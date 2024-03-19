@@ -1,4 +1,4 @@
-.. image:: ./images/logos_icons/logo_main.png
+.. image:: /source/images/logos_icons/logo_main.png
     :scale: 50%
 
 |precom| |docs| |isort Status| |black| |astropy| |astroQuery|
