@@ -1,5 +1,5 @@
 .. image:: source/images/logos_icons/logo_main.png
-    :scale: 10%
+    :scale: 1%
 
 |precom| |docs| |isort Status| |black| |astropy| |astroQuery|
 
