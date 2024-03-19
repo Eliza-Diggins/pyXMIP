@@ -1,4 +1,4 @@
-.. image:: images/logos_icons/logo_main.png
+.. image:: ./images/logos_icons/logo_main.png
     :scale: 50%
 
 |precom| |docs| |isort Status| |black| |astropy| |astroQuery|
@@ -20,117 +20,9 @@ Features
 - Use statistical methodologies to model the distribution of sources and produce match probabilities.
 - Create mock all sky surveys.
 
-.. grid:: 3
-
-    .. grid-item::
-
-        .. dropdown:: Astronomical Databases
-
-            - |NED| IPAC/NED
-            - |SIMBAD|
-
-    .. grid-item::
-
-        .. dropdown:: Tools
-
-            Coming Soon
-
-    .. grid-item::
-
-        .. dropdown:: Statistic Methods
-
-            Coming Soon
-
-Resources
-=========
-
-.. grid:: 2
-    :padding: 3
-    :gutter: 5
-
-    .. grid-item-card::
-        :img-top: images/logos_icons/stopwatch_icon.png
-
-        Quickstart Guide
-        ^^^^^^^^^^^^^^^^
-        New to pyXMIP? The quickstart guide page includes a variety of examples for utilizing our software for easy use cases.
-
-        +++
-
-        .. button-ref:: getting_started
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            To The Quickstart Page
-
-    .. grid-item-card::
-        :img-top: images/logos_icons/lightbulb.png
-
-        Examples
-        ^^^^^^^^
-        Interested in seeing a variety of use cases for the software? This example catalog is worth checking out!
-
-        +++
-
-        .. button-ref:: examples
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            To the Examples Page
-
-    .. grid-item-card::
-        :img-top: images/logos_icons/book.svg
-
-        User References
-        ^^^^^^^^^^^^^^^^
-
-        The user reference page contains a brief overview of the critical topics relating to the development and use of this
-        software.
-        +++
-
-        .. button-ref:: user_guide
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            To the User Guide
-
-    .. grid-item-card::
-        :img-top: images/logos_icons/api_icon.png
-
-        API Reference
-        ^^^^^^^^^^^^^
-
-        Doing a deep dive into our code? Looking to contribute to development? The API reference is a comprehensive resource
-        complete with source code and type hinting so that you can find every detail you might need.
-
-        +++
-
-        .. button-ref:: api
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            API Reference
 
 
 
-.. raw:: html
-
-   <hr style="color:black">
-
-Pages
------
-
-.. toctree::
-   :maxdepth: 1
-
-   api
-   user_guide
-   getting_started
-   examples
 
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
