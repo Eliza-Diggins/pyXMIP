@@ -22,7 +22,8 @@ Structures
     :template: module.rst
     :nosignatures:
 
-    structures.catalog
+    structures.databases
+    structures.table
     structures.skymap
 
 Other
