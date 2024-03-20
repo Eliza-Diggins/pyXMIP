@@ -134,3 +134,9 @@ def _enforce_style(func):
 def set_style():
     for _k, _v in xsparams["plotting"]["defaults"].items():
         plt.rcParams[_k] = _v
+
+def enforce_units(value,preferred_units):
+    if isinstance(value,u.Quantity):
+        return value.to(preferred_units)
+    else:
+        return value * u.Unit(preferred_units)

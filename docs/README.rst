@@ -20,6 +20,9 @@ Features
 - Use statistical methodologies to model the distribution of sources and produce match probabilities.
 - Create mock all sky surveys.
 
+Installation
+============
+
 
 
 

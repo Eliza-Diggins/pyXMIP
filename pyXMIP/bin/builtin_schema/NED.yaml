@@ -1,0 +1,16 @@
+#-----------------------------------------#
+# MAPPINGS
+#-----------------------------------------#
+column_map: # The column map tells the schema what different columns in your catalog actually are.
+    RA: "<name of RA column in catalog>"
+    Z: "<name of the redshift column in catalog>"
+object_map: # The different classes of objects.
+    "*": "star"
+    "**": "binary"
+    "*Ass": "star.nes"
+    "*Cl": "star_cluster"
+    "AbLS":
+#-----------------------------------------#
+# DEFAULTS
+#-----------------------------------------#
+default_coord_system: "ICRS" # The default coordinate system to use.

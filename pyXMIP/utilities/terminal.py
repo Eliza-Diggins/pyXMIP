@@ -1,9 +1,7 @@
 import multiprocessing
 import sys
 import time
-
 from pyXMIP.utilities.core import xsparams
-
 
 class Spinner:
     busy = False
@@ -61,6 +59,7 @@ class Spinner:
                 asctime=time.asctime(),
             )
         )
+        self.stream.write("\n")
         self.stream.flush()
         self.busy = False
         time.sleep(self.delay)

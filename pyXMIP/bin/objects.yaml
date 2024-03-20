@@ -1,0 +1,887 @@
+#======================================================================================================================#
+#                                          pyXMIP Recognized Objects Schema                                            #
+#                                                                                                                      #
+#                                                                                                                      #
+#======================================================================================================================#
+object_codes:
+  "*": "Star"
+  "Ma*": "Massive Star"
+  "Ma?": "Massive Star"
+  "bC*": "beta Cep Variable"
+  "bC?": "beta Cep Variable"
+  "sg*": "Evolved Supergiant"
+  "sg?": "Evolved Supergiant"
+  "s*r": "Red Supergiant"
+  "s?r": "Red Supergiant"
+  "s*y": "Yellow Supergiant"
+  "s?y": "Yellow Supergiant"
+  "s*b": "Blue Supergiant"
+  "s?b": "Blue Supergiant"
+  "WR*": "Wolf-Rayet"
+  "WR?": "Wolf-Rayet"
+  "N*": "Neutron Star"
+  "N*?": "Neutron Star"
+  "Psr": "Pulsar"
+  "Y*O": "Young Stellar Object"
+  "Y*?": "Young Stellar Object"
+  "Or*": "Orion Variable"
+  "TT*": "T Tauri Star"
+  "TT?": "T Tauri Star"
+  "Ae*": "Herbig Ae/Be Star"
+  "Ae?": "Herbig Ae/Be Star"
+  "out": "Outflow"
+  "of?": "Outflow"
+  "HH": "Herbig-Haro Object"
+  "MS*": "Main Sequence Star"
+  "MS?": "Main Sequence Star"
+  "Be*": "Be Star"
+  "Be?": "Be Star"
+  "BS*": "Blue Straggler"
+  "BS?": "Blue Straggler"
+  "SX*": "SX Phe Variable"
+  "gD*": "gamma Dor Variable"
+  "dS*": "delta Sct Variable"
+  "Ev*": "Evolved Star"
+  "Ev?": "Evolved Star"
+  "RG*": "Red Giant Branch star"
+  "RB?": "Red Giant Branch star"
+  "HS*": "Hot Subdwarf"
+  "HS?": "Hot Subdwarf"
+  "HB*": "Horizontal Branch Star"
+  "HB?": "Horizontal Branch Star"
+  "RR*": "RR Lyrae Variable"
+  "RR?": "RR Lyrae Variable"
+  "WV*": "Type II Cepheid Variable"
+  "WV?": "Type II Cepheid Variable"
+  "Ce*": "Cepheid Variable"
+  "Ce?": "Cepheid Variable"
+  "cC*": "Classical Cepheid Variable"
+  "C*": "Carbon Star"
+  "C*?": "Carbon Star"
+  "S*": "S Star"
+  "S*?": "S Star"
+  "LP*": "Long-Period Variable"
+  "LP?": "Long-Period Variable"
+  "AB*": "Asymptotic Giant Branch Star"
+  "AB?": "Asymptotic Giant Branch Star"
+  "Mi*": "Mira Variable"
+  "Mi?": "Mira Variable"
+  "OH*": "OH/IR Star"
+  "OH?": "OH/IR Star"
+  "pA*": "Post-AGB Star"
+  "pA?": "Post-AGB Star"
+  "RV*": "RV Tauri Variable"
+  "RV?": "RV Tauri Variable"
+  "PN": "Planetary Nebula"
+  "PN?": "Planetary Nebula"
+  "WD*": "White Dwarf"
+  "WD?": "White Dwarf"
+  "Pe*": "Chemically Peculiar Star"
+  "Pe?": "Chemically Peculiar Star"
+  "a2*": "alpha2 CVn Variable"
+  "a2?": "alpha2 CVn Variable"
+  "RC*": "R CrB Variable"
+  "RC?": "R CrB Variable"
+  "**": "Double or Multiple Star"
+  "**?": "Double or Multiple Star"
+  "El*": "Ellipsoidal Variable"
+  "El?": "Ellipsoidal Variable"
+  "EB*": "Eclipsing Binary"
+  "EB?": "Eclipsing Binary"
+  "SB*": "Spectroscopic Binary"
+  "SB?": "Spectroscopic Binary"
+  "BY*": "BY Dra Variable"
+  "BY?": "BY Dra Variable"
+  "RS*": "RS CVn Variable"
+  "RS?": "RS CVn Variable"
+  "Sy*": "Symbiotic Star"
+  "Sy?": "Symbiotic Star"
+  "XB*": "X-ray Binary"
+  "XB?": "X-ray Binary"
+  "LXB": "Low Mass X-ray Binary"
+  "LX?": "Low Mass X-ray Binary"
+  "HXB": "High Mass X-ray Binary"
+  "HX?": "High Mass X-ray Binary"
+  "CV*": "Cataclysmic Binary"
+  "CV?": "Cataclysmic Binary"
+  "No*": "Classical Nova"
+  "No?": "Classical Nova"
+  "SN*": "SuperNova"
+  "SN?": "SuperNova"
+  "LM*": "Low-mass Star"
+  "LM?": "Low-mass Star"
+  "BD*": "Brown Dwarf"
+  "BD?": "Brown Dwarf"
+  "Pl": "Extra-solar Planet"
+  "Pl?": "Extra-solar Planet"
+  "V*": "Variable Star"
+  "V*?": "Variable Star"
+  "Ir*": "Irregular Variable"
+  "Er*": "Eruptive Variable"
+  "Er?": "Eruptive Variable"
+  "Ro*": "Rotating Variable"
+  "Ro?": "Rotating Variable"
+  "Pu*": "Pulsating Variable"
+  "Pu?": "Pulsating Variable"
+  "Em*": "Emission-line Star"
+  "PM*": "High Proper Motion Star"
+  "HV*": "High Velocity Star"
+  "Cl*": "Cluster of Stars"
+  "Cl?": "Cluster of Stars"
+  "GlC": "Globular Cluster"
+  "Gl?": "Globular Cluster"
+  "OpC": "Open Cluster"
+  "As*": "Association of Stars"
+  "As?": "Association of Stars"
+  "St*": "Stellar Stream"
+  "MGr": "Moving Group"
+  "ISM": "Interstellar Medium Object"
+  "SFR": "Star Forming Region"
+  "HII": "HII Region"
+  "Cld": "Cloud"
+  "GNe": "Nebula"
+  "RNe": "Reflection Nebula"
+  "MoC": "Molecular Cloud"
+  "DNe": "Dark Cloud (nebula)"
+  "glb": "Globule (low-mass dark cloud)"
+  "CGb": "Cometary Globule / Pillar"
+  "HVC": "High-velocity Cloud"
+  "cor": "Dense Core"
+  "bub": "Bubble"
+  "SNR": "SuperNova Remnant"
+  "SR?": "SuperNova Remnant"
+  "sh": "Interstellar Shell"
+  "flt": "Interstellar Filament"
+  "G": "Galaxy"
+  "G?": "Galaxy"
+  "LSB": "Low Surface Brightness Galaxy"
+  "bCG": "Blue Compact Galaxy"
+  "SBG": "Starburst Galaxy"
+  "H2G": "HII Galaxy"
+  "EmG": "Emission-line galaxy"
+  "AGN": "Active Galaxy Nucleus"
+  "AG?": "Active Galaxy Nucleus"
+  "SyG": "Seyfert Galaxy"
+  "Sy1": "Seyfert 1 Galaxy"
+  "Sy2": "Seyfert 2 Galaxy"
+  "rG": "Radio Galaxy"
+  "LIN": "LINER-type Active Galaxy Nucleus"
+  "QSO": "Quasar"
+  "Q?": "Quasar"
+  "Bla": "Blazar"
+  "Bz?": "Blazar"
+  "BLL": "BL Lac"
+  "BL?": "BL Lac"
+  "GiP": "Galaxy in Pair of Galaxies"
+  "GiG": "Galaxy towards a Group of Galaxies"
+  "GiC": "Galaxy towards a Cluster of Galaxies"
+  "BiC": "Brightest Galaxy in a Cluster (BCG)"
+  "IG": "Interacting Galaxies"
+  "PaG": "Pair of Galaxies"
+  "GrG": "Group of Galaxies"
+  "Gr?": "Group of Galaxies"
+  "CGG": "Compact Group of Galaxies"
+  "ClG": "Cluster of Galaxies"
+  "C?G": "Cluster of Galaxies"
+  "PCG": "Proto Cluster of Galaxies"
+  "PCG?": "Proto Cluster of Galaxies"
+  "SCG": "Supercluster of Galaxies"
+  "SC?": "Supercluster of Galaxies"
+  "vid": "Underdense Region of the Universe"
+  "grv": "Gravitational Source"
+  "Lev": "(Micro)Lensing Event"
+  "gLS": "Gravitational Lens System (lens+images)"
+  "LS?": "Gravitational Lens System (lens+images)"
+  "gLe": "Gravitational Lens"
+  "Le?": "Gravitational Lens"
+  "LeI": "Gravitationally Lensed Image"
+  "LI?": "Gravitationally Lensed Image"
+  "LeG": "Gravitationally Lensed Image of a Galaxy"
+  "LeQ": "Gravitationally Lensed Image of a Quasar"
+  "BH": "Black Hole"
+  "BH?": "Black Hole"
+  "GWE": "Gravitational Wave Event"
+  "ev": "Transient Event"
+  "var": "Variable source"
+  "Rad": "Radio Source"
+  "mR": "Metric Radio Source"
+  "cm": "Centimetric Radio Source"
+  "mm": "Millimetric Radio Source"
+  "smm": "Sub-Millimetric Source"
+  "HI": "HI (21cm) Source"
+  "rB": "Radio Burst"
+  "Mas": "Maser"
+  "IR": "Infra-Red Source"
+  "FIR": "Far-IR source (λ >= 30 µm)"
+  "MIR": "Mid-IR Source (3 to 30 µm)"
+  "NIR": "Near-IR Source (λ < 3 µm)"
+  "Opt": "Optical Source"
+  "EmO": "Emission Object"
+  "blu": "Blue Object"
+  "UV": "UV-emission Source"
+  "X": "X-ray Source"
+  "ULX": "Ultra-luminous X-ray Source"
+  "UX?": "Ultra-luminous X-ray Source"
+  "gam": "Gamma-ray Source"
+  "gB": "Gamma-ray Burst"
+  "mul": "Composite Object, Blend"
+  "err": "Not an Object (Error, Artefact, ...)"
+  "PoC": "Part of Cloud"
+  "PoG": "Part of a Galaxy"
+  "?": "Object of Unknown Nature"
+  "reg": "Region defined in the Sky"
+
+object_hierarchy:
+'*': [ ]
+'**':
+  - '*'
+'**?':
+  - '*'
+  - '**'
+'?': [ ]
+AB*:
+  - '*'
+  - Ev*
+AB?:
+  - '*'
+  - Ev*
+  - AB*
+AG?:
+  - G
+  - AGN
+AGN:
+  - G
+Ae*:
+  - '*'
+  - Y*O
+Ae?:
+  - '*'
+  - Y*O
+  - Ae*
+As*: [ ]
+As?:
+  - As*
+BD*:
+  - '*'
+  - LM*
+BD?:
+  - '*'
+  - LM*
+  - BD*
+BH:
+  - grv
+BH?:
+  - grv
+  - BH
+BL?:
+  - G
+  - AGN
+  - QSO
+  - Bla
+  - BLL
+BLL:
+  - G
+  - AGN
+  - QSO
+  - Bla
+BS*:
+  - '*'
+  - MS*
+BS?:
+  - '*'
+  - MS*
+  - BS*
+BY*:
+  - '*'
+  - '**'
+BY?:
+  - '*'
+  - '**'
+  - BY*
+Be*:
+  - '*'
+  - MS*
+Be?:
+  - '*'
+  - MS*
+  - Be*
+BiC:
+  - G
+  - GiC
+Bla:
+  - G
+  - AGN
+  - QSO
+Bz?:
+  - G
+  - AGN
+  - QSO
+  - Bla
+C*:
+  - '*'
+  - Ev*
+C*?:
+  - '*'
+  - Ev*
+  - C*
+C?G:
+  - ClG
+CGG:
+  - GrG
+CGb:
+  - ISM
+  - Cld
+CV*:
+  - '*'
+  - '**'
+CV?:
+  - '*'
+  - '**'
+  - CV*
+Ce*:
+  - '*'
+  - Ev*
+Ce?:
+  - '*'
+  - Ev*
+  - Ce*
+Cl*: [ ]
+Cl?:
+  - Cl*
+ClG: [ ]
+Cld:
+  - ISM
+DNe:
+  - ISM
+  - Cld
+EB*:
+  - '*'
+  - '**'
+EB?:
+  - '*'
+  - '**'
+  - EB*
+El*:
+  - '*'
+  - '**'
+El?:
+  - '*'
+  - '**'
+  - El*
+Em*:
+  - '*'
+EmG:
+  - G
+EmO:
+  - Opt
+Er*:
+  - '*'
+  - V*
+Er?:
+  - '*'
+  - V*
+  - Er*
+Ev*:
+  - '*'
+Ev?:
+  - '*'
+  - Ev*
+FIR:
+  - IR
+G: [ ]
+G?:
+  - G
+GNe:
+  - ISM
+  - Cld
+GWE:
+  - grv
+GiC:
+  - G
+GiG:
+  - G
+GiP:
+  - G
+Gl?:
+  - Cl*
+  - GlC
+GlC:
+  - Cl*
+Gr?:
+  - GrG
+GrG: [ ]
+H2G:
+  - G
+HB*:
+  - '*'
+  - Ev*
+HB?:
+  - '*'
+  - Ev*
+  - HB*
+HH:
+  - '*'
+  - Y*O
+  - out
+HI:
+  - Rad
+HII:
+  - ISM
+HS*:
+  - '*'
+  - Ev*
+HS?:
+  - '*'
+  - Ev*
+  - HS*
+HV*:
+  - '*'
+HVC:
+  - ISM
+  - Cld
+HX?:
+  - '*'
+  - '**'
+  - XB*
+  - HXB
+HXB:
+  - '*'
+  - '**'
+  - XB*
+IG: [ ]
+IR: [ ]
+ISM: [ ]
+Ir*:
+  - '*'
+  - V*
+LI?:
+  - grv
+  - gLS
+  - LeI
+LIN:
+  - G
+  - AGN
+LM*:
+  - '*'
+LM?:
+  - '*'
+  - LM*
+LP*:
+  - '*'
+  - Ev*
+LP?:
+  - '*'
+  - Ev*
+  - LP*
+LS?:
+  - grv
+  - gLS
+LSB:
+  - G
+LX?:
+  - '*'
+  - '**'
+  - XB*
+  - LXB
+LXB:
+  - '*'
+  - '**'
+  - XB*
+Le?:
+  - grv
+  - gLS
+  - gLe
+LeG:
+  - grv
+  - gLS
+  - LeI
+LeI:
+  - grv
+  - gLS
+LeQ:
+  - grv
+  - gLS
+  - LeI
+Lev:
+  - grv
+MGr:
+  - As*
+MIR:
+  - IR
+MS*:
+  - '*'
+MS?:
+  - '*'
+  - MS*
+Ma*:
+  - '*'
+Ma?:
+  - '*'
+  - Ma*
+Mas:
+  - Rad
+Mi*:
+  - '*'
+  - Ev*
+  - AB*
+Mi?:
+  - '*'
+  - Ev*
+  - AB*
+  - Mi*
+MoC:
+  - ISM
+  - Cld
+N*:
+  - '*'
+  - Ma*
+N*?:
+  - '*'
+  - Ma*
+  - N*
+NIR:
+  - IR
+No*:
+  - '*'
+  - '**'
+  - CV*
+No?:
+  - '*'
+  - '**'
+  - CV*
+  - No*
+OH*:
+  - '*'
+  - Ev*
+OH?:
+  - '*'
+  - Ev*
+  - OH*
+OpC:
+  - Cl*
+Opt: [ ]
+Or*:
+  - '*'
+  - Y*O
+PCG: [ ]
+PCG?:
+  - PCG
+PM*:
+  - '*'
+PN:
+  - '*'
+  - Ev*
+PN?:
+  - '*'
+  - Ev*
+  - PN
+PaG: [ ]
+Pe*:
+  - '*'
+Pe?:
+  - '*'
+  - Pe*
+Pl:
+  - '*'
+Pl?:
+  - '*'
+  - Pl
+PoC: [ ]
+PoG: [ ]
+Psr:
+  - '*'
+  - Ma*
+  - N*
+Pu*:
+  - '*'
+  - V*
+Pu?:
+  - '*'
+  - V*
+  - Pu*
+Q?:
+  - G
+  - AGN
+  - QSO
+QSO:
+  - G
+  - AGN
+RB?:
+  - '*'
+  - Ev*
+  - RG*
+RC*:
+  - '*'
+  - Pe*
+RC?:
+  - '*'
+  - Pe*
+  - RC*
+RG*:
+  - '*'
+  - Ev*
+RNe:
+  - ISM
+  - Cld
+  - GNe
+RR*:
+  - '*'
+  - Ev*
+  - HB*
+RR?:
+  - '*'
+  - Ev*
+  - HB*
+  - RR*
+RS*:
+  - '*'
+  - '**'
+RS?:
+  - '*'
+  - '**'
+  - RS*
+RV*:
+  - '*'
+  - Ev*
+RV?:
+  - '*'
+  - Ev*
+  - RV*
+Rad: [ ]
+Ro*:
+  - '*'
+  - V*
+Ro?:
+  - '*'
+  - V*
+  - Ro*
+S*:
+  - '*'
+  - Ev*
+S*?:
+  - '*'
+  - Ev*
+  - S*
+SB*:
+  - '*'
+  - '**'
+SB?:
+  - '*'
+  - '**'
+  - SB*
+SBG:
+  - G
+SC?:
+  - SCG
+SCG: [ ]
+SFR:
+  - ISM
+SN*:
+  - '*'
+SN?:
+  - '*'
+  - SN*
+SNR:
+  - ISM
+SR?:
+  - ISM
+  - SNR
+SX*:
+  - '*'
+  - MS*
+  - BS*
+St*:
+  - As*
+Sy*:
+  - '*'
+  - '**'
+Sy1:
+  - G
+  - AGN
+  - SyG
+Sy2:
+  - G
+  - AGN
+  - SyG
+Sy?:
+  - '*'
+  - '**'
+  - Sy*
+SyG:
+  - G
+  - AGN
+TT*:
+  - '*'
+  - Y*O
+TT?:
+  - '*'
+  - Y*O
+  - TT*
+ULX:
+  - X
+UV: [ ]
+UX?:
+  - X
+  - ULX
+V*:
+  - '*'
+V*?:
+  - '*'
+  - V*
+WD*:
+  - '*'
+  - Ev*
+WD?:
+  - '*'
+  - Ev*
+  - WD*
+WR*:
+  - '*'
+  - Ma*
+  - sg*
+  - s*b
+WR?:
+  - '*'
+  - Ma*
+  - sg*
+  - s*b
+  - WR*
+WV*:
+  - '*'
+  - Ev*
+WV?:
+  - '*'
+  - Ev*
+  - WV*
+X: [ ]
+XB*:
+  - '*'
+  - '**'
+XB?:
+  - '*'
+  - '**'
+  - XB*
+Y*?:
+  - '*'
+  - Y*O
+Y*O:
+  - '*'
+a2*:
+  - '*'
+  - Pe*
+a2?:
+  - '*'
+  - Pe*
+  - a2*
+bC*:
+  - '*'
+  - Ma*
+bC?:
+  - '*'
+  - Ma*
+  - bC*
+bCG:
+  - G
+blu:
+  - Opt
+bub:
+  - ISM
+cC*:
+  - '*'
+  - Ev*
+  - Ce*
+cm:
+  - Rad
+cor:
+  - ISM
+dS*:
+  - '*'
+  - MS*
+err: [ ]
+ev: [ ]
+flt:
+  - ISM
+gB:
+  - gam
+gD*:
+  - '*'
+  - MS*
+gLS:
+  - grv
+gLe:
+  - grv
+  - gLS
+gam: [ ]
+glb:
+  - ISM
+  - Cld
+grv: [ ]
+mR:
+  - Rad
+mm:
+  - Rad
+mul: [ ]
+of?:
+  - '*'
+  - Y*O
+  - out
+out:
+  - '*'
+  - Y*O
+pA*:
+  - '*'
+  - Ev*
+pA?:
+  - '*'
+  - Ev*
+  - pA*
+rB:
+  - Rad
+rG:
+  - G
+  - AGN
+reg: [ ]
+s*b:
+  - '*'
+  - Ma*
+  - sg*
+s*r:
+  - '*'
+  - Ma*
+  - sg*
+s*y:
+  - '*'
+  - Ma*
+  - sg*
+s?b:
+  - '*'
+  - Ma*
+  - sg*
+  - s*b
+s?r:
+  - '*'
+  - Ma*
+  - sg*
+  - s*r
+s?y:
+  - '*'
+  - Ma*
+  - sg*
+  - s*y
+sg*:
+  - '*'
+  - Ma*
+sg?:
+  - '*'
+  - Ma*
+  - sg*
+sh:
+  - ISM
+smm:
+  - Rad
+var: [ ]
+vid: [ ]
+
+
+
+

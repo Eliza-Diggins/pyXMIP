@@ -269,7 +269,7 @@ class DensityModel:
     }
     _class_analytically_tractable = False
 
-    def __init__(self, density_function=None, parameters=None):
+    def __init__(self, density_function=None, parameters=None, derivative_function=None, second_derivative_function=None, prior_function=None):
         r"""
         Initializes the :py:class:`stats.density.DensityModel` instance.
 
@@ -302,6 +302,35 @@ class DensityModel:
                 If ``parameters`` is left unspecified, object inspection is used to determine argument names and
                 parameter information is populated with blank descriptions, latex repr., and units.
 
+        derivative_function: callable, optional
+            Optional parameter to specify the first order partial derivatives of the density function. The function must have a signature
+            ``func(phi,theta,arg1,...,argN)``. It must return an array of shape ``(N,)`` containing the partial derivatives of the density function for
+            each of the arguments.
+
+            .. math::
+
+                g(\phi,\theta,a_1,\cdots,a_N)_{i} = \left.\frac{\partial f}{\partial a_i}\right|_{\phi,\theta,a_1,\cdots,a_N}
+
+        second_derivative_function: callable, optional
+            Optional parameter to specify the second order partial derivatives of the density function. The function must have a signature
+            ``func(phi,theta,arg1,...,argN)``. It must return an array of shape ``(N,N)`` containing the partial derivatives of the density function for
+            each of the arguments. Thus,
+
+            .. math::
+
+                g(\phi,\theta,a_1,\cdots,a_N)_{ij} = \left.\frac{\partial^2 f}{\partial a_i \partial a_j}\right|_{\phi,\theta,a_1,\cdots,a_N}
+        prior_function: callable, optional
+            Optional parameter to specify the Bayesian priors for each of the free parameters in the model. This should be a function
+            ``func(arg1,arg2,...,argN)`` which returns a ``float`` indicating the *a priori* likelihood of the parameter set.
+
+            .. warning::
+
+                If you choose to use the ``prior_function`` argument, you **must** remember that the function returns a float, not an array. This means
+                that the priors are combined:
+
+                .. math::
+
+                    P(\mathbf{\Omega}|\mathcal{D}) = P(\mathcal{D}|\mathbf{\Omega})\frac{P(\mathbf{\Omega})}{P(\mathcal{D})} \neq P(\mathcal{D}|\mathbf{\Omega})P(\mathcal{D})^{-1} \prod_{i = 1}^{N} P(\mathbf{\Omega}_i)
         """
         self.function = (
             density_function
@@ -762,7 +791,7 @@ class DensityModel:
         mainlog.info(f"Completed fitting {self.__class__.__name__} to {population}.")
         return self.fit
 
-    def _poisson_mle_nonlinear(
+    def _mle_nonlinear(
         self, phi, theta, counts, areas, function, guess_functions=None, ls_kwargs=None
     ):
         r"""
@@ -1128,7 +1157,7 @@ class UniformDensityModel(DensityModel):
             self.__class__.class_function, parameters=self.__class__.class_parameters
         )
 
-    def _poisson_mle_analytical(
+    def _mle_analytical(
         self, phi, theta, counts, areas, function, *args, **kwargs
     ):
         _, _, _, _, _ = (
