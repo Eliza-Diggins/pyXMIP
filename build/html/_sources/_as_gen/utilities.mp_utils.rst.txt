@@ -1,6 +1,29 @@
-utilities.mp\_utils
-===================
+﻿utilities.mp_utils
+==================
 
-.. currentmodule:: utilities
+.. automodule:: utilities.mp_utils
 
-.. automodule:: mp_utils
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+
+   
+      split
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

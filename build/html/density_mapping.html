@@ -370,21 +370,104 @@ document.write(`
                   
   <section id="density-mapping">
 <h1>Density Mapping<a class="headerlink" href="#density-mapping" title="Link to this heading">#</a></h1>
+<p>One of the core objectives of pyXMIP is to cross match novel sources in astronomical surveys against databases of known
+objects. One of the challenges presented is that, for any given sky position, there is always a chance that a database contains an entirely
+unrelated source at or near the same sky position. This will preferentially bias source types which are more common in a given database and
+bias databases with more sources over those with fewer sources. To improve our methodology, we use statistical methods to model the probability
+of a spurious match in some region of sky. This process is roughly broken into 4 steps:</p>
+<ol class="arabic simple">
+<li><p>Sample sources from the matching database.</p></li>
+<li><p>Construct a <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.DensityModel</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.PopulationDensity</span></code> map of the different source populations in the matching database.</p></li>
+<li><p>Cross match a local catalog (unknown sources) against the matching database.</p></li>
+<li><p>Model the probability of a given match given the density of database sources from the map.</p></li>
+</ol>
+<p>On this page, we present the basic ideas behind this process.</p>
 </section>
 <section id="statistical-methods">
 <h1>Statistical Methods<a class="headerlink" href="#statistical-methods" title="Link to this heading">#</a></h1>
-<section id="bayesian-methods">
-<h2>Bayesian Methods<a class="headerlink" href="#bayesian-methods" title="Link to this heading">#</a></h2>
-</section>
-<section id="frequentist-methods">
-<h2>Frequentist Methods<a class="headerlink" href="#frequentist-methods" title="Link to this heading">#</a></h2>
-</section>
-</section>
-<section id="built-in-methods">
-<h1>Built-in Methods<a class="headerlink" href="#built-in-methods" title="Link to this heading">#</a></h1>
+<p>Consider a collection of sources (preferably a self-consistent population of sources) from the matching database.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<p>We could be looking to map the density of QSO objects in NED.</p>
+</div>
+<p>We begin by randomly sampling from that population and constructing a <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.PopulationDensity</span></code> object with a collection of source positions on the sky and
+the number of counts within a given solid angle around that point. Each <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.PopulationDensity</span></code> instance is effectively a collection of sky positions
+<span class="math notranslate nohighlight">\(\textbf{r} = (\phi_i,\theta_i)\)</span>, sampling areas <span class="math notranslate nohighlight">\(A_i\)</span> and source counts <span class="math notranslate nohighlight">\(k_i\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>TODO: this should link to info about the random sampling methodology.</p>
+</div>
+<p>Once a <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.PopulationDensity</span></code> object has been produced for the given database or catalog, we then seek to fit a given
+density model to the data. A density model (encapsulated by the <code class="xref py py-class docutils literal notranslate"><span class="pre">stats.density.DensityModel</span></code> class) is a function</p>
+<div class="math notranslate nohighlight">
+\[f(\phi,\theta;\mathbf{\Omega}) \;\text{such that}\; \left&lt;k_{\mathrm{matches}}\right&gt;_{\phi,\theta} = f(\phi,\theta; \mathbf{\Omega})\]</div>
+<p>for some set of fit parameters <span class="math notranslate nohighlight">\(\mathbf{\Omega}\)</span>. As such, <span class="math notranslate nohighlight">\(f(\phi,\theta;\mathbf{\Omega})\)</span> effectively encapsulates the density
+of sources at a given position on the sky.</p>
+<p>This information can then be used in the cross matching process. If a source at <span class="math notranslate nohighlight">\(\textbf{r}\)</span> on the sky is matched to a database source at <span class="math notranslate nohighlight">\(\textbf{r}'\)</span> which
+has some angular distance <span class="math notranslate nohighlight">\(\delta\)</span> from the true source, the probability of finding such a source randomly is</p>
+<div class="math notranslate nohighlight">
+\[1-P(k=0|\phi,\theta,\delta) = 1 - \lambda(\phi,\theta,\delta) \exp\left(-\lambda(\phi,\theta,\delta)\right)\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\lambda(\phi,\theta,\delta) = f(\phi,\theta;\mathbf{\Omega}_{\mathrm{fit}}) \pi^2 \delta.\]</div>
+<p>From this, we may determine our confidence in the legitimacy of a particular match.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are two cruxes in this process:</p>
+<ol class="arabic simple">
+<li><p>Computing a reasonable density fit.</p></li>
+<li><p>Constructing the density maps.</p></li>
+</ol>
+<p>For common databases, the density maps for each of the object types are updated regularly and available directly from
+the repository.</p>
+</div>
+<hr style="color:black"><section id="fitting-density-models">
+<h2>Fitting Density Models<a class="headerlink" href="#fitting-density-models" title="Link to this heading">#</a></h2>
+<p>For a given population density sample consisting of <span class="math notranslate nohighlight">\(N\)</span> points <span class="math notranslate nohighlight">\(\mathbf{\phi},\mathbf{\theta}\)</span>, their associated
+source counts <span class="math notranslate nohighlight">\(\textbf{k}\)</span>, and the sampling area <span class="math notranslate nohighlight">\(\textbf{A}\)</span>, the liklihood of obtaining that data from a Poisson process is</p>
+<div class="math notranslate nohighlight">
+\[p(\textbf{k}|\mathbf{\phi},\mathbf{\theta},\mathbf{A}) = \prod_{i=1}^N \mathrm{Poisson}\left(k_i,\Lambda_i)\right)\]</div>
+<p>The (negative) log-likelihood associated with the distribution is</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L} = - \log p(\textbf{k}|\mathbf{\phi},\mathbf{\theta},\mathbf{A}) = \sum_{i=1}^N \Lambda_i - k_i\log \Lambda_i - \log k_i!,\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\Lambda_i = A_if(\phi_i,\theta_i,\mathbf{\Omega}).\]</div>
+<p>To this point, all of the various density estimation methods are homogeneous. From here, there are several possible classes of fit that
+the user may choose to employ:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 </input><label class="sd-tab-label" for="sd-tab-item-0">
+Bayesian Estimation</label><div class="sd-tab-content docutils">
+<p>If the user elects to use a Bayesian framework for the model fit, then</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Maximum Likelihood Estimation</label><div class="sd-tab-content docutils">
+<p>If the user elects to use maximum likelihood estimation (MLE) to determine the fit, the backend will attempt to find a minima of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> corresponding
+to the effective best fit parameters. Generically, this problem takes the form</p>
+<div class="math notranslate nohighlight">
+\[\partial_\mu \mathcal{L} =  \Lambda_{i,\mu}\left(1 - \frac{k_i}{\Lambda_i}\right) = A_if_{i,\mu}\left(1 - \frac{k_i}{A_i f_i}\right) = 0\]</div>
+<p>Letting</p>
+<div class="math notranslate nohighlight">
+\[\textbf{F}_i^j(\mathbf{\Omega}) = f_{i,\Omega_j}(\Omega), \;\text{and}\; \textbf{U}_i = 1 - k_i A_i^{-1} f_{i}^{-1}(\mathbf{\Omega}),\]</div>
+<p>The problem reduces to a non-linear optimization problem of the form</p>
+<div class="math notranslate nohighlight">
+\[\textbf{A} \cdot \textbf{F}(\mathbf{\Omega})U(\mathbf{\Omega}) = 0\]</div>
+<p>which contains <span class="math notranslate nohighlight">\(|\mathbf{\Omega}|\)</span> variables in <span class="math notranslate nohighlight">\(N\)</span> equations. In almost all cases, these equations should be tractable. For the most part,
+we accomplish the minimization by numerical method; however, some special cases have analytically tractable solutions.</p>
+<p>The covariance matrix for the model fit is (by the <a class="reference external" href="https://en.wikipedia.org/wiki/Cram%C3%A9r%E2%80%93Rao_bound">Cramer-Rao Bound</a>)</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Cov}\mathbf{\Omega}_{ij} = \left(- \mathcal{L}_{,ij}(\mathbf{\Omega}_0)\right)^{-1/2}\]</div>
+</div>
+</div>
+</section>
+</section>
+<section id="built-in-models">
+<h1>Built-in Models<a class="headerlink" href="#built-in-models" title="Link to this heading">#</a></h1>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
 Constant Density</label><div class="sd-tab-content docutils">
 <p>The constant density model assumes (for a given probability model <span class="math notranslate nohighlight">\(P(N_E|A,f)\)</span>) a distribution function <span class="math notranslate nohighlight">\(f\)</span> of the form</p>
 <div class="math notranslate nohighlight">
@@ -439,11 +522,10 @@ Constant Density</label><div class="sd-tab-content docutils">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Density Mapping</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-methods">Statistical Methods</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-methods">Bayesian Methods</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frequentist-methods">Frequentist Methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-density-models">Fitting Density Models</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-methods">Built-in Methods</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-models">Built-in Models</a></li>
 </ul>
 
   </nav></div>

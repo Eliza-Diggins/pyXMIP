@@ -13,8 +13,8 @@ Statistics
 
     stats.density
 
-Catalogs
---------
+Structures
+----------
 
 .. autosummary::
     :toctree: _as_gen
@@ -22,7 +22,8 @@ Catalogs
     :template: module.rst
     :nosignatures:
 
-    groups.catalog
+    structures.catalog
+    structures.skymap
 
 Other
 -----
@@ -34,4 +35,6 @@ Other
     :nosignatures:
 
     schema
-    utilities
+    utilities.core
+    utilities.mp_utils
+    utilities.terminal
