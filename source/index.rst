@@ -131,6 +131,7 @@ Pages
    user_guide
    getting_started
    examples
+   data_structures
 
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg

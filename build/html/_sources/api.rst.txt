@@ -38,4 +38,4 @@ Other
     schema
     utilities.core
     utilities.mp_utils
-    utilities.terminal
+    utilities.text
