@@ -1,16 +1,85 @@
 #-----------------------------------------#
 # MAPPINGS
+#
+# The following are NED's standard columns
+# 'No.','Object Name','RA','DEC','Type','Velocity','Redshift','Redshift Flag','Magnitude and Filter',
+# 'Separation','References','Notes','Photometry Points','Positions','Redshift Points','Diameter Points','Associations'
 #-----------------------------------------#
+
 column_map: # The column map tells the schema what different columns in your catalog actually are.
-    RA: "<name of RA column in catalog>"
-    Z: "<name of the redshift column in catalog>"
-object_map: # The different classes of objects.
-    "*": "star"
-    "**": "binary"
-    "*Ass": "star.nes"
-    "*Cl": "star_cluster"
-    "AbLS":
+    RA: "RA"
+    DEC: "DEC"
+    NAME: "Object Name"
+    TYPE: 'Type'
+    Z: "Redshift"
+
+object_map:
+  "*":          '*'                    # Star or Point Source
+  "**":         '**'                    # Double star
+  "*Ass":       'As*'                    # Stellar association
+  "*Cl":        'Cl*'                    # Star cluster
+  "AbLS":       'ISM'                    # Absorption line system
+  "Blue*":      '*'                    # Blue star
+  "C*":         'C*'                    # Carbon star
+  "EmLS":       'EmLine*'                    # Emission line source
+  "EmObj":      'EmObj'                    # Emission object
+  "exG*":       '*'                    # Extragalactic star (not a member of an identified galaxy)
+  "Flare*":     'Pe*'                    # Flare star
+  "G":          'G'                    # Galaxy
+  "GammaS":     'gam'                    # Gamma ray source
+  "GClstr":     'ClG'                    # Cluster of galaxies
+  "GGroup":     'GrG'                    # Group of galaxies
+  "GPair":      'PaG'                    # Galaxy pair
+  "GTrpl":      'CGG'                    # Galaxy triple
+  "G_Lens":     'gLS'                    # Lensed image of a galaxy
+  "HII":        'HII'                    # HII region
+  "IrS":        'IR'                    # Infrared source
+  "MCld":       'MoC'                    # Molecular cloud
+  "Neb":        'GNe'                    # Nebula
+  "Nova":       'No*'                    # Nova
+  "Other":      '?'                    # Other classification (e.g. comet; plate defect)
+  "PN":         'PN'                    # Planetary nebula
+  "PofG":       'G'                    # Part of galaxy
+  "Psr":        'Psr'                    # Pulsar
+  "QGroup":     'AGN'                    # Group of QSOs
+  "QSO":        'QSO'                    # Quasi-stellar object
+  "Q_Lens":     'LeQ'                    # Lensed image of a QSO
+  "RadioS":     'Rad'                    # Radio source
+  "Red*":       '*'                    # Red star
+  "RfN":        'RNe'                    # Reflection nebula
+  "SN":         'SN*'                    # Supernova
+  "SNR":        'SNR'                    # Supernova remnant
+  "UvES":       'UV'                    # Ultraviolet excess source
+  "UvS":        'UV'                    # Ultraviolet source
+  "V*":         'V*'                    # Variable star
+  "VisS":       'Opt'                    # Visual source
+  "WD*":        'WD*'                    # White dwarf
+  "WR*":        'WR*'                    # Wolf-Rayet star
+  "XrayS":      'X'                    # X-ray source
+  "!*":         '*'                    # Galactic star
+  "!**":        '**'                    # Galactic double star
+  "!*Ass":      'As*'                    # Galactic star association
+  "!*Cl":       'Cl*'                    # Galactic Star cluster
+  "!Blue*":     '*'                    # Galactic blue star
+  "!C*":        'C*'                    # Galactic carbon star
+  "!EmObj":     'EmObj'                    # Galactic emission line object
+  "!Flar*":     'Pe*'                    # Galactic flare star
+  "!HII":       'HII'                    # Galactic HII region
+  "!MCld":      'MoC'                    # Galactic molecular cloud
+  "!Neb":       'GNe'                    # Galactic nebula
+  "!Nova":      'No*'                    # Galactic nova
+  "!PN":        'PN'                    # Galactic planetary nebula
+  "!Psr":       'Psr'                    # Galactic pulsar
+  "!RfN":       'PNe'                    # Galactic reflection nebula
+  "!Red*":      '*'                    # Galactic red star
+  "!SN":        'SN*'                    # Galactic supernova
+  "!SNR":       'SNR'                    # Galactic supernova remnant
+  "!V*":        'V*'                    # Galactic variable star
+  "!WD*":       'WD*'                    # Galactic white dwarf
+  "!WR*":       'WD*'                    # Galactic Wolf-Rayet star
 #-----------------------------------------#
 # DEFAULTS
 #-----------------------------------------#
-default_coord_system: "ICRS" # The default coordinate system to use.
+settings:
+    default_coord_system: "ICRS" # The default coordinate system to use.
+    coordinate_units: 'deg'

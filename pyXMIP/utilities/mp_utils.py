@@ -1,5 +1,5 @@
 """
-Utilities for multi-processing needs.
+Utilities for managing multi-processing tasks.
 """
 def split(a, n):
     k, m = divmod(len(a), n)

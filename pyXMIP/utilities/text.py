@@ -1,3 +1,6 @@
+"""
+Textual utilities for CLI in pyXMIP.
+"""
 import multiprocessing
 import sys
 import time
