@@ -5,8 +5,46 @@ import pathlib as pt
 from copy import copy
 
 import astropy.coordinates as astro_coords
+from astropy.units import Quantity
 
-from pyXMIP.utilities.core import mainlog
+from pyXMIP.utilities.core import getFromDict, mainlog, setInDict
+
+
+class _SCHEMAENTRY:
+    def __init__(self, dict_location, required=False, dtype=None, allow_set=True):
+        self.dict_location = dict_location
+        self.required = required
+        self.dtype = dtype
+        self.allow_set = allow_set
+
+    def __set_name__(self, owner, name):
+        self._name = name
+        self.dict_location += [self._name]
+
+    def __get__(self, instance, owner):
+        try:
+            return getFromDict(instance, self.dict_location)
+        except KeyError:
+            return None
+        except TypeError:
+            return None
+
+    def __set__(self, instance, value):
+        setInDict(instance, self.dict_location, value)
+
+
+class _SpecialColumn:
+    def __set_name__(self, owner, name):
+        self._name = name
+
+    def __get__(self, instance, owner):
+        try:
+            return instance.colmap[self._name]
+        except KeyError:
+            return None
+
+    def __set__(self, instance, value):
+        instance.colmap[self._name] = value
 
 
 def _get_recursive(key, dictionary):
@@ -14,7 +52,7 @@ def _get_recursive(key, dictionary):
 
     for k in key.split("."):
         assert (
-                k in o
+            k in o
         ), f"The key {k} failed to appear in the schema at this level: KEYS={o.keys()}."
         o = o[k]
 
@@ -30,27 +68,58 @@ class Schema(dict):
 
         This class is archetypal. Most methods are only functional for sub-classes.
     """
-    _required_keys = []
 
-    def __init__(self, mapping, *args, **kwargs):
+    def __init__(self, mapping):
+        """
+        Initialize the generalized schema class.
+
+        Parameters
+        ----------
+        mapping: dict
+            The dictionary underlying this schema.
+        """
         super().__init__(mapping)
 
         assert (
             self._check_valid()
         ), "The mapping provided is not valid for the schema type."
 
-    def _check_valid(self):
-        from pyXMIP.utilities.core import getFromDict
-        for k in self.__class__._required_keys:
-            if '.' in k:
-                k = k.split('.')
-            else:
-                k = [k]
+    @classmethod
+    def _get_descriptors(cls):
+        # fetching descriptors.
+        return [m for m, v in cls.__dict__.items() if isinstance(v, _SCHEMAENTRY)]
 
-            try:
-                _ = getFromDict(self,k)
-            except KeyError:
-                raise ValueError(f" [{self.__class__.__name__}] Failed to find entry {k} on schema check.")
+    @classmethod
+    def _get_required_descriptors(cls):
+        return [
+            m
+            for m, v in cls.__dict__.items()
+            if isinstance(v, _SCHEMAENTRY) and v.required is True
+        ]
+
+    def _check_valid(self):
+        for schema_entry in self.__class__._get_descriptors():
+            # Iterate through the schema entries associated with this object.
+            _ref = self.__class__.__dict__[schema_entry]
+
+            if isinstance(_ref.required, bool) and _ref.required:
+                assert (
+                    getattr(self, schema_entry) is not None
+                ), f"Failed to find required entry {schema_entry} at {_ref.dict_location} in the provided schema."
+            elif isinstance(_ref.required, str):
+                _parent_val = getattr(self, _ref.required)
+
+                if _parent_val is not None:
+                    assert (
+                        getattr(self, schema_entry) is not None
+                    ), f"Failed to find required (BY PARENT {_ref.required}) entry {schema_entry} at {_ref.dict_location} in the provided schema."
+            _val = getattr(self, schema_entry)
+
+            if _val is not None:
+                if _ref.dtype is not None:
+                    assert isinstance(
+                        _val, _ref.dtype
+                    ), f"Found {schema_entry}, but it had type {type(_val)}, not {_ref.dtype}."
 
         return True
 
@@ -59,7 +128,7 @@ class Schema(dict):
         return self._check_valid()
 
     @classmethod
-    def from_file(cls, path, format=None, **kwargs):
+    def from_file(cls, path, format=None):
         """
         Load a :py:class:`schema.Schema` instance from file.
 
@@ -70,12 +139,6 @@ class Schema(dict):
         format: str, optional
             The format of the file being read. If ``None`` (default), then the format is determined based on the file extension.
             Currently, ``yaml``, ``toml``, and ``json`` are all supported formats.
-        kwargs
-            Additional kwargs to pass to the ``__init__`` call.
-
-        Returns
-        -------
-
         """
         if format is None:
             # determine the format from the extension.
@@ -96,44 +159,46 @@ class Schema(dict):
             pass
 
         try:
-            return getattr(cls, f"_from_{format}")(path, **kwargs)
+            return getattr(cls, f"_from_{format}")(path)
         except AttributeError:
             raise ValueError(
                 f"The format {format} is not recognized. Schema files must be .yaml, .json, or .toml."
             )
 
     @classmethod
-    def _from_yaml(cls, path, **kwargs):
+    def _from_yaml(cls, path):
         import yaml
 
         with open(path, "r") as f:
             return cls(yaml.load(f, yaml.FullLoader))
 
     @classmethod
-    def _from_toml(cls, path, **kwargs):
+    def _from_toml(cls, path):
         import tomllib as toml
 
         return cls(toml.load(path))
 
     @classmethod
-    def _from_json(cls, path, **kwargs):
+    def _from_json(cls, path):
         import json
 
         with open(path, "r") as f:
             return cls(json.load(f))
 
-class _SpecialColumn:
-    def __set_name__(self, owner, name):
-        self._name = name
+    @classmethod
+    def _build_schema_template(cls):
+        """construct a schema from the template"""
 
-    def __get__(self,instance,owner):
-        try:
-            return instance.colmap[self._name]
-        except KeyError:
-            return None
+        _output_schema = {}
 
-    def __set__(self,instance,value):
-        instance.colmap[self._name] = value
+        for schema_entry in cls._get_required_descriptors():
+            _loc = cls.__dict__[schema_entry].dict_location
+            for _l in range(1, len(_loc)):
+                setInDict(_output_schema, _loc[:_l], {})
+
+            setInDict(_output_schema, cls.__dict__[schema_entry].dict_location, None)
+
+        return _output_schema
 
 
 class SourceTableSchema(Schema):
@@ -155,21 +220,26 @@ class SourceTableSchema(Schema):
         - ``object_map``: contains each of the possible object types from the native dataset and corresponds to the SIMBAD convention used
           in ``pyXMIP``.
     """
-
-    _required_keys = ["column_map", "settings.default_coord_system", "object_map"]
-
     _coordinate_requirements = {
-        astro_coords.ICRS    : ["RA", "DEC"],
-        astro_coords.Galactic: ["L", "B"]
+        astro_coords.ICRS: ["RA", "DEC"],
+        astro_coords.Galactic: ["L", "B"],
     }
-    _expected_special_columns = {"Z"   : ['Z', 'z', 'REDSHIFT', 'redshift', 'BEST_Z'],
-                                "TYPE": ['TYPE', 'type', 'object_type', 'OBJECT_TYPE', 'OTYPES'],
-                                "NAME": ['NAME', 'name', 'OBJECT', 'object', 'ID', 'OBJECT_ID','IAUNAME'],
-                                "RA": ['RA','ra'],
-                                 'DEC': ['DEC','dec'],
-                                 'L': ['l','lii','L','LII'],
-                                 'B': ['B','b','bii','BII']
-                                }
+    _expected_special_columns = {
+        "Z": ["Z", "z", "REDSHIFT", "redshift", "BEST_Z"],
+        "TYPE": ["TYPE", "type", "object_type", "OBJECT_TYPE", "OTYPES"],
+        "NAME": ["NAME", "name", "OBJECT", "object", "ID", "OBJECT_ID", "IAUNAME"],
+        "RA": ["RA", "ra"],
+        "DEC": ["DEC", "dec"],
+        "L": ["l", "lii", "L", "LII"],
+        "B": ["B", "b", "bii", "BII"],
+    }
+
+    # -- Construct the attributes -- #
+    column_map = _SCHEMAENTRY([], required=True, dtype=dict, allow_set=True)
+    default_coord_system = _SCHEMAENTRY(
+        ["settings"], required=True, dtype=str, allow_set=True
+    )
+    object_map = _SCHEMAENTRY([], required=True, dtype=dict, allow_set=True)
 
     # -- Constructing the schema column map accessors -- #
     Z = _SpecialColumn()
@@ -180,28 +250,8 @@ class SourceTableSchema(Schema):
     B = _SpecialColumn()
     L = _SpecialColumn()
 
-
     @property
-    def colmap(self):
-        """
-        The column map containing mappings between the "special" columns (using the native naming convention of pyXMIP) and the
-        true column names in the native dataset.
-
-        .. note::
-
-            The column map is a dictionary with ``keys`` corresponding to the pyXMIP designation for the column and the ``values``
-            corresponding to the native designation. **Not all columns must be mapped in** ``colmap``. ``colmap`` contains only those column
-            mappings with are "special": coordinate columns, object type columns, redshift columns, and object designation columns.
-
-        Returns
-        -------
-        dict
-            The column map.
-        """
-        return self["column_map"]
-
-    @property
-    def inv_colmap(self):
+    def inv_column_map(self):
         """
         The inverse column map, now with keys selected from the native columns and keys for the special columns of pyXMIP.
 
@@ -210,7 +260,7 @@ class SourceTableSchema(Schema):
         dict
             The inverse column map.
         """
-        return {v: k for k, v in self["column_map"].items()}
+        return {v: k for k, v in self.column_map.items()}
 
     @property
     def coordinate_system(self):
@@ -227,11 +277,8 @@ class SourceTableSchema(Schema):
         list
             The table column names corresponding to the coordinate system.
         """
-        _cs = getattr(astro_coords, self['settings']["default_coord_system"])
+        _cs = getattr(astro_coords, self.default_coord_system)
         return _cs, self.available_coordinate_frames()[_cs]
-
-    def set_special_column(self,key,value):
-        assert key in self.__class__._expected_special_columns
 
     @property
     def coordinate_columns(self):
@@ -258,10 +305,10 @@ class SourceTableSchema(Schema):
             astro_coords, value
         ), f"The coordinate frame {value} is not in astropy's coordinate systems."
         assert (
-                getattr(astro_coords, value) in self.available_coordinate_frames()
+            getattr(astro_coords, value) in self.available_coordinate_frames()
         ), f"The coordinate frame {value} is not a valid coordinate frame for this schema."
 
-        self['settings']["default_coord_system"] = value
+        self.default_coord_system = value
 
     def available_coordinate_frames(self):
         """
@@ -273,16 +320,27 @@ class SourceTableSchema(Schema):
         list
             The available coordinate frames.
         """
-        _available_coordinate_frames = self._get_coordinate_frames(
-            self.colmap
-        )
+        _available_coordinate_frames = self._get_coordinate_frames(self.column_map)
 
         if _available_coordinate_frames is not None:
             _available_coordinate_frames = {
-                k: [self.colmap[u] for u in v]
+                k: [self.column_map[u] for u in v]
                 for k, v in _available_coordinate_frames.items()
             }
         return _available_coordinate_frames
+
+    @classmethod
+    def _get_coordinate_frames(cls, column_map):
+        """searches the column map for allowed values"""
+        _allowed_coordinate_frames = {}
+        for k, v in cls._coordinate_requirements.items():
+            if all(u in column_map for u in v):
+                # this is an allowed coordinate mapping
+                _allowed_coordinate_frames[k] = [column_map[_v] for _v in v]
+        if len(_allowed_coordinate_frames):
+            return _allowed_coordinate_frames
+        else:
+            return None
 
     @classmethod
     def construct(cls, table):
@@ -299,7 +357,9 @@ class SourceTableSchema(Schema):
         :py:class:`SourceTableSchema`
             The finalized guess schema.
         """
-        mainlog.debug(f" [SourceTableSchema] Constructing {cls.__name__} from fits table.")
+        mainlog.debug(
+            f" [SourceTableSchema] Constructing {cls.__name__} from fits table."
+        )
         # ----------------------------------------------#
         # setup components
         _table_columns = table.columns
@@ -310,31 +370,39 @@ class SourceTableSchema(Schema):
         # ----------------------------------------------------------------------#
         # Managing special columns
         # ----------------------------------------------------------------------#
-        _constructed_schema['column_map'] = {}
-        for k,v in cls._expected_special_columns.items():
+        _constructed_schema["column_map"] = {}
+        for k, v in cls._expected_special_columns.items():
             _matched_keys = [u for u in v if u in _table_columns]
 
             if len(_matched_keys):
-                mainlog.debug(f" [SourceTableSchema] Identified special key {k} with column {_matched_keys[0]} of the table.")
-                _constructed_schema['column_map'][k] = _matched_keys[0]
+                mainlog.debug(
+                    f" [SourceTableSchema] Identified special key {k} with column {_matched_keys[0]} of the table."
+                )
+                _constructed_schema["column_map"][k] = _matched_keys[0]
             else:
-                mainlog.debug(f" [SourceTableSchema] Failed to identify automatic match for special column {k}.")
+                mainlog.debug(
+                    f" [SourceTableSchema] Failed to identify automatic match for special column {k}."
+                )
 
         # ----------------------------------------------------------------------#
         # Managing object maps
         # ----------------------------------------------------------------------#
-        _constructed_schema['object_map'] = {}
+        _constructed_schema["object_map"] = {}
 
         # ----------------------------------------------------------------------#
         # Managing coordinates
         # ----------------------------------------------------------------------#
-        _construction_coords_avail = cls._get_coordinate_frames(_constructed_schema['column_map'])
+        _construction_coords_avail = cls._get_coordinate_frames(
+            _constructed_schema["column_map"]
+        )
         assert len(
             _construction_coords_avail
         ), " [SourceTableSchema] No valid coordinate system could be determined."
 
         _default_coordinate_frame = list(_construction_coords_avail.keys())[0].__name__
-        _constructed_schema['settings']["default_coord_system"] = _default_coordinate_frame
+        _constructed_schema["settings"][
+            "default_coord_system"
+        ] = _default_coordinate_frame
 
         mainlog.debug(
             f" [SourceTableSchema] Located {len(_construction_coords_avail)} possible coordinate frames. Selected {_default_coordinate_frame} as default."
@@ -346,39 +414,37 @@ class SourceTableSchema(Schema):
 
         return cls(_constructed_schema)
 
-    @classmethod
-    def _get_coordinate_frames(cls, column_map):
-        """searches the column map for allowed values"""
-        _allowed_coordinate_frames = {}
-        for k, v in cls._coordinate_requirements.items():
-            if all(u in column_map for u in v):
-                # this is an allowed coordinate mapping
-                _allowed_coordinate_frames[k] = [column_map[_v] for _v in v]
-        if len(_allowed_coordinate_frames):
-            return _allowed_coordinate_frames
-        else:
-            return None
 
-    @classmethod
-    def _build_schema_template(cls):
-        """construct a schema from the template"""
-        from pyXMIP.utilities.core import getFromDict, setInDict
-        _output_schema = {}
+class ReductionSchema(Schema):
+    # -- RUN_PARAMS -- #
+    RUN_PARAMS = _SCHEMAENTRY([], required=True, dtype=dict)
+    REFDBS = _SCHEMAENTRY(["RUN_PARAMS"], required=True, dtype=(list, str))
+    POISSON = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
+    INSTRUMENTAL = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
+    OTYPES = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
 
-        for key in cls._required_keys:
-            # parsing the keys and subkeys.
-            if "." in key:
-                subkeys = key.split(".")
+    # -- IO PARAMS -- #
+    IO_PARAMS = _SCHEMAENTRY([], required=True, dtype=dict)
+    DBPATH = _SCHEMAENTRY(["IO_PARAMS"], required=True, dtype=str)
 
-                for k_id, key in enumerate(subkeys[:-1], 1):
-                    try:
-                        _ = getFromDict(_output_schema, subkeys[:k_id])
-                    except KeyError:
-                        setInDict(_output_schema, subkeys[:k_id], {})
+    # -- POISSON PARAMS -- #
+    POISSON_PARAMS = _SCHEMAENTRY([], required="POISSON", dtype=dict)
 
-                setInDict(_output_schema, subkeys, None)
-            else:
-                _output_schema[key] = None
+    # -- INSTRUMENT PARAMS -- #
+    INSTRUMENT_PARAMS = _SCHEMAENTRY([], required="INSTRUMENTAL", dtype=dict)
+    PSF = _SCHEMAENTRY(
+        ["INSTRUMENT_PARAMS"], required="INSTRUMENT_PARAMS", dtype=Quantity
+    )
 
-        return _output_schema
+    # -- OBJECT PARAMS -- #
+    OBJECT_PARAMS = _SCHEMAENTRY([], required="OTYPES", dtype=dict)
 
+
+if __name__ == "__main__":
+    u = ReductionSchema(
+        {
+            "RUN_PARAMS": {"INSTRUMENTAL": True},
+            "IO_PARAMS": {"DBPATH": ""},
+            "INSTRUMENT_PARAMS": {},
+        }
+    )

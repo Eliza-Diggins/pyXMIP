@@ -4,7 +4,9 @@ Textual utilities for CLI in pyXMIP.
 import multiprocessing
 import sys
 import time
+
 from pyXMIP.utilities.core import xsparams
+
 
 class Spinner:
     busy = False

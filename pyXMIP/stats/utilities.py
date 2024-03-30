@@ -3,8 +3,9 @@ Statistical Utility functions
 """
 import numpy as np
 
+
 def uniform_sample_spherical(n_points):
-    """
+    r"""
     Return a uniform sample from a spherical surface.
 
     Parameters
@@ -47,4 +48,6 @@ def uniform_sample_spherical(n_points):
 
         \cos \phi \sim U(N).
     """
-    return 2*np.pi*np.random.uniform(0,1,size=n_points), np.arccos(2*np.random.uniform(0,1,size=n_points)-1)
+    return 2 * np.pi * np.random.uniform(0, 1, size=n_points), np.arccos(
+        2 * np.random.uniform(0, 1, size=n_points) - 1
+    )

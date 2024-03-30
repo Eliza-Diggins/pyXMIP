@@ -2,15 +2,15 @@
 Core utilities with ubiquitous use cases in the ``pyXs`` package.
 """
 import logging
+import operator
 import os
 import pathlib as pt
 import sys
+from functools import reduce
 
 import astropy.units as u
 import sqlalchemy as sql
 import yaml
-from functools import reduce
-import operator
 
 # -- configuration directory -- #
 _bin_directory = os.path.join(pt.Path(__file__).parents[1], "bin")
@@ -36,6 +36,7 @@ def _get_loader():
     loader.add_constructor("!unit", _yaml_unit_constructor)
     loader.add_constructor("!sql", _yaml_sql_type_constructor)
     return loader
+
 
 # ======================================================================================================================#
 # Configuration File                                                                                                    #
@@ -110,14 +111,16 @@ else:
     devLogger.disabled = True
 
 
-def enforce_units(value,preferred_units):
-    if isinstance(value,u.Quantity):
+def enforce_units(value, preferred_units):
+    if isinstance(value, u.Quantity):
         return value.to(preferred_units)
     else:
         return value * u.Unit(preferred_units)
 
+
 def getFromDict(dataDict, mapList):
     return reduce(operator.getitem, mapList, dataDict)
+
 
 def setInDict(dataDict, mapList, value):
     getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value

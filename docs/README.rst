@@ -49,4 +49,3 @@ Installation
 .. |SIMBAD| image:: images/logos_icons/SIMBAD.jpg
     :scale: 20%
     :target: https://simbad.cds.unistra.fr/simbad/
-

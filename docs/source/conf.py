@@ -46,6 +46,7 @@ extensions = [
     "nbsphinx",
     "sphinx_design",
     "hoverxref.extension",
+    "sphinxemoji.sphinxemoji",
 ]
 
 graphviz_output_format = "svg"

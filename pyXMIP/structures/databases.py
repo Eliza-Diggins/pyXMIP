@@ -1,26 +1,30 @@
 """
 Database module for X-matching and querying databases.
 """
+import os
+import pathlib as pt
 import threading
 import time
+import warnings
 from abc import ABC
+from itertools import repeat
+
+import numpy as np
+import requests.exceptions
+from astropy import units
+from astropy.coordinates import Angle
+from astropy.table import vstack
+from astroquery.ipac.ned import Ned
+from astroquery.simbad import Simbad
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
-import requests.exceptions
-from astroquery.ipac.ned import Ned
-from pyXMIP.structures.table import SourceTable
-from astropy.table import vstack
+
 from pyXMIP.schema import SourceTableSchema
-from pyXMIP.utilities.core import _bin_directory, mainlog, enforce_units
-import os
-import astropy.coordinates as coords
-from astropy import units
-import pathlib as pt
-import numpy as np
-from astropy.io import fits
-from itertools import repeat
-from time import asctime
-poisson_map_directory = os.path.join(_bin_directory,'psn_maps')
+from pyXMIP.structures.map import StatAtlas
+from pyXMIP.structures.table import SourceTable
+from pyXMIP.utilities.core import _bin_directory, enforce_units, mainlog
+
+poisson_map_directory = os.path.join(_bin_directory, "psn_maps")
 
 
 class DatabaseError(Exception):
@@ -28,24 +32,45 @@ class DatabaseError(Exception):
     Collective error type for issues with database queries.
     """
 
-    def __init__(self,message=None):
+    def __init__(self, message=None):
         self.message = message
         super().__init__(self.message)
+
 
 class SourceDatabase(ABC):
     """
     Generic class representation of a source database.
     """
 
-class RemoteDatabase(SourceDatabase):
-    """
-    Class representation of general remotely hosted databases which can be queried for source objects.
-    """
-
     class_table_schema = None
+    default_poisson_map = os.path.join(poisson_map_directory, "NONE")
+    poisson_map = default_poisson_map
 
     @classmethod
-    def query_radius(cls,position,radius):
+    def _fix_output_table_formatting(cls, table):
+        """This is a backend function for fixing query tables with non-standard outputs."""
+
+        # -- remove all table meta-data -- #
+        table.meta = None
+
+        # -- Fix object column types -- #
+        for col in table.columns:
+            if table[col].dtype == "object":
+                table[col] = np.array([str(j) for j in table[col]], dtype="<U8")
+
+        # -- rename columns -- #
+        for column_key, column_value in cls.class_table_schema["column_map"].items():
+            if column_value in table.columns:
+                table.rename_column(column_value, column_key)
+
+        return table
+
+    @classmethod
+    def _query_radius_uncorrected(cls, position, radius):
+        raise NotImplementedError
+
+    @classmethod
+    def query_radius(cls, position, radius):
         """
         Query the remote database at the specified position and pull all sources within a given radius.
 
@@ -60,7 +85,11 @@ class RemoteDatabase(SourceDatabase):
         -------
         :py:class:`structures.table.SourceTable`
         """
-        raise NotImplementedError
+        output_table = cls._query_radius_uncorrected(position, radius)
+        if len(output_table):
+            return cls._fix_output_table_formatting(output_table)
+        else:
+            return output_table
 
     @classmethod
     def random_sample_count(cls, points, radii, threading=True, thread_kw=None):
@@ -84,67 +113,78 @@ class RemoteDatabase(SourceDatabase):
             Table of counts for each of the object types.
         """
         from pyXMIP.stats.utilities import uniform_sample_spherical
+
         mainlog.info(f"Querying for {points} random counts on {cls.__name__}.")
 
-        #-------------------------------------------#
+        # -------------------------------------------#
         # Managing args / kwargs and paths
-        #-------------------------------------------#
-        radii = enforce_units(radii,units.arcmin)
+        # -------------------------------------------#
+        radii = enforce_units(radii, units.arcmin)
         if radii.isscalar:
             radii = radii * np.ones(points)
 
-        #-------------------------------------------#
+        # -------------------------------------------#
         # Pull the random samples
-        #-------------------------------------------#
-        phi,theta = uniform_sample_spherical(points)
-        theta = np.pi/2 - theta
-        positions = SkyCoord(phi, theta, frame='galactic', unit='rad')
-        #-------------------------------------------#
+        # -------------------------------------------#
+        phi, theta = uniform_sample_spherical(points)
+        theta = np.pi / 2 - theta
+        positions = SkyCoord(phi, theta, frame="galactic", unit="rad")
+        # -------------------------------------------#
         # Managing Threads
-        #-------------------------------------------#
+        # -------------------------------------------#
         if thread_kw is None:
             thread_kw = {}
 
         if threading:
-            from pyXMIP.utilities.mp_utils import split
             from concurrent.futures import ThreadPoolExecutor
-            mainlog.debug("Querying with threading.")
-            max_workers = thread_kw.pop('max_workers', 5)
-            chunk_size = thread_kw.pop('chunk_size', 5)
-            c_radii = split(radii,len(radii)//chunk_size)
-            c_positions = split(positions,len(positions)//chunk_size)
 
-            with logging_redirect_tqdm(loggers=[mainlog]):
-                pbar = tqdm("Querying",total=len(radii))
-                with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                    results = executor.map(cls._count_multithreaded,c_positions,c_radii,repeat(pbar))
+            from pyXMIP.utilities.mp_utils import split
+
+            mainlog.debug("Querying with threading.")
+            max_workers = thread_kw.pop("max_workers", 5)
+            chunk_size = thread_kw.pop("chunk_size", 5)
+            c_radii = split(radii, len(radii) // chunk_size)
+            c_positions = split(positions, len(positions) // chunk_size)
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                with logging_redirect_tqdm(loggers=[mainlog]):
+                    pbar = tqdm("Querying", total=len(radii))
+                    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                        results = executor.map(
+                            cls._count_multithreaded, c_positions, c_radii, repeat(pbar)
+                        )
 
             output_tables = [r for r in results]
             output_tables = vstack(output_tables)
-            output_tables['RA'] = [p.icrs.ra for p in positions]
-            output_tables['DEC'] = [p.icrs.dec for p in positions]
-            output_tables['RAD'] = radii
-            output_tables['TIME'] = time.asctime()
+            output_tables = cls._fix_output_table_formatting(output_tables)
+            output_tables["RA"] = [p.icrs.ra for p in positions]
+            output_tables["DEC"] = [p.icrs.dec for p in positions]
+            output_tables["RAD"] = radii
+            output_tables["TIME"] = time.asctime()
             return output_tables
 
         else:
             mainlog.debug("Querying without threading.")
-            return cls.count(positions,radii)
+            return cls.count(positions, radii)
 
     @classmethod
-    def _count_multithreaded(cls,positions,radii,progress_bar):
+    def _count_multithreaded(cls, positions, radii, progress_bar):
         output_tables = []
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            for position, radius in zip(positions, radii):
+                # Iterate over all of the queries and grab them all.
+                try:
+                    output_tables.append(
+                        cls._query_radius_uncorrected(position, radius).count_types()
+                    )
+                except Exception as exception:
+                    mainlog.error(exception.__repr__())
 
-        for position,radius in zip(positions,radii):
-            # Iterate over all of the queries and grab them all.
-            try:
-                output_tables.append(cls.query_radius(position,radius).count_types())
-            except Exception as exception:
-                mainlog.error(exception.__repr__())
+                progress_bar.update()
 
-            progress_bar.update()
-
-        return vstack(output_tables)
+            return vstack(output_tables)
 
     @classmethod
     def count(cls, positions, radii):
@@ -165,22 +205,32 @@ class RemoteDatabase(SourceDatabase):
         """
         output_tables = []
         with logging_redirect_tqdm(loggers=[mainlog]):
-            for position, radius in tqdm(zip(positions, radii),total=len(radii)):
+            for position, radius in tqdm(zip(positions, radii), total=len(radii)):
                 # Iterate over all of the queries and grab them all.
                 try:
-                    output_tables.append(cls.query_radius(position, radius).count_types())
+                    output_tables.append(
+                        cls._query_radius_uncorrected(position, radius).count_types()
+                    )
                 except Exception as exception:
                     mainlog.error(exception.__repr__())
 
         output_table = vstack(output_tables)
-        output_table['RA'] = [p.icrs.ra for p in positions]
-        output_table['DEC'] = [p.icrs.dec for p in positions]
-        output_table['RAD'] = radii
-        output_table['TIME'] = time.asctime()
+        output_table = cls._fix_output_table_formatting(output_table)
+        output_table["RA"] = [p.icrs.ra for p in positions]
+        output_table["DEC"] = [p.icrs.dec for p in positions]
+        output_table["RAD"] = radii
+        output_table["TIME"] = time.asctime()
         return output_table
 
     @classmethod
-    def source_match(cls,path,source_table,search_radii=1*units.arcmin,threading=True,thread_kw=None):
+    def source_match(
+        cls,
+        path,
+        source_table,
+        search_radii=1 * units.arcmin,
+        threading=True,
+        thread_kw=None,
+    ):
         """
         Match a :py:class:`SourceTable` against this database.
 
@@ -201,85 +251,107 @@ class RemoteDatabase(SourceDatabase):
         -------
         None
         """
+        import sqlalchemy as sql
+
         mainlog.info(f"Source matching {len(source_table)} against {cls.__name__}.")
 
-        #---------------------------------------------------#
+        # ---------------------------------------------------#
         # Managing args and kwargs
-        #---------------------------------------------------#
-        path = pt.Path(path)
-        if not path.exists():
-            hdr = fits.Header()
-            hdr['DATE'] = asctime()
-            fits.HDUList([fits.PrimaryHDU(header=hdr)]).writeto(path)
+        # ---------------------------------------------------#
+        engine = sql.create_engine(f"sqlite:///{path}")
 
-        if not isinstance(search_radii,units.Quantity):
-            mainlog.warning(f"Search radii is a data type without standard units ({type(search_radii)}). Defaulting to arcmin.")
+        if not isinstance(search_radii, units.Quantity):
+            mainlog.warning(
+                f"Search radii is a data type without standard units ({type(search_radii)}). Defaulting to arcmin."
+            )
             search_radii = np.array(search_radii) * units.arcmin
 
         if search_radii.isscalar:
             search_radii = search_radii * np.ones(len(source_table))
 
-        if thread_kw is None: thread_kw = {} # --> Keyword arguments for threading.
+        if thread_kw is None:
+            thread_kw = {}  # --> Keyword arguments for threading.
 
-        #---------------------------------------------------#
+        # ---------------------------------------------------#
         # Running queries
-        #---------------------------------------------------#
+        # ---------------------------------------------------#
         positions = source_table.get_coordinates()
         if threading:
-            from pyXMIP.utilities.mp_utils import split
             from concurrent.futures import ThreadPoolExecutor
+
+            from pyXMIP.utilities.mp_utils import split
+
             mainlog.debug("Querying with threading.")
-            max_workers = thread_kw.pop('max_workers', 5)
-            chunk_size = thread_kw.pop('chunk_size', 5)
-            c_radii = split(search_radii,len(search_radii)//chunk_size)
-            c_positions = split(positions,len(positions)//chunk_size)
-            c_entries = split(source_table,len(source_table)//chunk_size)
+            max_workers = thread_kw.pop("max_workers", 5)
+            chunk_size = thread_kw.pop("chunk_size", 5)
+            c_radii = split(search_radii, len(search_radii) // chunk_size)
+            c_positions = split(positions, len(positions) // chunk_size)
+            c_entries = split(source_table, len(source_table) // chunk_size)
 
             with logging_redirect_tqdm(loggers=[mainlog]):
-                pbar = tqdm("Querying",total=len(search_radii))
+                pbar = tqdm(
+                    desc=f"Querying {cls.__name__}",
+                    total=len(search_radii),
+                    leave=False,
+                )
                 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                    executor.map(cls._source_match_multithreaded,c_positions,c_entries,c_radii,repeat(pbar),repeat(path))
+                    executor.map(
+                        cls._source_match_multithreaded,
+                        c_positions,
+                        c_entries,
+                        c_radii,
+                        repeat(pbar),
+                        repeat(engine),
+                    )
 
         else:
             mainlog.info(f"Querying without threading. [Calls={len(source_table)}]")
             with logging_redirect_tqdm(loggers=[mainlog]):
-                for _position, _st_entry, _radius in tqdm(zip(positions,source_table,search_radii),total=len(source_table)):
+                for _position, _st_entry, _radius in tqdm(
+                    zip(positions, source_table, search_radii),
+                    desc=f"Querying {cls.__name__}",
+                    total=len(source_table),
+                    leave=False,
+                ):
                     try:
-                        query = cls.query_radius(_position,
-                                                 _radius)
+                        query = cls._query_radius_uncorrected(_position, _radius)
                     except Exception as exception:
                         mainlog.error(exception.__repr__())
 
-                    query['CATALOG_OBJECT'] = _st_entry[source_table.schema.NAME]
-                    query['CATALOG_RA'] = _position.ra
-                    query['CATALOG_DEC'] = _position.dec
-
+                    query["CATALOG_OBJECT"] = _st_entry[source_table.schema.NAME]
+                    query["CATALOG_RA"] = _position.ra
+                    query["CATALOG_DEC"] = _position.dec
 
                     # -- Writing the query to the path -- #
                     query = query[
-                        ['CATALOG_OBJECT',
-                         'CATALOG_RA',
-                         'CATALOG_DEC',
-                         cls.class_table_schema.coordinate_columns[0],
-                         cls.class_table_schema.coordinate_columns[1],
-                         cls.class_table_schema.NAME,
-                         cls.class_table_schema.TYPE]
+                        [
+                            "CATALOG_OBJECT",
+                            "CATALOG_RA",
+                            "CATALOG_DEC",
+                            cls.class_table_schema.coordinate_columns[0],
+                            cls.class_table_schema.coordinate_columns[1],
+                            cls.class_table_schema.NAME,
+                            cls.class_table_schema.TYPE,
+                        ]
                     ]
-                    query.append_to_fits(path,f'{cls.__name__}_MATCH')
+                    query = cls._fix_output_table_formatting(query)
+                    query.append_to_sql(f"{cls.__name__}_MATCH", engine)
 
     @classmethod
-    def _source_match_multithreaded(cls,positions,source_table,search_radii,pbar,path):
+    def _source_match_multithreaded(
+        cls, positions, source_table, search_radii, pbar, engine
+    ):
         output_tables = []
         for _position, _st_entry, _radius in zip(positions, source_table, search_radii):
             try:
-                query = cls.query_radius(_position,
-                                         _radius)
+                query = cls._query_radius_uncorrected(_position, _radius)
             except Exception as exception:
                 mainlog.error(exception.__repr__())
+                continue
 
-            query['CATALOG_OBJECT'] = _st_entry[source_table.schema.NAME]
-            query['CATALOG_RA'] = _position.ra
-            query['CATALOG_DEC'] = _position.dec
+            query["CATALOG_OBJECT"] = _st_entry[source_table.schema.NAME]
+            query["CATALOG_RA"] = _position.ra
+            query["CATALOG_DEC"] = _position.dec
             query.meta = {}
             output_tables.append(query)
 
@@ -288,33 +360,111 @@ class RemoteDatabase(SourceDatabase):
         # -- Writing the query to the path -- #
         output_tables = vstack(output_tables)
         output_tables = output_tables[
-            ['CATALOG_OBJECT',
-             'CATALOG_RA',
-             'CATALOG_DEC',
-             cls.class_table_schema.coordinate_columns[0],
-             cls.class_table_schema.coordinate_columns[1],
-             cls.class_table_schema.NAME,
-             cls.class_table_schema.TYPE]
+            [
+                "CATALOG_OBJECT",
+                "CATALOG_RA",
+                "CATALOG_DEC",
+                cls.class_table_schema.coordinate_columns[0],
+                cls.class_table_schema.coordinate_columns[1],
+                cls.class_table_schema.NAME,
+                cls.class_table_schema.TYPE,
+            ]
         ]
+        output_tables = cls._fix_output_table_formatting(output_tables)
         with threading.Lock():
-            output_tables.append_to_fits(path, f'{cls.__name__}_MATCH')
+            output_tables.append_to_sql(f"{cls.__name__}_MATCH", engine)
+
+    @classmethod
+    def get_poisson_map(cls):
+        """Get the currently set PoissonMap instance."""
+        try:
+            return StatAtlas(cls.default_poisson_map)
+        except FileNotFoundError:
+            mainlog.warning(
+                f"Class {cls.__name__} has no map at {cls.default_poisson_map}. Defaulting."
+            )
+            return cls.get_default_poisson_map()
+
+    @classmethod
+    def get_default_poisson_map(cls):
+        return StatAtlas(cls.default_poisson_map)
+
+    @classmethod
+    def set_poisson_map(cls, path):
+        cls.poisson_map = path
+
+    @classmethod
+    def remove_poisson_map(cls):
+        pt.Path(cls.poisson_map).unlink()
+
+    @classmethod
+    def generate_blank_default_poisson_map(cls, resolution):
+        if pt.Path(cls.default_poisson_map).exists():
+            pt.Path(cls.default_poisson_map).unlink()
+
+        cls._build_new_poisson_map(path=cls.default_poisson_map, resolution=resolution)
+
+    @classmethod
+    def _build_new_poisson_map(
+        cls, path=None, resolution=1 * units.arcmin, overwrite=False
+    ):
+        if not path:
+            # -- setting the default poisson map -- #
+            path = os.path.join(poisson_map_directory, f"{cls.__name__}.poisson.fits")
+
+        StatAtlas.generate(path, resolution, overwrite=overwrite)
+
+    @classmethod
+    def add_sources_to_poisson(cls, points, radii, threading=True, thread_kw=None):
+        mainlog.info(f"Generating random sample of {points} counts.")
+        point_data = cls.random_sample_count(
+            points, radii, threading=threading, thread_kw=thread_kw
+        )
+
+        mainlog.info(f"Adding data to the Poisson map at {cls.poisson_map}.")
+        psmap = cls.get_poisson_map()
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            psmap.append_to_fits(point_data, "COUNTS")
+
+
+class RemoteDatabase(SourceDatabase):
+    """
+    Class representation of general remotely hosted databases which can be queried for source objects.
+    """
 
 
 class LocalDatabase(SourceDatabase):
     """
     Generic representation of a local database.
     """
-    def __init__(self,filepath,schema=None,tablename=None):
-        pass
+
 
 class NED(RemoteDatabase):
     """
     Class instantiation of the IPAC / CALTECH NED database.
     """
-    class_table_schema = SourceTableSchema.from_file(os.path.join(_bin_directory, 'builtin_schema', 'NED.yaml'))
+
+    default_poisson_map = os.path.join(poisson_map_directory, "NED.poisson.fits")
+    poisson_map = default_poisson_map
+    class_table_schema = SourceTableSchema.from_file(
+        os.path.join(_bin_directory, "builtin_schema", "NED.yaml")
+    )
 
     @classmethod
-    def query_radius(cls,position,radius):
+    def _fix_output_table_formatting(cls, table):
+        for col in table.columns:
+            table[col].format = None
+            if table[col].unit == "degrees":
+                table[col].unit = "deg"
+
+        table = super()._fix_output_table_formatting(table)
+
+        return table
+
+    @classmethod
+    def _query_radius_uncorrected(cls, position, radius):
         """
         Query the remote database at the specified position and pull all sources within a given radius.
 
@@ -331,23 +481,75 @@ class NED(RemoteDatabase):
         """
         # -- Attempt the query -- #
         try:
-            output = SourceTable(Ned.query_region(position,radius))
-        except requests.exceptions.ConnectionError as error:
-            raise DatabaseError(f"Failed to complete query [{position},{radius}] to NED due to timeout.")
+            output = SourceTable(Ned.query_region(position, radius))
+        except requests.exceptions.ConnectionError:
+            raise DatabaseError(
+                f"Failed to complete query [{position},{radius}] to NED due to timeout."
+            )
 
         # -- return data if valid -- #
         output.schema = cls.class_table_schema
         return output
 
 
+class SIMBAD(RemoteDatabase):
+    """
+    Class instantiation of the SIMBAD database.
+    """
 
-if __name__ == '__main__':
+    Simbad.add_votable_fields("otypes")
+    Simbad.TIMEOUT = 120
+    default_poisson_map = os.path.join(poisson_map_directory, "SIMBAD.poisson.fits")
+    poisson_map = default_poisson_map
+    class_table_schema = SourceTableSchema.from_file(
+        os.path.join(_bin_directory, "builtin_schema", "SIMBAD.yaml")
+    )
+
+    @classmethod
+    def _fix_output_table_formatting(cls, table):
+        if "RA" in table.columns:
+            table["RA"] = Angle(table["RA"], unit="h").deg
+
+        if "DEC" in table.columns:
+            table["DEC"] = Angle(table["DEC"], unit="deg").deg
+
+        table = super()._fix_output_table_formatting(table)
+
+        return table
+
+    @classmethod
+    def _query_radius_uncorrected(cls, position, radius):
+        """
+        Query the remote database at the specified position and pull all sources within a given radius.
+
+        Parameters
+        ----------
+        position: :py:class:`astropy.coordinates.SkyCoord`
+            The position at which to query.
+        radius: :py:class:`astropy.units.Quantity`
+            The angular area about which to query.
+
+        Returns
+        -------
+        :py:class:`astropy.table.Table`
+        """
+        # -- Attempt the query -- #
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                output = SourceTable(Simbad.query_region(position, radius))
+            except requests.exceptions.ConnectionError:
+                raise DatabaseError(
+                    f"Failed to complete query [{position},{radius}] to SIMBAD due to timeout."
+                )
+
+        # -- return data if valid -- #
+        output.schema = cls.class_table_schema
+        return output
+
+
+if __name__ == "__main__":
+    from astropy import units
     from astropy.coordinates import SkyCoord
-    from astropy.coordinates import SkyCoord
-    import matplotlib.pyplot as plt
-    #fits_table = SourceTable.read('/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits',format='fits')
 
-    #NED.source_match('test.fits',fits_table,threading=True)
-
-    with fits.open('test.fits','update') as hudl:
-        print(hudl.info())
+    q = SourceTable.read("/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits")
