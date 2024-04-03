@@ -1,6 +1,9 @@
 """
 Custom table module for specialized table types.
 """
+import re
+
+import pandas as pd
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.table import Column, Table, TableAttribute
@@ -83,9 +86,10 @@ class SourceTable(Table):
 
     def count_types(self):
         if len(self) != 0:
+            _types = pd.Series(self[self.schema.TYPE])
             return Table(
                 {
-                    k: [len(self[self[self.schema.TYPE] == k])]
+                    k: [len(_types[_types.str.contains(f"|{re.escape(k)}|")])]
                     for k in self.schema["object_map"]
                 }
             )

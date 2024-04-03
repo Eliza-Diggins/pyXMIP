@@ -2,7 +2,6 @@
 Database module for X-matching and querying databases.
 """
 import os
-import pathlib as pt
 import threading
 import time
 import warnings
@@ -12,7 +11,7 @@ from itertools import repeat
 import numpy as np
 import requests.exceptions
 from astropy import units
-from astropy.coordinates import Angle
+from astropy.coordinates import Angle, SkyCoord
 from astropy.table import vstack
 from astroquery.ipac.ned import Ned
 from astroquery.simbad import Simbad
@@ -22,6 +21,7 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 from pyXMIP.schema import SourceTableSchema
 from pyXMIP.structures.map import StatAtlas
 from pyXMIP.structures.table import SourceTable
+from pyXMIP.utilities._registries import _Registry
 from pyXMIP.utilities.core import _bin_directory, enforce_units, mainlog
 
 poisson_map_directory = os.path.join(_bin_directory, "psn_maps")
@@ -52,16 +52,20 @@ class SourceDatabase(ABC):
 
         # -- remove all table meta-data -- #
         table.meta = None
-
+        table.schema = cls.class_table_schema
         # -- Fix object column types -- #
         for col in table.columns:
             if table[col].dtype == "object":
                 table[col] = np.array([str(j) for j in table[col]], dtype="<U8")
 
-        # -- rename columns -- #
-        for column_key, column_value in cls.class_table_schema["column_map"].items():
-            if column_value in table.columns:
-                table.rename_column(column_value, column_key)
+        if table.schema.TYPE in table.columns:
+            # fix the types
+            table[table.schema.TYPE] = [
+                f"|{k}" if k[0] != "|" else k for k in table[table.schema.TYPE]
+            ]
+            table[table.schema.TYPE] = [
+                f"{k}|" if k[-1] != "|" else k for k in table[table.schema.TYPE]
+            ]
 
         return table
 
@@ -378,41 +382,25 @@ class SourceDatabase(ABC):
     def get_poisson_map(cls):
         """Get the currently set PoissonMap instance."""
         try:
-            return StatAtlas(cls.default_poisson_map)
+            return StatAtlas(cls.poisson_map)
         except FileNotFoundError:
             mainlog.warning(
-                f"Class {cls.__name__} has no map at {cls.default_poisson_map}. Defaulting."
+                f"Class {cls.__name__} has no map at {cls.poisson_map}. Defaulting."
             )
             return cls.get_default_poisson_map()
 
     @classmethod
     def get_default_poisson_map(cls):
-        return StatAtlas(cls.default_poisson_map)
+        try:
+            return StatAtlas(cls.default_poisson_map)
+        except FileNotFoundError:
+            raise ValueError(
+                f"It appears there is no existing PoissonAtlas at {cls.default_poisson_map}. You will have to generate one."
+            )
 
     @classmethod
     def set_poisson_map(cls, path):
         cls.poisson_map = path
-
-    @classmethod
-    def remove_poisson_map(cls):
-        pt.Path(cls.poisson_map).unlink()
-
-    @classmethod
-    def generate_blank_default_poisson_map(cls, resolution):
-        if pt.Path(cls.default_poisson_map).exists():
-            pt.Path(cls.default_poisson_map).unlink()
-
-        cls._build_new_poisson_map(path=cls.default_poisson_map, resolution=resolution)
-
-    @classmethod
-    def _build_new_poisson_map(
-        cls, path=None, resolution=1 * units.arcmin, overwrite=False
-    ):
-        if not path:
-            # -- setting the default poisson map -- #
-            path = os.path.join(poisson_map_directory, f"{cls.__name__}.poisson.fits")
-
-        StatAtlas.generate(path, resolution, overwrite=overwrite)
 
     @classmethod
     def add_sources_to_poisson(cls, points, radii, threading=True, thread_kw=None):
@@ -427,6 +415,15 @@ class SourceDatabase(ABC):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             psmap.append_to_fits(point_data, "COUNTS")
+
+    @classmethod
+    def create_poisson_map(cls, *args, **kwargs):
+        kwargs["database"] = cls.__name__
+        path = kwargs.pop("path", cls.default_poisson_map)
+        psn = StatAtlas.generate(path, *args, **kwargs)
+
+        cls.set_poisson_map(psn.path)
+        return psn
 
 
 class RemoteDatabase(SourceDatabase):
@@ -548,8 +545,25 @@ class SIMBAD(RemoteDatabase):
         return output
 
 
+class DBRegistry(_Registry):
+    def __init__(self, mapping):
+        super().__init__(mapping)
+
+        assert all(issubclass(k, SourceDatabase) for k in list(mapping.values()))
+
+    @classmethod
+    def _default_registry(cls):
+        _mapping = {"NED": NED, "SIMBAD": SIMBAD}
+        return cls(_mapping)
+
+
+DEFAULT_DATABASE_REGISTRY = DBRegistry._default_registry()
+
 if __name__ == "__main__":
     from astropy import units
-    from astropy.coordinates import SkyCoord
 
-    q = SourceTable.read("/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits")
+    p = SIMBAD.query_radius(SkyCoord(ra=1, dec=1, unit="deg"), 10 * units.arcmin)
+    print(list(p["OTYPES"]))
+    print(p.count_types()["LM*"])
+    # print(p['TYPE'])
+    # print(p.count_types())

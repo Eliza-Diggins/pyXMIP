@@ -2,10 +2,13 @@
 Skymapping handlers and classes for pyXMIP.
 """
 import pathlib as pt
+import warnings
 from time import asctime
+from types import SimpleNamespace
 
 import healpy as hp
 import numpy as np
+from _collections_abc import Collection
 from astropy import coordinates as astro_coords
 from astropy import units
 from astropy.io import fits
@@ -13,6 +16,28 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from pyXMIP.utilities.core import enforce_units, mainlog
+
+
+class _AtlasHeaderParam:
+    def __set_name__(self, owner, name):
+        self._name = name
+
+    def __get__(self, instance, owner):
+        try:
+            val = getattr(instance, f"_{self._name}")
+            if val is not None:
+                return val
+            else:
+                raise AttributeError
+        except AttributeError:
+            with fits.open(instance.path) as hudl:
+                setattr(instance, f"_{self._name}", hudl[0].header[self._name])
+                return hudl[0].header[self._name]
+
+    def __set__(self, instance, value):
+        with fits.open(instance.path, "update") as hudl:
+            hudl[0].header[self._name] = value
+            hudl.flush()
 
 
 class MapAtlas:
@@ -48,6 +73,11 @@ class MapAtlas:
 
     The headers of Map HDU's need to be identified in their header with ``ISMAP = True``.
     """
+    NPIX = _AtlasHeaderParam()
+    NSIDE = _AtlasHeaderParam()
+    CSYS = _AtlasHeaderParam()
+    CD = _AtlasHeaderParam()
+    ED = _AtlasHeaderParam()
 
     def __init__(self, filepath):
         """
@@ -60,87 +90,25 @@ class MapAtlas:
 
         """
         self.path = filepath
-        # ==========================================#
-        # Loading the fits information from header
-        # ==========================================#
-        with fits.open(self.path, "update") as hudl:
-            self._npix = hudl[0].header["NPIX"]
-            self._nside = hudl[0].header["NSIDE"]
-            self._csys = hudl[0].header["CSYS"]
-            self._cd, self._ed = hudl[0].header["CDATE"], hudl[0].header["EDATE"]
 
-    def _set_header(self, key, value):
-        assert key not in [
-            "NPIX",
-            "NSIDE",
-        ], "NPIX and NSIDE are invariant structures and cannot be edited."
+        if not pt.Path(self.path).exists():
+            raise FileNotFoundError(f"There is no Atlas file at {self.path}.")
 
-        with fits.open(self.path, "update") as hudl:
-            hudl[0].header[key] = value
+    def get_map(self, name):
+        """
+        Obtain an instance of the map corresponding the the name specified from this Atlas.
 
-            hudl.flush()
+        Parameters
+        ----------
+        name: str
+            The name of the map.
 
-    def _get_header(self, key):
-        try:
-            return getattr(self, f"_{key.lower()}")
-        except AttributeError:
-            with fits.open(self.path, "update") as hudl:
-                setattr(self, f"_{key.lower()}", hudl[0].header[key.upper()])
-            return getattr(self, f"_{key.lower()}")
+        Returns
+        -------
+        :py:class:`Map`
 
-    @property
-    def NPIX(self):
-        """The number of pixels in the corresponding HEALPix grid."""
-        return self._get_header("NPIX")
-
-    @property
-    def NSIDE(self):
-        """The NSIDES parameter for the HEALPix grid. Equivalent to NPIX."""
-        return self._get_header("NSIDE")
-
-    @property
-    def CSYS(self):
-        """String representation of the standard coordinate system."""
-        return self._get_header("CSYS")
-
-    @property
-    def CDATE(self):
-        """Creation date for the Atlas."""
-        return self._get_header("CDATE")
-
-    @property
-    def RES(self):
-        """The resolution of the map"""
-        return self._get_header("RES")
-
-    @property
-    def EDATE(self):
-        """Last edit date for the Atlas."""
-        return self._get_header("EDATE")
-
-    @NPIX.setter
-    def NPIX(self, value):
-        return self._set_header("NPIX", value)
-
-    @NSIDE.setter
-    def NSIDE(self, value):
-        self._set_header("NSIDE", value)
-
-    @CSYS.setter
-    def CSYS(self, value):
-        self._set_header("CSYS", value)
-
-    @CDATE.setter
-    def CDATE(self, value):
-        self._set_header("CDATE", value)
-
-    @EDATE.setter
-    def EDATE(self, value):
-        self._set_header("EDATE", value)
-
-    @RES.setter
-    def RES(self, value):
-        self._set_header("RES", value)
+        """
+        return Map(self.path, name)
 
     @property
     def map_names(self):
@@ -157,6 +125,10 @@ class MapAtlas:
                 for q in hudl
                 if isinstance(q, fits.ImageHDU) and q.header["ISMAP"]
             ]
+
+    @property
+    def has_maps(self):
+        return True if len(self.map_names) else False
 
     @property
     def hdus(self):
@@ -178,7 +150,7 @@ class MapAtlas:
     @property
     def pixel_positions(self):
         """The SkyCoord positions of the healpix pixels."""
-        _ph, _th = hp.pix2ang(self.NSIDE, np.arange(self.NPIX))
+        _th, _ph = hp.pix2ang(self.NSIDE, np.arange(self.NPIX))
         _ph, _th = _healpix_coordinates_to_spherical(_ph, _th)
         return astro_coords.SkyCoord(_ph, _th, frame=self.coordinate_frame, unit="rad")
 
@@ -216,6 +188,7 @@ class MapAtlas:
         header = fits.Header()
 
         header["CDATE"] = asctime()
+        header["EDATE"] = asctime()
         header["NSIDE"] = n_sides
         header["NPIX"] = n_pixels
         header["RES"] = resolution.to_value(units.rad)
@@ -283,6 +256,11 @@ class MapAtlas:
 
             hudl.flush()
 
+    def remove(self):
+        mainlog.info(f"Removing {self.path}.")
+        pt.Path(self.path).unlink()
+        del self
+
 
 class StatAtlas(MapAtlas):
     """
@@ -304,88 +282,10 @@ class StatAtlas(MapAtlas):
     - ``DBNAME``: The name of the database.
     """
 
-    def _set_header(self, key, value):
-        assert key not in [
-            "NPIX",
-            "NSIDE",
-        ], "NPIX and NSIDE are invariant structures and cannot be edited."
-
-        with fits.open(self.path, "update") as hudl:
-            hudl[0].header[key] = value
-
-            hudl.flush()
-
-    def _build_blank_healpix_maps(self):
-        """build out blank HEALPix maps for each of the object types available."""
-        pass
+    DBNAME = _AtlasHeaderParam()
 
     def __init__(self, filepath):
         super().__init__(filepath)
-
-        with fits.open(self.path, "update") as hudl:
-            self._database = hudl[0].header["DBNAME"]
-
-    @property
-    def database(self):
-        """The name of the database class."""
-        return self._get_header("DBNAME")
-
-    @database.setter
-    def database(self, value):
-        self._set_header("DBNAME", value)
-
-    @classmethod
-    def generate(cls, path, resolution, overwrite=False):
-        """
-        Create an empty :py:class:`SkyAtlas` of a given resolution.
-
-        Parameters
-        ----------
-        path: str
-            The path to the ``.fits`` file from which this object is to be loaded / saved.
-        resolution: :py:class:`astropy.units.Quantity` or Number
-            The resolution of the HEALPix grid. If a value is passed with units, the units are assumed to be in ``rad``.
-        overwrite: bool
-            Allow file overwrite.
-
-        Returns
-        -------
-        :py:class:`SkyAtlas`
-        """
-        from astropy.io import fits
-
-        resolution = enforce_units(resolution, units.rad)
-
-        mainlog.info(
-            f"Generating blank SkyAtlas with resolution {resolution} at {path}."
-        )
-
-        # -- resolving the grid -- #
-        n_sides = int(np.ceil(1 / (resolution.to_value(units.rad) * np.sqrt(3))))
-        n_pixels = hp.nside2npix(n_sides)
-
-        # -- generating the meta data -- #
-        header = fits.Header()
-
-        header["CDATE"] = asctime()
-        header["NSIDE"] = n_sides
-        header["NPIX"] = n_pixels
-        header["RES"] = resolution.to_value(units.rad)
-        header["CSYS"] = "ICRS"
-        header["DBNAME"] = "NONE"
-        header["EDATE"] = asctime()
-
-        # -- creating the fits file -- #
-        empty_primary = fits.PrimaryHDU(header=header)
-        hudl = fits.HDUList([empty_primary])
-        hudl.writeto(path, overwrite=overwrite)
-
-    @property
-    def has_maps(self):
-        if len(self.map_names):
-            return True
-        else:
-            return False
 
     def get_points(self):
         import warnings
@@ -413,135 +313,768 @@ class StatAtlas(MapAtlas):
 
         return _out
 
-    def build_poisson_maps(
-        self, method="MLE", prior=None, multiprocess=False, multiprocess_kw=None
-    ):
-        mainlog.info(
-            f"Building poisson density maps for {self.NPIX} HEALPix points from Atlas at {self.path}."
+    def sample_from_database(self, npoints, search_radius, *args, **kwargs):
+        """
+        Randomly sample points from the database specified in the meta-data of this atlas and add the count
+        data to the pre-existing COUNTS table.
+
+        Parameters
+        ----------
+        npoints: int
+            The number of random sample points to query for.
+        search_radius: :py:class:`astropy.units.Quantity`
+            Angular search radius for counting around each point.
+        args
+            Additional arguments to pass through.
+        kwargs
+            Additional key-word arguments to pass through.
+
+        Returns
+        -------
+        None
+        """
+        from pyXMIP.structures.databases import DEFAULT_DATABASE_REGISTRY
+
+        mainlog.info(f"Adding {npoints} counting queries to {self.path} atlas.")
+
+        # -- fetching the correct database -- #
+        _registry = kwargs.pop("registry", DEFAULT_DATABASE_REGISTRY)
+        if self.DBNAME == "NONE":
+            raise KeyError(
+                "This PoissonAtlas doesn't appear to be linked to a database. It may be corrupted or it was never set. Use instance.DBNAME = 'new_name' to set a database name."
+            )
+        elif self.DBNAME not in _registry:
+            raise KeyError(
+                "This Database doesn't correspond to a known database in the registry provided."
+            )
+        else:
+            database = _registry[self.DBNAME]
+        mainlog.debug(f"LINKED DATABASE: {database}")
+
+        # -- Requesting pull from database -- #
+        sample_count_table = database.random_sample_count(
+            npoints, search_radius, *args, **kwargs
         )
 
-        # ====================================================#
-        # Preparing
-        # ====================================================#
-        if multiprocess:
-            mainlog.debug("Constructing poisson maps with multiprocessing enabled.")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.append_to_fits(sample_count_table, "COUNTS")
+
+        mainlog.info(f"Appended {npoints} samples to COUNTS.")
+
+    def reset(self, *args, **kwargs):
+        mainlog.info(f"Resetting Atlas at {self.path}.")
+        path = self.path
+        self.remove()
+        self.generate(path, *args, **kwargs)
+
+    def _write_build_output_to_fits(self, object_type, output_object, overwrite=False):
+        # =========================================== #
+        # Writing the map to an HDU of the correct name
+        with fits.open(self.path, "update") as hdul:
+            if object_type in [hdu.name for hdu in hdul] and not overwrite:
+                # The map already exists and we cannot overwrite.
+                raise ValueError(
+                    f"The map {object_type} already exists in {self.path} and overwrite = False."
+                )
+            elif object_type in [hdu.name for hdu in hdul]:
+                # The map exists we need to remove it.
+                del hdul[object_type]
+
+            # -- Writing the new map -- #
+            image_hdu = fits.ImageHDU(output_object.map)
+            image_hdu.name = object_type
+            image_hdu.header["ISMAP"] = True
+            image_hdu.header["METH"] = output_object.method
+            image_hdu.header["DATE"] = asctime()
+
+            hdul.append(image_hdu)
+            hdul.flush()
+
+    def build_poisson_map(
+        self, object_type, method="GP", overwrite=True, inplace=True, *args, **kwargs
+    ):
+        """
+        Build a Poisson map in the Atlas for a specific object type.
+
+        Parameters
+        ----------
+        object_type: str
+            A particular object type in this PoissonAtlas from which to generate the map.
+        method: str
+            The method by which to calculate the map.
+        overwrite: bool, optional
+            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?
+        inplace: bool, optional
+            [Default ``True``]. If ``True``, the map is written directly to file. If ``False`` it is returned to the user.
+        *args
+            Additional arguments.
+        **kwargs
+            Additional keyword arguments.
+
+        Returns
+        -------
+
+        """
+
+        _count_data = self.get_points()
+        _method = getattr(self, f"build_poisson_map_{method}")
+        mainlog.info(f"Generating {object_type} map using {method}.")
+        # ======================================================= #
+        # Managing different methods
+        # ======================================================= #
+        if method in ["MAP"]:
+            # These methods take object type, *args, **kwargs as their arguments.
+            #
+            #
+            _output = _method(object_type, args, **kwargs)
         else:
-            mainlog.debug("Constructing poisson maps with multiprocessing disabled.")
-
-            with logging_redirect_tqdm(loggers=[mainlog]):
-                for _ in tqdm(np.arange(self.NPIX)):
-                    pass
-
-    def build_poisson_map(self, object_type, *args, **kwargs):
-        mainlog.info(f"Building poisson map in {self.path} for {object_type}.")
-
-        # --------------------------------------------------#
-        # Setup and argument management
-        # --------------------------------------------------#
-        # manage arguments
-        mode = kwargs.pop("mode", "LOCAL_UNIFORM")
-
-        # pull points
-        point_table = self.get_points()[[object_type, "PIX_ID", "RAD"]]
-        point_table["AREA"] = np.pi * point_table["RAD"] ** 2
-
-        # --------------------------------------------------#
-        # Building counts information
-        # --------------------------------------------------#
-        if mode in ["GLOBAL_UNIFORM", "GU", "gu", "global_uniform"]:
-            # use a global uniform method
-            map = self._bpm_gu(point_table, object_type, *args, **kwargs)
-        elif mode in ["LOCAL_UNIFORM", "LU", "lu", "local_uniform"]:
-            map = self._bpm_lu(point_table, object_type, *args, **kwargs)
-        elif mode in ["kernel"]:
-            map = None
-        else:
-            raise ValueError(f"The method {mode} is not recognized.")
-
-        # ------------------------------------------------#
-        # Fix Broken
-        # ------------------------------------------------#
-        fixna = kwargs.pop("fixna", None)
-
-        if fixna == "average":
-            map[np.isnan(map)] = np.sum(point_table[object_type]) / np.sum(
-                point_table["AREA"]
+            # These methods take X,Y, *args, **kwargs
+            #
+            #
+            positions = astro_coords.SkyCoord(
+                ra=_count_data["RA"], dec=_count_data["DEC"], unit="deg"
             )
-        elif fixna == "zero":
-            map[np.isnan(map)] = 0
+            X = np.vstack(
+                [positions.frame.spherical.lon.rad, positions.frame.spherical.lat.rad]
+            )
+            _r = _count_data["RAD"] * units.arcmin
+            Y = _count_data[object_type] / (np.pi * (_r.to_value("rad")) ** 2)
+
+            _output = _method(X, Y, *args, **kwargs)
+
+        # ===================================================== #
+        # Writing data
+        # ===================================================== #
+        if inplace:
+            self._write_build_output_to_fits(object_type, _output, overwrite=overwrite)
         else:
-            pass
+            return _output
 
-        return map
+    def build_poisson_maps(
+        self,
+        object_types="all",
+        methods="MAP",
+        overwrite=True,
+        build_args=None,
+        build_kwargs=None,
+        **kwargs,
+    ):
+        """
+        Construct all or a subset of the available object type Poisson maps for this Atlas.
 
-    def _bpm_gu(self, point_table, object_type, *args, **kwargs):
-        mainlog.debug("Using GLOBAL_UNIFORM to determine poisson map.")
-        # -- Manage arguments and kwargs -- #
-        prior = kwargs.pop("prior", None)
+        Parameters
+        ----------
+        object_types: list of str or str, optional
+            The object types to generate Poisson maps for. If ``all`` (default), then all of the object types in the ``COUNTS``
+            table are used.
+        methods: list of str or str, optional
+            The method to use for the map generation. If this is a list, it must match the length of ``object_types`` and each
+            of the Poisson maps will be generated using the specified method. If ``methods`` is a single ``str``, then a single
+            method will be used for all of the generation procedures.
+        build_args: list of list, optional
+            List of additional arguments to pass to each of the generation methods individually. By default, this is ``None``, and will result
+            in empty lists being appended to the arguments of each generation method. If specified, this parameter must be a list of length ``object_types.size``
+            with each element also being a list (or arbitrary size) containing any additional args to pass.
+        build_kwargs: list of dict, optional
+            Similar to ``build_args``, ``build_kwargs`` may be specified to pass particular keyword arguments along to the individual generation methods.
+            If left unspecified, no kwargs are passed to the sub-generation processes.
+        overwrite: bool, optional
+            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?
+        **kwargs
+            Additional keyword arguments.
 
-        # -- computing globals -- #
-        count, area = np.sum(point_table[object_type]), np.sum(point_table["AREA"])
+        Returns
+        -------
 
-        # -- break method on type -- #
-        if prior is None:
-            mainlog.debug("No prior detected: MLE estimator (analytic)")
-            # no prior was specified; we can simply proceed via MLE.
-            _map_value = count / area
-        elif callable(prior):
-            mainlog.debug("Prior detected: Using a MAP scheme.")
-            # the prior is callable
-            from scipy.optimize import minimize
-            from scipy.stats import poisson
+        """
+        # ======================================================================== #
+        # Setup
+        # ======================================================================== #
+        _count_data = self.get_points()
 
-            _min_func = lambda x: -poisson.pmf(count, area * x) * prior(x)
-            _map_value = minimize(_min_func, count / area, *args, **kwargs).x
+        if object_types == "all":
+            # the object types need to be grabbed. Removing RA,DEC,RAD,PIX_ID,TIME
+            object_types = list(_count_data.columns[:-5])
         else:
-            raise ValueError(
-                f"{prior} is not a valid prior for global uniform poisson mapping."
+            object_types = [
+                object_type
+                for object_type in object_types
+                if object_type in _count_data.columns
+            ]
+
+        mainlog.info(f"Generating Poisson maps for {len(object_types)} object types...")
+
+        # Managing the methods
+        if isinstance(methods, str):
+            methods = [methods] * len(object_types)
+        elif isinstance(methods, Collection):
+            assert len(methods) == len(
+                object_types
+            ), f"Attempted to pass {len(methods)} methods for {len(object_types)} object types."
+        else:
+            raise TypeError(
+                f"Kwarg `methods` has type {type(methods)} when it was expected to be `str` or `Collection`."
             )
 
-        return _map_value * np.ones(self.NPIX)
-
-    def _bpm_lu(self, point_table, object_type, *args, **kwargs):
-        mainlog.debug("Using LOCAL_UNIFORM to determine poisson map.")
-        # -- Manage arguments and kwargs -- #
-        prior = kwargs.pop("prior", None)
-        map = np.zeros(self.NPIX)
-        index_array = [i for i in np.arange(self.NPIX) if i in point_table["PIX_ID"]]
-
-        # ------------------------------------------------------------------#
-        # No PRIOR
-        # ------------------------------------------------------------------#
-        if prior is None:
-            mainlog.debug("No prior detected: MLE estimator (analytic)")
-            with logging_redirect_tqdm(loggers=[mainlog]):
-                for ind in tqdm(index_array):
-                    _pt = point_table[point_table["PIX_ID"] == ind]
-                    count, area = np.sum(_pt[object_type]), np.sum(_pt["AREA"])
-                    map[ind] = count / area
-        elif callable(prior):
-            from scipy.optimize import minimize
-            from scipy.stats import poisson
-
-            mainlog.debug("Prior detected: Using a MAP scheme.")
-            with logging_redirect_tqdm(loggers=[mainlog]):
-                for ind in tqdm(index_array):
-                    # the prior is callable
-                    _pt = point_table[point_table["PIX_ID"] == ind]
-                    count, area = np.sum(_pt[object_type]), np.sum(_pt["AREA"])
-                    _min_func = lambda x, c=count, a=area: -poisson.pmf(
-                        c, a * x
-                    ) * prior(x)
-                    map[ind] = minimize(_min_func, count / area, *args, **kwargs).x
+        # Managing the build args / kwargs
+        if build_args is None:
+            build_args = [[] for _ in range(len(object_types))]
         else:
-            raise ValueError(
-                f"{prior} is not a valid prior for global uniform poisson mapping."
+            assert isinstance(
+                build_args, Collection
+            ), f"Kwarg `build_args` has type {type(build_args)} which is not a subclass of `Collection`."
+
+        if build_kwargs is None:
+            build_kwargs = [{} for _ in range(len(object_types))]
+        else:
+            assert isinstance(
+                build_args, Collection
+            ), f"Kwarg `build_kwargs` has type {type(build_args)} which is not a subclass of `Collection`."
+
+        # ======================================================================== #
+        # Map Generation Processes
+        # ======================================================================== #
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            for object_type, method, bargs, bkwargs in tqdm(
+                zip(object_types, methods, build_args, build_kwargs),
+                total=len(object_types),
+                desc="Constructing Poisson Maps",
+                disable=(not kwargs.get("progress_bar", True)),
+                leave=True,
+            ):
+                bkwargs["progress_bar"] = kwargs.get(
+                    "progress_bar", bkwargs.get("progress_bar", True)
+                )
+
+                self.build_poisson_map(
+                    object_type,
+                    method=method,
+                    overwrite=overwrite,
+                    inplace=True,
+                    *bargs,
+                    **bkwargs,
+                )
+
+    def build_poisson_map_gp(
+        self, X, Y, training_kw=None, parallel_kw=None, *args, **kwargs
+    ):
+        r"""
+        Build the poisson map using a Haversine based Gaussian Process regression methodology.
+
+        Parameters
+        ----------
+        X: array-like
+            An array of size ``N,2`` containing the coordinates :math:`\phi,\theta` (in that order).
+
+            .. warning::
+
+                The coordinates MUST be in valid LAT/LON format: :math:`-\pi<\phi<\pi` and :math:`-\pi/2<\theta<\pi/2`.
+                If this is not done, then the Gaussian Process regression will fail to correctly compute distances between
+                points on the sphere and the resulting map may be entirely erroneous.
+
+        Y: array-like
+            The density values (``N,1``) at each of the provided coordinate positions.
+
+            .. hint::
+
+                Behind the scene, this is converted to the log-density to avoid issues with the GP regressor allowing
+                negative densities. It is then rectified after the GP has been created.
+        training_kw: dict
+            Training key-word arguments specific to this ML algorithm.
+
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |
+            +===================================+=================================================+====================+========================+
+            | ``training_proportion``           | The proportion of the provided data to use as   | ``float``          | ``0.2``                |
+            |                                   | the training set.                               |                    |                        |
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | ``cv_groups``                     | The number of groups to split the training      | ``int``            | ``5``                  |
+            |                                   | set into for cross-validation.                  |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+            | ``length_scale``                  | The initial guess for the Haversine Kernel's    | ``float``          | ``1.0``                |
+            |                                   | characteristic length scale.                    |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+            | ``length_scale_bounds``           | Bounds on the characteristic length scale.      | ``tuple``          | ``(1e-2,1e2)``         |
+            |                                   |                                                 |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+            | ``alpha_cv``                      | The :math:`\alpha` values for the GP regressor  | ``list``           | Log spaced from        |
+            |                                   | to be compared during cross-validation.         | [if not bounds,    | ``1e-8`` to ``1e0``    |
+            |                                   | If a 2-``tuple``, then linearly spaced between  | then must match    |                        |
+            |                                   | bounds. Else, individual values.                | ``cv_groups`` ]    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+
+        parallel_kw: dict
+            Additional kwargs to pass for parallelism capabilities.
+
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |
+            +===================================+=================================================+====================+========================+
+            | ``multiprocess``                  | If ``True``, then multi-core processing is      | ``bool``           | ``False``              |
+            |                                   | enabled. Otherwise single-core.                 |                    |                        |
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | ``nproc``                         | The number of processors to utilize.            | ``int``            | ``n_cpu``              |
+            |                                   | [Cannot exceed ``cv_groups``]                   |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+
+        Returns
+        -------
+
+        """
+        from sklearn.gaussian_process import GaussianProcessRegressor
+        from sklearn.model_selection import train_test_split
+
+        from pyXMIP.stats._gaussian_process import Haversine_RBF
+
+        # -- Defaults -- #
+        _default_training_kw = {
+            "training_proportion": 0.2,
+            "cv_groups": 20,
+            "length_scale": 1,
+            "length_scale_bounds": (1e-5, 1e5),
+            "alpha_cv": np.geomspace(1e-1, 1e3, 20),
+        }
+        _default_parallel_kw = {"multiprocess": False, "nproc": None}
+
+        mainlog.debug("Generating map from GPR (HVSINE-RBF).")
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            _process_progress_bar = tqdm(
+                total=100,
+                desc="GP HVSINE-RBF - Setup",
+                bar_format="{desc}: {percentage:3.0f}%|{bar}|",
+                disable=(not kwargs.pop("progress_bar", True)),
+                leave=False,
             )
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                # ================================================== #
+                # Arguments / kwargs
+                training_kw = {
+                    k: (
+                        v
+                        if (training_kw is None or k not in training_kw)
+                        else training_kw[k]
+                    )
+                    for k, v in _default_training_kw.items()
+                }
+                parallel_kw = {
+                    k: (
+                        v
+                        if (parallel_kw is None or k not in parallel_kw)
+                        else parallel_kw[k]
+                    )
+                    for k, v in _default_parallel_kw.items()
+                }
 
-        return map
+                # X should be Nx2, Y should be Nx1 in shape.
+                X, Y = X.reshape((X.size // 2, 2)), Y.reshape(
+                    (Y.size, 1)
+                )  # This will yield an error if the arrays are not correct.
 
-    def _bpm_kern(self, point_table, *args, **kwargs):
-        pass
+                # ================================================== #
+                # splitting training data and testing data.
+                X_TRAIN, X_TEST, Y_TRAIN, Y_TEST = train_test_split(
+                    X,
+                    Y,
+                    train_size=training_kw["training_proportion"],
+                    shuffle=kwargs.pop("shuffle_features", False),
+                    random_state=kwargs.pop("random_state", None),
+                )
+
+                # ================================================== #
+                # Generating the Kernel and Cross-validating.
+                kernel = Haversine_RBF(
+                    length_scale=training_kw["length_scale"],
+                    length_scale_bounds=training_kw["length_scale_bounds"],
+                )
+
+                _process_progress_bar.update(10)
+                _process_progress_bar.desc = "GP HVSINE-RBF - Cross Validating"
+                # If there are no CV groups, we just fit the regressor and proceed.
+                if training_kw["cv_groups"] in [0, 1]:
+                    # cross-validation doesn't occur. We simply proceed to fit.
+                    _gaussian_process_regressor = GaussianProcessRegressor(
+                        kernel=kernel, *args, **kwargs
+                    )
+                    _cv_return_data = None
+                else:
+                    # cross-validation does occur
+                    from sklearn.model_selection import GridSearchCV
+
+                    _ = kwargs.pop(
+                        "alpha", None
+                    )  # Remove alpha if it is present to allow for X-val.
+                    _gaussian_process_regressor = GaussianProcessRegressor(
+                        kernel=kernel, *args, **kwargs
+                    )
+
+                    if (
+                        len(training_kw["alpha_cv"]) == 2
+                        and training_kw["cv_groups"] != 2
+                    ):
+                        # we have a query region.
+                        _gscv = GridSearchCV(
+                            _gaussian_process_regressor,
+                            {
+                                "alpha": np.geomspace(
+                                    *training_kw["alpha_cv"], training_kw["cv_groups"]
+                                )
+                            },
+                        )
+                    else:
+                        _gscv = GridSearchCV(
+                            _gaussian_process_regressor,
+                            {"alpha": training_kw["alpha_cv"]},
+                        )
+
+                    # pulling scores
+                    _gscv.fit(X_TRAIN, Y_TRAIN)
+                    _cv_return_data = _gscv.cv_results_
+                    _alpha_fixed = _cv_return_data["param_alpha"].data[
+                        np.where(
+                            _cv_return_data["mean_test_score"]
+                            == np.amax(_cv_return_data["mean_test_score"])
+                        )
+                    ]
+
+                    _process_progress_bar.update(50)
+                    _process_progress_bar.desc = (
+                        "GP HVSINE-RBF - Fitting to training set"
+                    )
+                    mainlog.debug(
+                        f"CV determined alpha to be {_alpha_fixed} with mean test score {np.amax(_cv_return_data['mean_test_score'])}."
+                    )
+
+                    # creating the regressor
+                    kwargs["alpha"] = _alpha_fixed
+                    _gaussian_process_regressor = GaussianProcessRegressor(
+                        kernel=kernel, *args, **kwargs
+                    )
+
+                # ===============================================================
+                # Training fully
+                _gaussian_process_regressor.fit(X_TRAIN, Y_TRAIN)
+
+                # ===============================================================
+                # Getting scores.
+                _return_score = _gaussian_process_regressor.score(X_TEST, Y_TEST)
+                _process_progress_bar.update(20)
+                mainlog.debug(f"Fit to training set yielded score of {_return_score}.")
+                _process_progress_bar.desc = "GP HVSINE-RBF - Predicting Poisson Map"
+                # =================================================================
+                # Generating the actual sky map.
+                map_positions = np.vstack(
+                    [
+                        self.pixel_positions.frame.spherical.lat.rad,
+                        self.pixel_positions.frame.spherical.lon.rad,
+                    ]
+                ).T
+
+                map_values, map_std = _gaussian_process_regressor.predict(
+                    map_positions, return_std=True
+                )
+
+                _process_progress_bar.update(20)
+                _process_progress_bar.close()
+        mainlog.debug("GP HVSINE-RBF - [COMPLETE]")
+        return SimpleNamespace(
+            map=map_values,
+            std_map=map_std,
+            training_info={"score": _return_score, "cv_info": _cv_return_data},
+            method="GP",
+            parameters={"alpha": _alpha_fixed},
+        )
+
+    def build_poisson_map_NNR(
+        self, X, Y, training_kw=None, parallel_kw=None, *args, **kwargs
+    ):
+        r"""
+        Build the poisson map using a Haversine based KNN radius matching approach.
+
+        Parameters
+        ----------
+        X: array-like
+            An array of size ``N,2`` containing the coordinates :math:`\phi,\theta` (in that order).
+
+            .. warning::
+
+                The coordinates MUST be in valid LAT/LON format: :math:`-\pi<\phi<\pi` and :math:`-\pi/2<\theta<\pi/2`.
+                If this is not done, then the Gaussian Process regression will fail to correctly compute distances between
+                points on the sphere and the resulting map may be entirely erroneous.
+
+        Y: array-like
+            The density values (``N,1``) at each of the provided coordinate positions.
+
+            .. hint::
+
+                Behind the scene, this is converted to the log-density to avoid issues with the GP regressor allowing
+                negative densities. It is then rectified after the GP has been created.
+        training_kw: dict
+            Training key-word arguments specific to this ML algorithm.
+
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |
+            +===================================+=================================================+====================+========================+
+            | ``training_proportion``           | The proportion of the provided data to use as   | ``float``          | ``0.2``                |
+            |                                   | the training set.                               |                    |                        |
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | ``cv_groups``                     | The number of groups to split the training      | ``int``            | ``5``                  |
+            |                                   | set into for cross-validation.                  |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+            | ``radius``                        | The initial guess for the KNN search radius.    | ``float``          | ``1.0``                |
+            |                                   |                                                 |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+            | ``radius_bounds``                 | Bounds on the characteristic KNNR scale (deg)   | ``tuple``          | ``(0.5,10)``           |
+            |                                   |                                                 |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+
+        parallel_kw: dict
+            Additional kwargs to pass for parallelism capabilities.
+
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |
+            +===================================+=================================================+====================+========================+
+            | ``multiprocess``                  | If ``True``, then multi-core processing is      | ``bool``           | ``False``              |
+            |                                   | enabled. Otherwise single-core.                 |                    |                        |
+            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+
+            | ``nproc``                         | The number of processors to utilize.            | ``int``            | ``n_cpu``              |
+            |                                   | [Cannot exceed ``cv_groups``]                   |                    |                        |
+            +-----------------------------------+-------------------------------------------------+---------------------------------------------+
+
+        Returns
+        -------
+
+        """
+        from sklearn.model_selection import train_test_split
+        from sklearn.neighbors import RadiusNeighborsRegressor
+
+        # -- Defaults -- #
+        _default_training_kw = {
+            "training_proportion": 0.2,
+            "cv_groups": 20,
+            "radius": 1,
+            "radius_bounds": tuple((np.array([0.1, 30]) * units.deg).to_value("rad")),
+        }
+        _default_parallel_kw = {"multiprocess": False, "nproc": None}
+
+        mainlog.debug("Generating map from NNR (HVSINE).")
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            _process_progress_bar = tqdm(
+                total=100,
+                desc="NNR HVSINE - Setup",
+                bar_format="{desc}: {percentage:3.0f}%|{bar}|",
+                disable=(not kwargs.pop("progress_bar", True)),
+                leave=False,
+            )
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                # ================================================== #
+                # Arguments / kwargs
+                training_kw = {
+                    k: (
+                        v
+                        if (training_kw is None or k not in training_kw)
+                        else training_kw[k]
+                    )
+                    for k, v in _default_training_kw.items()
+                }
+                parallel_kw = {
+                    k: (
+                        v
+                        if (parallel_kw is None or k not in parallel_kw)
+                        else parallel_kw[k]
+                    )
+                    for k, v in _default_parallel_kw.items()
+                }
+
+                # X should be Nx2, Y should be Nx1 in shape.
+                X, Y = X.reshape((X.size // 2, 2)), Y.reshape(
+                    (Y.size, 1)
+                )  # This will yield an error if the arrays are not correct.
+
+                # ================================================== #
+                # splitting training data and testing data.
+                X_TRAIN, X_TEST, Y_TRAIN, Y_TEST = train_test_split(
+                    X,
+                    Y,
+                    train_size=training_kw["training_proportion"],
+                    shuffle=kwargs.pop("shuffle_features", False),
+                    random_state=kwargs.pop("random_state", None),
+                )
+
+                # ================================================== #
+                # Generating the Kernel and Cross-validating.
+
+                _process_progress_bar.update(10)
+                _process_progress_bar.desc = "NNR HVSINE - Cross Validating"
+                # If there are no CV groups, we just fit the regressor and proceed.
+                if training_kw["cv_groups"] in [0, 1]:
+                    # cross-validation doesn't occur. We simply proceed to fit.
+                    _nnr_regressor = RadiusNeighborsRegressor(
+                        radius=training_kw["radius"],
+                        metric="haversine",
+                        algorithm="brute",
+                        weights=kwargs.get("weights", "distance"),
+                        n_jobs=(
+                            parallel_kw["nproc"]
+                            if parallel_kw["multiprocess"]
+                            else None
+                        ),
+                    )
+                    _cv_return_data = None
+                else:
+                    # cross-validation does occur
+                    from sklearn.model_selection import GridSearchCV
+
+                    _nnr_regressor = RadiusNeighborsRegressor(
+                        metric="haversine",
+                        algorithm="brute",
+                        weights=kwargs.get("weights", "distance"),
+                        n_jobs=(
+                            parallel_kw["nproc"]
+                            if parallel_kw["multiprocess"]
+                            else None
+                        ),
+                    )
+
+                    # we have a query region.
+                    _gscv = GridSearchCV(
+                        _nnr_regressor,
+                        {
+                            "radius": np.geomspace(
+                                *training_kw["radius_bounds"], training_kw["cv_groups"]
+                            )
+                        },
+                    )
+
+                    # pulling scores
+                    _gscv.fit(X_TRAIN, Y_TRAIN)
+                    _cv_return_data = _gscv.cv_results_
+                    _cv_return_data["param_radius"] = _cv_return_data["param_radius"][
+                        ~np.isnan(_cv_return_data["mean_test_score"])
+                    ]
+                    _cv_return_data["mean_test_score"] = _cv_return_data[
+                        "mean_test_score"
+                    ][~np.isnan(_cv_return_data["mean_test_score"])]
+                    _radius_fixed = _cv_return_data["param_radius"].data[
+                        np.where(
+                            _cv_return_data["mean_test_score"]
+                            == np.amax(_cv_return_data["mean_test_score"])
+                        )
+                    ]
+
+                    _process_progress_bar.update(50)
+                    _process_progress_bar.desc = "NNR HVSINE - Fitting to training set"
+                    mainlog.debug(
+                        f"CV determined radius to be {_radius_fixed} with mean test score {np.amax(_cv_return_data['mean_test_score'])}."
+                    )
+
+                    if isinstance(_radius_fixed, np.ndarray) and len(_radius_fixed):
+                        _radius_fixed = _radius_fixed[0]
+                    elif isinstance(_radius_fixed, np.ndarray) and not len(
+                        _radius_fixed
+                    ):
+                        mainlog.error(
+                            f"Failed to find a valid radius from CV. Using default {training_kw['radius']}."
+                        )
+                        _radius_fixed = training_kw["radius"]
+                    else:
+                        pass
+
+                    # creating the regressor
+                    _nnr_regressor = RadiusNeighborsRegressor(
+                        radius=_radius_fixed,
+                        metric="haversine",
+                        algorithm="brute",
+                        weights=kwargs.get("weights", "distance"),
+                        n_jobs=(
+                            parallel_kw["nproc"]
+                            if parallel_kw["multiprocess"]
+                            else None
+                        ),
+                    )
+
+                # ===============================================================
+                # Training fully
+                _nnr_regressor.fit(X_TRAIN, Y_TRAIN)
+
+                # ===============================================================
+                # Getting scores.
+                _return_score = _nnr_regressor.score(X_TEST, Y_TEST)
+                _process_progress_bar.update(20)
+                mainlog.debug(f"Fit to training set yielded score of {_return_score}.")
+                _process_progress_bar.desc = "NNR HVSINE - Predicting Poisson Map"
+                # =================================================================
+                # Generating the actual sky map.
+                map_positions = np.vstack(
+                    [
+                        self.pixel_positions.frame.spherical.lat.rad,
+                        self.pixel_positions.frame.spherical.lon.rad,
+                    ]
+                ).T
+
+                map_values = _nnr_regressor.predict(map_positions)
+                map_values = map_values.reshape((map_values.size,))
+                _process_progress_bar.update(20)
+                _process_progress_bar.close()
+        mainlog.debug("NNR HVSINE - [COMPLETE]")
+
+        return SimpleNamespace(
+            map=map_values,
+            std_map=None,
+            training_info={"score": _return_score, "cv_info": _cv_return_data},
+            method="NNR",
+            parameters={"radius": _radius_fixed},
+        )
+
+    def build_poisson_map_MAP(self, object_id, *args, **kwargs):
+        mainlog.debug("Generating map from posterior (MAP).")
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+
+                # ===============================================#
+                # Constructing grids
+                _pix_ids = np.arange(self.NPIX)
+                _map_array = np.zeros(self.NPIX)
+                _point_data = self.get_points()
+
+                _non_empty_pix_ids = [
+                    pid for pid in _pix_ids if pid in _point_data["PIX_ID"]
+                ]
+
+                for pix_id in tqdm(
+                    _non_empty_pix_ids,
+                    desc="posterior (MAP) - Calculating",
+                    disable=(not kwargs.pop("progress_bar", True)),
+                    leave=False,
+                ):
+                    _c = np.sum(
+                        _point_data[object_id][
+                            np.where(_point_data["PIX_ID"] == pix_id)
+                        ]
+                    )
+                    _r = _point_data["RAD"][np.where(_point_data["PIX_ID"] == pix_id)]
+
+                    # -- convert radii to rad -- #
+                    _r = (np.array(_r) * units.arcmin).to_value("rad")
+                    _a = np.pi * _r**2
+                    _map_array[pix_id] = _c / np.sum(_a)
+
+        return SimpleNamespace(
+            map=_map_array,
+            std_map=None,
+            training_info=None,
+            method="MAP",
+            parameters=None,
+        )
+
+    @classmethod
+    def generate(cls, path, resolution, overwrite=False, database="NONE"):
+        obj = super().generate(path, resolution, overwrite=overwrite)
+        obj.DBNAME = database
+
+        return obj
 
     def append_to_fits(self, table, hudl):
         _self_hudl = fits.table_to_hdu(table)
@@ -562,74 +1095,6 @@ class StatAtlas(MapAtlas):
             new_hudl.name = hudl
             hudl_list.append(new_hudl)
             hudl_list.flush()
-
-    def plot_points_2d(self, object_type=None, *args, **kwargs):
-        import matplotlib.pyplot as plt
-        from matplotlib.colors import LogNorm, Normalize
-
-        from pyXMIP.utilities.plot import scatter_table_2d
-
-        # -- Pull the necessary points for the plotting procedure -- #
-        points = self.get_points
-        points["RA"] *= units.deg
-        points["DEC"] *= units.deg
-
-        # -- Setting up coloring -- #
-        if object_type is not None:
-            assert (
-                object_type in points.columns
-            ), f"The object type {object_type} is not in the corresponding table."
-
-            color_scale = {"linear": Normalize, "log": LogNorm}[
-                kwargs.pop("color_scale", "linear")
-            ]
-            ccmin, ccmax = np.amin(points[object_type]), np.amax(points[object_type])
-            color_norm = color_scale(vmin=ccmin, vmax=ccmax)
-            kwargs["c"] = color_norm(points[object_type])
-            color_mappable = plt.cm.ScalarMappable(
-                norm=color_norm, cmap=kwargs.get("cmap", None)
-            )
-        else:
-            kwargs["c"] = "k"
-            color_mappable = None
-
-        fig, ax, _ = scatter_table_2d(points, *args, **kwargs)
-
-        return fig, ax, color_mappable
-
-    def plot_points_3d(self, object_type=None, *args, **kwargs):
-        import matplotlib.pyplot as plt
-        from matplotlib.colors import LogNorm, Normalize
-
-        from pyXMIP.utilities.plot import scatter_table_3d
-
-        # -- Pull the necessary points for the plotting procedure -- #
-        points = self.get_points()
-        points["RA"] *= units.deg
-        points["DEC"] *= units.deg
-
-        # -- Setting up coloring -- #
-        if object_type is not None:
-            assert (
-                object_type in points.columns
-            ), f"The object type {object_type} is not in the corresponding table."
-
-            color_scale = {"linear": Normalize, "log": LogNorm}[
-                kwargs.pop("color_scale", "linear")
-            ]
-            ccmin, ccmax = np.amin(points[object_type]), np.amax(points[object_type])
-            color_norm = color_scale(vmin=ccmin, vmax=ccmax)
-            kwargs["c"] = color_norm(points[object_type])
-            color_mappable = plt.cm.ScalarMappable(
-                norm=color_norm, cmap=kwargs.get("cmap", None)
-            )
-        else:
-            kwargs["c"] = "k"
-            color_mappable = None
-
-        fig, ax, _ = scatter_table_3d(points, *args, **kwargs)
-
-        return fig, ax, color_mappable
 
 
 class Map:

@@ -39,12 +39,12 @@ class _SpecialColumn:
 
     def __get__(self, instance, owner):
         try:
-            return instance.colmap[self._name]
+            return instance.column_map[self._name]
         except KeyError:
             return None
 
     def __set__(self, instance, value):
-        instance.colmap[self._name] = value
+        instance.column_map[self._name] = value
 
 
 def _get_recursive(key, dictionary):

@@ -21,6 +21,8 @@ Creating Plots
 Statistics
 ----------
 
+:ref:`poisson_mapping`
+
 Backend
 -------
 
