@@ -69,3 +69,6 @@ stack-data==0.6.3
 tqdm==4.66.1
 virtualenv==20.24.6
 widgetsnbextension==4.0.9
+pandas
+sqlalchemy
+healpy
