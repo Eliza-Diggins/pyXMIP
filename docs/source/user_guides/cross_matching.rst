@@ -1,4 +1,4 @@
-.. _cross-matching:
+.. _cross_matching:
 =========================
 Cross Matching
 =========================
