@@ -375,20 +375,20 @@ document.write(`
 </section>
 <section id="schemas">
 <h2>SCHEMAS<a class="headerlink" href="#schemas" title="Link to this heading">#</a></h2>
-<p>Schemas (subclasses of the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code> abstract base class) are objects which are attached to various
+<p>Schemas (subclasses of the <a class="reference internal" href="_as_gen/schema.Schema.html#schema.Schema" title="schema.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code></a> abstract base class) are objects which are attached to various
 collection classes (databases, catalogs, etc.) to provide those collection classes with the information they need to
 access the data they are given. There are a variety of types of schema that are used throughout the pyXMIP package which the user
 should be aware of.</p>
 <section id="sky-collection-schema">
 <h3>Sky Collection Schema<a class="headerlink" href="#sky-collection-schema" title="Link to this heading">#</a></h3>
-<p>Collection schema (<code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>) are the most important schema class in pyXMIP. These schema connect the
+<p>Collection schema (<a class="reference internal" href="_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>) are the most important schema class in pyXMIP. These schema connect the
 raw data in a table (underlying a catalog or a database) to the corresponding physical properties of interest. In practice, the
-most important job of <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> instances is to connect the available <code class="docutils literal notranslate"><span class="pre">columns</span></code> of the underlying data table
+most important job of <a class="reference internal" href="_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> instances is to connect the available <code class="docutils literal notranslate"><span class="pre">columns</span></code> of the underlying data table
 to standardized conventions used by the class for cross matching or other tasks.</p>
 <section id="formatting">
 <h4>Formatting<a class="headerlink" href="#formatting" title="Link to this heading">#</a></h4>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">column_map</span></code> is the most important key of the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>. This specifies the names of special columns in your catalog.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">column_map</span></code> is the most important key of the <a class="reference internal" href="_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>. This specifies the names of special columns in your catalog.</p>
 <ul class="simple">
 <li><p>You <strong>DO NOT</strong> need to include every column in the <code class="docutils literal notranslate"><span class="pre">column_map</span></code>. Only special columns have to be specified.</p></li>
 <li><p>Coordinate systems are determined from the <code class="docutils literal notranslate"><span class="pre">column_map</span></code>. You must have at least one complete coordinate system in your <code class="docutils literal notranslate"><span class="pre">column_map</span></code>.</p></li>
@@ -420,9 +420,9 @@ to standardized conventions used by the class for cross matching or other tasks.
 </table>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">default_coord_system</span></code> is the default coordinate system to apply to your data. In general, catalogs may contain more than 1 complete
-coordinate system and so this column is used to determine which frame to use by default. It can be changed on the fly by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">schema.SourceTableSchema.coordinate_system</span></code> .</p></li>
+coordinate system and so this column is used to determine which frame to use by default. It can be changed on the fly by setting <a class="reference internal" href="_as_gen/schema.SourceTableSchema.coordinate_system.html#schema.SourceTableSchema.coordinate_system" title="schema.SourceTableSchema.coordinate_system"><code class="xref py py-attr docutils literal notranslate"><span class="pre">schema.SourceTableSchema.coordinate_system</span></code></a> .</p></li>
 </ul>
-<p>The following is the standard format for the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class.</p>
+<p>The following is the standard format for the <a class="reference internal" href="_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> class.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#-----------------------------------------#</span>
 <span class="c1"># MAPPINGS</span>
 <span class="c1">#-----------------------------------------#</span>

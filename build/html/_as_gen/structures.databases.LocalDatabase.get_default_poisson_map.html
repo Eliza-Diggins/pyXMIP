@@ -1,0 +1,833 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>structures.databases.LocalDatabase.get_default_poisson_map &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/structures.databases.LocalDatabase.get_default_poisson_map';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="structures.databases.LocalDatabase.get_poisson_map" href="structures.databases.LocalDatabase.get_poisson_map.html" />
+    <link rel="prev" title="structures.databases.LocalDatabase.create_poisson_map" href="structures.databases.LocalDatabase.create_poisson_map.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="structures.databases.html">structures.databases</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.DBRegistry.html">structures.databases.DBRegistry</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.__init__.html">structures.databases.DBRegistry.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.clear.html">structures.databases.DBRegistry.clear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.copy.html">structures.databases.DBRegistry.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.fromkeys.html">structures.databases.DBRegistry.fromkeys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.get.html">structures.databases.DBRegistry.get</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.items.html">structures.databases.DBRegistry.items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.keys.html">structures.databases.DBRegistry.keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.pop.html">structures.databases.DBRegistry.pop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.popitem.html">structures.databases.DBRegistry.popitem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.setdefault.html">structures.databases.DBRegistry.setdefault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.update.html">structures.databases.DBRegistry.update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.values.html">structures.databases.DBRegistry.values</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="structures.databases.LocalDatabase.html">structures.databases.LocalDatabase</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.__init__.html">structures.databases.LocalDatabase.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.add_sources_to_poisson.html">structures.databases.LocalDatabase.add_sources_to_poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.count.html">structures.databases.LocalDatabase.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.create_poisson_map.html">structures.databases.LocalDatabase.create_poisson_map</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">structures.databases.LocalDatabase.get_default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.get_poisson_map.html">structures.databases.LocalDatabase.get_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.query_radius.html">structures.databases.LocalDatabase.query_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.random_sample_count.html">structures.databases.LocalDatabase.random_sample_count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.set_poisson_map.html">structures.databases.LocalDatabase.set_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.source_match.html">structures.databases.LocalDatabase.source_match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.class_table_schema.html">structures.databases.LocalDatabase.class_table_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.default_poisson_map.html">structures.databases.LocalDatabase.default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.LocalDatabase.poisson_map.html">structures.databases.LocalDatabase.poisson_map</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.NED.html">structures.databases.NED</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.__init__.html">structures.databases.NED.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.add_sources_to_poisson.html">structures.databases.NED.add_sources_to_poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.count.html">structures.databases.NED.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.create_poisson_map.html">structures.databases.NED.create_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.get_default_poisson_map.html">structures.databases.NED.get_default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.get_poisson_map.html">structures.databases.NED.get_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.query_radius.html">structures.databases.NED.query_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.random_sample_count.html">structures.databases.NED.random_sample_count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.set_poisson_map.html">structures.databases.NED.set_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.source_match.html">structures.databases.NED.source_match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.class_table_schema.html">structures.databases.NED.class_table_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.default_poisson_map.html">structures.databases.NED.default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.NED.poisson_map.html">structures.databases.NED.poisson_map</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.RemoteDatabase.html">structures.databases.RemoteDatabase</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.__init__.html">structures.databases.RemoteDatabase.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.add_sources_to_poisson.html">structures.databases.RemoteDatabase.add_sources_to_poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.count.html">structures.databases.RemoteDatabase.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.create_poisson_map.html">structures.databases.RemoteDatabase.create_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.get_default_poisson_map.html">structures.databases.RemoteDatabase.get_default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.get_poisson_map.html">structures.databases.RemoteDatabase.get_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.query_radius.html">structures.databases.RemoteDatabase.query_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.random_sample_count.html">structures.databases.RemoteDatabase.random_sample_count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.set_poisson_map.html">structures.databases.RemoteDatabase.set_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.source_match.html">structures.databases.RemoteDatabase.source_match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.class_table_schema.html">structures.databases.RemoteDatabase.class_table_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.default_poisson_map.html">structures.databases.RemoteDatabase.default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.RemoteDatabase.poisson_map.html">structures.databases.RemoteDatabase.poisson_map</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.SIMBAD.html">structures.databases.SIMBAD</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.__init__.html">structures.databases.SIMBAD.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.add_sources_to_poisson.html">structures.databases.SIMBAD.add_sources_to_poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.count.html">structures.databases.SIMBAD.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.create_poisson_map.html">structures.databases.SIMBAD.create_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.get_default_poisson_map.html">structures.databases.SIMBAD.get_default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.get_poisson_map.html">structures.databases.SIMBAD.get_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.query_radius.html">structures.databases.SIMBAD.query_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.random_sample_count.html">structures.databases.SIMBAD.random_sample_count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.set_poisson_map.html">structures.databases.SIMBAD.set_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.source_match.html">structures.databases.SIMBAD.source_match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.class_table_schema.html">structures.databases.SIMBAD.class_table_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.default_poisson_map.html">structures.databases.SIMBAD.default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SIMBAD.poisson_map.html">structures.databases.SIMBAD.poisson_map</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.SourceDatabase.html">structures.databases.SourceDatabase</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.__init__.html">structures.databases.SourceDatabase.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.add_sources_to_poisson.html">structures.databases.SourceDatabase.add_sources_to_poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.count.html">structures.databases.SourceDatabase.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.create_poisson_map.html">structures.databases.SourceDatabase.create_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.get_default_poisson_map.html">structures.databases.SourceDatabase.get_default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.get_poisson_map.html">structures.databases.SourceDatabase.get_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.query_radius.html">structures.databases.SourceDatabase.query_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.random_sample_count.html">structures.databases.SourceDatabase.random_sample_count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.set_poisson_map.html">structures.databases.SourceDatabase.set_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.source_match.html">structures.databases.SourceDatabase.source_match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.class_table_schema.html">structures.databases.SourceDatabase.class_table_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.default_poisson_map.html">structures.databases.SourceDatabase.default_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.databases.SourceDatabase.poisson_map.html">structures.databases.SourceDatabase.poisson_map</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="structures.table.html">structures.table</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.table.SourceTable.html">structures.table.SourceTable</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.__init__.html">structures.table.SourceTable.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.add_column.html">structures.table.SourceTable.add_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.add_columns.html">structures.table.SourceTable.add_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.add_index.html">structures.table.SourceTable.add_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.add_row.html">structures.table.SourceTable.add_row</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.append_to_fits.html">structures.table.SourceTable.append_to_fits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.append_to_sql.html">structures.table.SourceTable.append_to_sql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.argsort.html">structures.table.SourceTable.argsort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.as_array.html">structures.table.SourceTable.as_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.convert_bytestring_to_unicode.html">structures.table.SourceTable.convert_bytestring_to_unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.convert_unicode_to_bytestring.html">structures.table.SourceTable.convert_unicode_to_bytestring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.copy.html">structures.table.SourceTable.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.count_types.html">structures.table.SourceTable.count_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.field.html">structures.table.SourceTable.field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.filled.html">structures.table.SourceTable.filled</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.from_pandas.html">structures.table.SourceTable.from_pandas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.generate_schema.html">structures.table.SourceTable.generate_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.get_coordinates.html">structures.table.SourceTable.get_coordinates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.group_by.html">structures.table.SourceTable.group_by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.index_column.html">structures.table.SourceTable.index_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.index_mode.html">structures.table.SourceTable.index_mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.insert_row.html">structures.table.SourceTable.insert_row</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.items.html">structures.table.SourceTable.items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.itercols.html">structures.table.SourceTable.itercols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.iterrows.html">structures.table.SourceTable.iterrows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.keep_columns.html">structures.table.SourceTable.keep_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.keys.html">structures.table.SourceTable.keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.more.html">structures.table.SourceTable.more</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pformat.html">structures.table.SourceTable.pformat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pformat_all.html">structures.table.SourceTable.pformat_all</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pprint.html">structures.table.SourceTable.pprint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pprint_all.html">structures.table.SourceTable.pprint_all</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.remove_column.html">structures.table.SourceTable.remove_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.remove_columns.html">structures.table.SourceTable.remove_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.remove_indices.html">structures.table.SourceTable.remove_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.remove_row.html">structures.table.SourceTable.remove_row</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.remove_rows.html">structures.table.SourceTable.remove_rows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.rename_column.html">structures.table.SourceTable.rename_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.rename_columns.html">structures.table.SourceTable.rename_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.replace_column.html">structures.table.SourceTable.replace_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.reverse.html">structures.table.SourceTable.reverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.round.html">structures.table.SourceTable.round</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.show_in_browser.html">structures.table.SourceTable.show_in_browser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.show_in_notebook.html">structures.table.SourceTable.show_in_notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.sort.html">structures.table.SourceTable.sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.to_pandas.html">structures.table.SourceTable.to_pandas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.update.html">structures.table.SourceTable.update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.values.html">structures.table.SourceTable.values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.values_equal.html">structures.table.SourceTable.values_equal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.ColumnClass.html">structures.table.SourceTable.ColumnClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.colnames.html">structures.table.SourceTable.colnames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.dtype.html">structures.table.SourceTable.dtype</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.groups.html">structures.table.SourceTable.groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.has_masked_columns.html">structures.table.SourceTable.has_masked_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.has_masked_values.html">structures.table.SourceTable.has_masked_values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.has_mixin_columns.html">structures.table.SourceTable.has_mixin_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.iloc.html">structures.table.SourceTable.iloc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.indices.html">structures.table.SourceTable.indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.info.html">structures.table.SourceTable.info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.lat.html">structures.table.SourceTable.lat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.loc.html">structures.table.SourceTable.loc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.loc_indices.html">structures.table.SourceTable.loc_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.lon.html">structures.table.SourceTable.lon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.mask.html">structures.table.SourceTable.mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.masked.html">structures.table.SourceTable.masked</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.meta.html">structures.table.SourceTable.meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.name.html">structures.table.SourceTable.name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pprint_exclude_names.html">structures.table.SourceTable.pprint_exclude_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.pprint_include_names.html">structures.table.SourceTable.pprint_include_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.read.html">structures.table.SourceTable.read</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.redshift.html">structures.table.SourceTable.redshift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.schema.html">structures.table.SourceTable.schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.type.html">structures.table.SourceTable.type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.type_native.html">structures.table.SourceTable.type_native</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.table.SourceTable.write.html">structures.table.SourceTable.write</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="structures.map.html">structures.map</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.map.Map.html">structures.map.Map</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.Map.__init__.html">structures.map.Map.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.Map.coordinate_frame.html">structures.map.Map.coordinate_frame</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.map.MapAtlas.html">structures.map.MapAtlas</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.__init__.html">structures.map.MapAtlas.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.generate.html">structures.map.MapAtlas.generate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.get_map.html">structures.map.MapAtlas.get_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.remove.html">structures.map.MapAtlas.remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.reshape_healpix.html">structures.map.MapAtlas.reshape_healpix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.coordinate_frame.html">structures.map.MapAtlas.coordinate_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.has_maps.html">structures.map.MapAtlas.has_maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.hdus.html">structures.map.MapAtlas.hdus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.map_names.html">structures.map.MapAtlas.map_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.MapAtlas.pixel_positions.html">structures.map.MapAtlas.pixel_positions</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="structures.map.StatAtlas.html">structures.map.StatAtlas</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.__init__.html">structures.map.StatAtlas.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.append_to_fits.html">structures.map.StatAtlas.append_to_fits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.build_poisson_map.html">structures.map.StatAtlas.build_poisson_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.build_poisson_map_MAP.html">structures.map.StatAtlas.build_poisson_map_MAP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.build_poisson_map_NNR.html">structures.map.StatAtlas.build_poisson_map_NNR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.build_poisson_map_gp.html">structures.map.StatAtlas.build_poisson_map_gp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.build_poisson_maps.html">structures.map.StatAtlas.build_poisson_maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.generate.html">structures.map.StatAtlas.generate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.get_map.html">structures.map.StatAtlas.get_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.get_points.html">structures.map.StatAtlas.get_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.remove.html">structures.map.StatAtlas.remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.reset.html">structures.map.StatAtlas.reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.reshape_healpix.html">structures.map.StatAtlas.reshape_healpix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.sample_from_database.html">structures.map.StatAtlas.sample_from_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.coordinate_frame.html">structures.map.StatAtlas.coordinate_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.has_maps.html">structures.map.StatAtlas.has_maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.hdus.html">structures.map.StatAtlas.hdus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.map_names.html">structures.map.StatAtlas.map_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.StatAtlas.pixel_positions.html">structures.map.StatAtlas.pixel_positions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="schema.html">schema</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="schema.ReductionSchema.html">schema.ReductionSchema</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.__init__.html">schema.ReductionSchema.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.clear.html">schema.ReductionSchema.clear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.copy.html">schema.ReductionSchema.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.from_file.html">schema.ReductionSchema.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.fromkeys.html">schema.ReductionSchema.fromkeys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.get.html">schema.ReductionSchema.get</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.isvalid.html">schema.ReductionSchema.isvalid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.items.html">schema.ReductionSchema.items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.keys.html">schema.ReductionSchema.keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.pop.html">schema.ReductionSchema.pop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.popitem.html">schema.ReductionSchema.popitem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.setdefault.html">schema.ReductionSchema.setdefault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.update.html">schema.ReductionSchema.update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.values.html">schema.ReductionSchema.values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.DBPATH.html">schema.ReductionSchema.DBPATH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.INSTRUMENTAL.html">schema.ReductionSchema.INSTRUMENTAL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.INSTRUMENT_PARAMS.html">schema.ReductionSchema.INSTRUMENT_PARAMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.IO_PARAMS.html">schema.ReductionSchema.IO_PARAMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.OBJECT_PARAMS.html">schema.ReductionSchema.OBJECT_PARAMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.OTYPES.html">schema.ReductionSchema.OTYPES</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.POISSON.html">schema.ReductionSchema.POISSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.POISSON_PARAMS.html">schema.ReductionSchema.POISSON_PARAMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.PSF.html">schema.ReductionSchema.PSF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.REFDBS.html">schema.ReductionSchema.REFDBS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.ReductionSchema.RUN_PARAMS.html">schema.ReductionSchema.RUN_PARAMS</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="schema.Schema.html">schema.Schema</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.__init__.html">schema.Schema.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.clear.html">schema.Schema.clear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.copy.html">schema.Schema.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.from_file.html">schema.Schema.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.fromkeys.html">schema.Schema.fromkeys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.get.html">schema.Schema.get</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.isvalid.html">schema.Schema.isvalid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.items.html">schema.Schema.items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.keys.html">schema.Schema.keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.pop.html">schema.Schema.pop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.popitem.html">schema.Schema.popitem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.setdefault.html">schema.Schema.setdefault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.update.html">schema.Schema.update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.Schema.values.html">schema.Schema.values</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="schema.SourceTableSchema.html">schema.SourceTableSchema</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.__init__.html">schema.SourceTableSchema.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.available_coordinate_frames.html">schema.SourceTableSchema.available_coordinate_frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.clear.html">schema.SourceTableSchema.clear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.construct.html">schema.SourceTableSchema.construct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.copy.html">schema.SourceTableSchema.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.from_file.html">schema.SourceTableSchema.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.fromkeys.html">schema.SourceTableSchema.fromkeys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.get.html">schema.SourceTableSchema.get</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.isvalid.html">schema.SourceTableSchema.isvalid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.items.html">schema.SourceTableSchema.items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.keys.html">schema.SourceTableSchema.keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.pop.html">schema.SourceTableSchema.pop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.popitem.html">schema.SourceTableSchema.popitem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.setdefault.html">schema.SourceTableSchema.setdefault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.update.html">schema.SourceTableSchema.update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.values.html">schema.SourceTableSchema.values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.column_map.html">schema.SourceTableSchema.column_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.coordinate_columns.html">schema.SourceTableSchema.coordinate_columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.coordinate_frame.html">schema.SourceTableSchema.coordinate_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.coordinate_system.html">schema.SourceTableSchema.coordinate_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.default_coord_system.html">schema.SourceTableSchema.default_coord_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.inv_column_map.html">schema.SourceTableSchema.inv_column_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.SourceTableSchema.object_map.html">schema.SourceTableSchema.object_map</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.core.html">utilities.core</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-18"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.core.enforce_units.html">utilities.core.enforce_units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.core.getFromDict.html">utilities.core.getFromDict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.core.setInDict.html">utilities.core.setInDict</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.mp_utils.html">utilities.mp_utils</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-19"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.mp_utils.split.html">utilities.mp_utils.split</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.text.html">utilities.text</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utilities.text.Spinner.html">utilities.text.Spinner</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.__init__.html">utilities.text.Spinner.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.spinner_task.html">utilities.text.Spinner.spinner_task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.spinning_cursor.html">utilities.text.Spinner.spinning_cursor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.busy.html">utilities.text.Spinner.busy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.delay.html">utilities.text.Spinner.delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.formatter.html">utilities.text.Spinner.formatter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.process.html">utilities.text.Spinner.process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.text.Spinner.stream.html">utilities.text.Spinner.stream</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="structures.databases.LocalDatabase.html" class="nav-link">structures.databases.LocalDatabase</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">structures.d...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="structures-databases-localdatabase-get-default-poisson-map">
+<h1>structures.databases.LocalDatabase.get_default_poisson_map<a class="headerlink" href="#structures-databases-localdatabase-get-default-poisson-map" title="Link to this heading">#</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="structures.databases.LocalDatabase.get_default_poisson_map">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">LocalDatabase.</span></span><span class="sig-name descname"><span class="pre">get_default_poisson_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#structures.databases.LocalDatabase.get_default_poisson_map" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="structures.databases.LocalDatabase.create_poisson_map.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">structures.databases.LocalDatabase.create_poisson_map</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="structures.databases.LocalDatabase.get_poisson_map.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">structures.databases.LocalDatabase.get_poisson_map</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structures.databases.LocalDatabase.get_default_poisson_map"><code class="docutils literal notranslate"><span class="pre">LocalDatabase.get_default_poisson_map()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/_as_gen/structures.databases.LocalDatabase.get_default_poisson_map.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

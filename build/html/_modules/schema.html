@@ -1,0 +1,915 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>schema &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/schema';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">schema</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for schema</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Schema classes for backend management of various user-facing data classes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pathlib</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="k">as</span> <span class="nn">astro_coords</span>
+<span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">getFromDict</span><span class="p">,</span> <span class="n">mainlog</span><span class="p">,</span> <span class="n">setInDict</span>
+
+
+<span class="k">class</span> <span class="nc">_SCHEMAENTRY</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_location</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_set</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_location</span> <span class="o">=</span> <span class="n">dict_location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_set</span> <span class="o">=</span> <span class="n">allow_set</span>
+
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_location</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">getFromDict</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_location</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">setInDict</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_location</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_SpecialColumn</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">column_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">column_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_get_recursive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">k</span> <span class="ow">in</span> <span class="n">o</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> failed to appear in the schema at this level: KEYS=</span><span class="si">{</span><span class="n">o</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">o</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">o</span>
+
+
+<div class="viewcode-block" id="Schema">
+<a class="viewcode-back" href="../_as_gen/schema.Schema.html#schema.Schema">[docs]</a>
+<span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The archetypal schema class. This is effectively a wrapper on the :py:class:`dict` type with a few additional</span>
+<span class="sd">    utility methods.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This class is archetypal. Most methods are only functional for sub-classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Schema.__init__">
+<a class="viewcode-back" href="../_as_gen/schema.Schema.__init__.html#schema.Schema.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the generalized schema class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mapping: dict</span>
+<span class="sd">            The dictionary underlying this schema.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_valid</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;The mapping provided is not valid for the schema type.&quot;</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_descriptors</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># fetching descriptors.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_SCHEMAENTRY</span><span class="p">)]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_required_descriptors</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">m</span>
+            <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_SCHEMAENTRY</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">required</span> <span class="ow">is</span> <span class="kc">True</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_check_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">schema_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_get_descriptors</span><span class="p">():</span>
+            <span class="c1"># Iterate through the schema entries associated with this object.</span>
+            <span class="n">_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">schema_entry</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_ref</span><span class="o">.</span><span class="n">required</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_ref</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_entry</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Failed to find required entry </span><span class="si">{</span><span class="n">schema_entry</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">_ref</span><span class="o">.</span><span class="n">dict_location</span><span class="si">}</span><span class="s2"> in the provided schema.&quot;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_ref</span><span class="o">.</span><span class="n">required</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">_parent_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_ref</span><span class="o">.</span><span class="n">required</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">_parent_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="p">(</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_entry</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Failed to find required (BY PARENT </span><span class="si">{</span><span class="n">_ref</span><span class="o">.</span><span class="n">required</span><span class="si">}</span><span class="s2">) entry </span><span class="si">{</span><span class="n">schema_entry</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">_ref</span><span class="o">.</span><span class="n">dict_location</span><span class="si">}</span><span class="s2"> in the provided schema.&quot;</span>
+            <span class="n">_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_entry</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_ref</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">_val</span><span class="p">,</span> <span class="n">_ref</span><span class="o">.</span><span class="n">dtype</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">schema_entry</span><span class="si">}</span><span class="s2">, but it had type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_val</span><span class="p">)</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">_ref</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Schema.isvalid">
+<a class="viewcode-back" href="../_as_gen/schema.Schema.isvalid.html#schema.Schema.isvalid">[docs]</a>
+    <span class="k">def</span> <span class="nf">isvalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns ``True`` if the schema is a valid format; ``False`` otherwise.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_valid</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Schema.from_file">
+<a class="viewcode-back" href="../_as_gen/schema.Schema.from_file.html#schema.Schema.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a :py:class:`schema.Schema` instance from file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path: str</span>
+<span class="sd">            The path to the file to load as a schema.</span>
+<span class="sd">        format: str, optional</span>
+<span class="sd">            The format of the file being read. If ``None`` (default), then the format is determined based on the file extension.</span>
+<span class="sd">            Currently, ``yaml``, ``toml``, and ``json`` are all supported formats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># determine the format from the extension.</span>
+            <span class="n">_suffix</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+
+            <span class="k">if</span> <span class="n">_suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.YAML&quot;</span><span class="p">,</span> <span class="s2">&quot;.YML&quot;</span><span class="p">,</span> <span class="s2">&quot;.schema&quot;</span><span class="p">]:</span>
+                <span class="c1"># the format is yaml</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;yaml&quot;</span>
+            <span class="k">elif</span> <span class="n">_suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.tml&quot;</span><span class="p">,</span> <span class="s2">&quot;.toml&quot;</span><span class="p">,</span> <span class="s2">&quot;.TOML&quot;</span><span class="p">,</span> <span class="s2">&quot;.TML&quot;</span><span class="p">,</span> <span class="s2">&quot;.config&quot;</span><span class="p">,</span> <span class="s2">&quot;.cfg&quot;</span><span class="p">]:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;toml&quot;</span>
+            <span class="k">elif</span> <span class="n">_suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;JSON&quot;</span><span class="p">]:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The format </span><span class="si">{</span><span class="n">_suffix</span><span class="si">}</span><span class="s2"> is not recognized. Schema files must be .yaml, .json, or .toml.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_from_</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The format </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2"> is not recognized. Schema files must be .yaml, .json, or .toml.&quot;</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">yaml</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_toml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">tomllib</span> <span class="k">as</span> <span class="nn">toml</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">toml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">json</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_build_schema_template</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;construct a schema from the template&quot;&quot;&quot;</span>
+
+        <span class="n">_output_schema</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">schema_entry</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_required_descriptors</span><span class="p">():</span>
+            <span class="n">_loc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">schema_entry</span><span class="p">]</span><span class="o">.</span><span class="n">dict_location</span>
+            <span class="k">for</span> <span class="n">_l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_loc</span><span class="p">)):</span>
+                <span class="n">setInDict</span><span class="p">(</span><span class="n">_output_schema</span><span class="p">,</span> <span class="n">_loc</span><span class="p">[:</span><span class="n">_l</span><span class="p">],</span> <span class="p">{})</span>
+
+            <span class="n">setInDict</span><span class="p">(</span><span class="n">_output_schema</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">schema_entry</span><span class="p">]</span><span class="o">.</span><span class="n">dict_location</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_output_schema</span></div>
+
+
+
+<div class="viewcode-block" id="SourceTableSchema">
+<a class="viewcode-back" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema">[docs]</a>
+<span class="k">class</span> <span class="nc">SourceTableSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Schema class for representing table naming conventions for :py:class:`table.SourceTable` objects.</span>
+
+<span class="sd">    The :py:class:`SourceTableSchema` informs :py:class:`table.SourceTable` of special roles for particular columns in the dataset.</span>
+<span class="sd">    Additionally, the schema controls the native coordinate system, and the source type mapping from the native convention of the</span>
+<span class="sd">    source table to the SIMBAD convention adopted in pyXMIP.</span>
+
+<span class="sd">    .. admonition:: Format</span>
+
+<span class="sd">        The format of the :py:class:`SourceTableSchema` contains 3 top-level headers:</span>
+
+<span class="sd">        - ``column_map``: contains mappings from special ``pyXMIP`` column names to their equivalent in the native table.</span>
+<span class="sd">          - Special keys are ``Z``, ``NAME``, ``TYPE``, ``RA``, ``DEC``, ``L``, ``B``.</span>
+<span class="sd">        - ``settings``: contains the default settings for the specified schema.</span>
+<span class="sd">          - ``default_coord_system``: The default coordinate frame (represented as a string).</span>
+<span class="sd">        - ``object_map``: contains each of the possible object types from the native dataset and corresponds to the SIMBAD convention used</span>
+<span class="sd">          in ``pyXMIP``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_coordinate_requirements</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">astro_coords</span><span class="o">.</span><span class="n">ICRS</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">,</span> <span class="s2">&quot;DEC&quot;</span><span class="p">],</span>
+        <span class="n">astro_coords</span><span class="o">.</span><span class="n">Galactic</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">_expected_special_columns</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;REDSHIFT&quot;</span><span class="p">,</span> <span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="s2">&quot;BEST_Z&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;TYPE&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;TYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;object_type&quot;</span><span class="p">,</span> <span class="s2">&quot;OBJECT_TYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;OTYPES&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;NAME&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;OBJECT&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;OBJECT_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;IAUNAME&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;RA&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;DEC&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;lii&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;LII&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;bii&quot;</span><span class="p">,</span> <span class="s2">&quot;BII&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="c1"># -- Construct the attributes -- #</span>
+    <span class="n">column_map</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">allow_set</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">default_coord_system</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;settings&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">allow_set</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">object_map</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">allow_set</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># -- Constructing the schema column map accessors -- #</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">TYPE</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">RA</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">DEC</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">_SpecialColumn</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inv_column_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The inverse column map, now with keys selected from the native columns and keys for the special columns of pyXMIP.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The inverse column map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinate_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The specific coordinate system of the :py:class:`schema.SourceTableSchema` instance.</span>
+
+<span class="sd">        If :py:meth:`schema.SourceTableSchema.coordinate_system` is set to another value, it may be either ``str`` or</span>
+<span class="sd">        :py:class:`astropy.coordinates.GenericFrame`, and must be consistent with the available columns as specified by the ``colmap``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :py:class:`astropy.coordinates.GenericFrame`</span>
+<span class="sd">            The correct coordinate frame object for the coordinate system used by the schema.</span>
+<span class="sd">        list</span>
+<span class="sd">            The table column names corresponding to the coordinate system.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_cs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_coord_system</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_cs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_coordinate_frames</span><span class="p">()[</span><span class="n">_cs</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinate_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The columns representing the current coordinate system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinate_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The specific coordinate system currently corresponding to this schema.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@coordinate_system</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">coordinate_system</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># check the typing.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">GenericFrame</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set coordinate system to type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check validity</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="n">astro_coords</span><span class="p">,</span> <span class="n">value</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The coordinate frame </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not in astropy&#39;s coordinate systems.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_coordinate_frames</span><span class="p">()</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The coordinate frame </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not a valid coordinate frame for this schema.&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_coord_system</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="SourceTableSchema.available_coordinate_frames">
+<a class="viewcode-back" href="../_as_gen/schema.SourceTableSchema.available_coordinate_frames.html#schema.SourceTableSchema.available_coordinate_frames">[docs]</a>
+    <span class="k">def</span> <span class="nf">available_coordinate_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List the available :py:class:`astropy.coordinates.GenericFrame` types which can be associated with this schema given</span>
+<span class="sd">        the available data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The available coordinate frames.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_available_coordinate_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_coordinate_frames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_map</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_available_coordinate_frames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_available_coordinate_frames</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_map</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_available_coordinate_frames</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">_available_coordinate_frames</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_coordinate_frames</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">column_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;searches the column map for allowed values&quot;&quot;&quot;</span>
+        <span class="n">_allowed_coordinate_frames</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_coordinate_requirements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">column_map</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">v</span><span class="p">):</span>
+                <span class="c1"># this is an allowed coordinate mapping</span>
+                <span class="n">_allowed_coordinate_frames</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_map</span><span class="p">[</span><span class="n">_v</span><span class="p">]</span> <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_allowed_coordinate_frames</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_allowed_coordinate_frames</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SourceTableSchema.construct">
+<a class="viewcode-back" href="../_as_gen/schema.SourceTableSchema.construct.html#schema.SourceTableSchema.construct">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a &quot;best-guess&quot; schema from a table by deducing the meaning of it&#39;s columns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: :py:class:`structures.table.SourceTable`</span>
+<span class="sd">            The table on which to determine the best guess schema.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :py:class:`SourceTableSchema`</span>
+<span class="sd">            The finalized guess schema.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot; [SourceTableSchema] Constructing </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> from fits table.&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># ----------------------------------------------#</span>
+        <span class="c1"># setup components</span>
+        <span class="n">_table_columns</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">_constructed_schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_schema_template</span><span class="p">()</span>
+
+        <span class="n">_default_coordinate_frame</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="c1"># Managing special columns</span>
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;column_map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_expected_special_columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_matched_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">_table_columns</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_matched_keys</span><span class="p">):</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot; [SourceTableSchema] Identified special key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with column </span><span class="si">{</span><span class="n">_matched_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> of the table.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;column_map&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_matched_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot; [SourceTableSchema] Failed to identify automatic match for special column </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="c1"># Managing object maps</span>
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;object_map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="c1"># Managing coordinates</span>
+        <span class="c1"># ----------------------------------------------------------------------#</span>
+        <span class="n">_construction_coords_avail</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_coordinate_frames</span><span class="p">(</span>
+            <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;column_map&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">_construction_coords_avail</span>
+        <span class="p">),</span> <span class="s2">&quot; [SourceTableSchema] No valid coordinate system could be determined.&quot;</span>
+
+        <span class="n">_default_coordinate_frame</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_construction_coords_avail</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;settings&quot;</span><span class="p">][</span>
+            <span class="s2">&quot;default_coord_system&quot;</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">_default_coordinate_frame</span>
+
+        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot; [SourceTableSchema] Located </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">_construction_coords_avail</span><span class="p">)</span><span class="si">}</span><span class="s2"> possible coordinate frames. Selected </span><span class="si">{</span><span class="n">_default_coordinate_frame</span><span class="si">}</span><span class="s2"> as default.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_construction_coords_avail</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">_constructed_schema</span><span class="p">[</span><span class="s2">&quot;column_map&quot;</span><span class="p">][</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_constructed_schema</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReductionSchema">
+<a class="viewcode-back" href="../_as_gen/schema.ReductionSchema.html#schema.ReductionSchema">[docs]</a>
+<span class="k">class</span> <span class="nc">ReductionSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
+    <span class="c1"># -- RUN_PARAMS -- #</span>
+    <span class="n">RUN_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">REFDBS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+    <span class="n">POISSON</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">INSTRUMENTAL</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">OTYPES</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="c1"># -- IO PARAMS -- #</span>
+    <span class="n">IO_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">DBPATH</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;IO_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="c1"># -- POISSON PARAMS -- #</span>
+    <span class="n">POISSON_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="s2">&quot;POISSON&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># -- INSTRUMENT PARAMS -- #</span>
+    <span class="n">INSTRUMENT_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="s2">&quot;INSTRUMENTAL&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">PSF</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;INSTRUMENT_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="s2">&quot;INSTRUMENT_PARAMS&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Quantity</span>
+    <span class="p">)</span>
+
+    <span class="c1"># -- OBJECT PARAMS -- #</span>
+    <span class="n">OBJECT_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="s2">&quot;OTYPES&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">ReductionSchema</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;INSTRUMENTAL&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="s2">&quot;IO_PARAMS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;DBPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;INSTRUMENT_PARAMS&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
