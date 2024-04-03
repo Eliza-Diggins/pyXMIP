@@ -24,7 +24,7 @@ Structures
 
     structures.databases
     structures.table
-    structures.skymap
+    structures.map
 
 Other
 -----
