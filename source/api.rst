@@ -11,7 +11,8 @@ Statistics
     :template: module.rst
     :nosignatures:
 
-    stats.density
+    stats.utilities
+    stats.gaussian_process
 
 Structures
 ----------
@@ -36,6 +37,7 @@ Other
     :nosignatures:
 
     schema
+    cross_reference
     utilities.core
     utilities.mp_utils
     utilities.text
