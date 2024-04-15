@@ -22,6 +22,7 @@
    
       Map
       MapAtlas
+      PoissonAtlas
       StatAtlas
    
    

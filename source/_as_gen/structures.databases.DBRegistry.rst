@@ -15,6 +15,7 @@ structures.databases.DBRegistry
       :recursive:
    
       ~DBRegistry.__init__
+      ~DBRegistry.as_list
       ~DBRegistry.clear
       ~DBRegistry.copy
       ~DBRegistry.fromkeys

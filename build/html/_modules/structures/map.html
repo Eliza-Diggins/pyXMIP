@@ -369,8 +369,14 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for structures.map</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Skymapping handlers and classes for pyXMIP.</span>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for representing functions on the sky.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">The :py:mod:`structures.map` module provides an interface for managing data on the sky. The :py:class:`structures.map.MapAtlas` class</span>
+<span class="sd">represents a collection of :py:class:`structures.map.Map` objects. Each of these maps acts like a function of sky position.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pathlib</span> <span class="k">as</span> <span class="nn">pt</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -387,6 +393,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">tqdm.contrib.logging</span> <span class="kn">import</span> <span class="n">logging_redirect_tqdm</span>
 
 <span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">enforce_units</span><span class="p">,</span> <span class="n">mainlog</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.geo</span> <span class="kn">import</span> <span class="n">convert_coordinates</span><span class="p">,</span> <span class="n">convert_skycoord</span>
 
 
 <span class="k">class</span> <span class="nc">_AtlasHeaderParam</span><span class="p">:</span>
@@ -408,6 +415,30 @@ document.write(`
     <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
             <span class="n">hudl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">hudl</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_MapHeaderParam</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span>
+                    <span class="n">instance</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">hudl</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">hudl</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
+            <span class="n">hudl</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="n">hudl</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
 
@@ -485,8 +516,19 @@ document.write(`
 <span class="sd">        -------</span>
 <span class="sd">        :py:class:`Map`</span>
 
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        Let&#39;s try loading the galaxies poisson map for the SIMBAD database.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from pyXMIP.structures.databases import SIMBAD</span>
+<span class="sd">            poisson_atlas = SIMBAD.get_default_poisson_atlas() # load the default poisson map.</span>
+<span class="sd">            map = poisson_atlas.get_map(&#39;G&#39;)</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span></div>
 
 
     <span class="nd">@property</span>
@@ -530,7 +572,9 @@ document.write(`
     <span class="k">def</span> <span class="nf">pixel_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The SkyCoord positions of the healpix pixels.&quot;&quot;&quot;</span>
         <span class="n">_th</span><span class="p">,</span> <span class="n">_ph</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">pix2ang</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">))</span>
-        <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span> <span class="o">=</span> <span class="n">_healpix_coordinates_to_spherical</span><span class="p">(</span><span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">)</span>
+        <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span> <span class="o">=</span> <span class="n">convert_coordinates</span><span class="p">(</span>
+            <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">from_system</span><span class="o">=</span><span class="s2">&quot;healpix&quot;</span><span class="p">,</span> <span class="n">to_system</span><span class="o">=</span><span class="s2">&quot;latlon&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rad&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MapAtlas.generate">
@@ -647,7 +691,19 @@ document.write(`
         <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="n">pt</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
         <span class="k">del</span> <span class="bp">self</span></div>
-</div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_descriptors</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># fetching descriptors.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_AtlasHeaderParam</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_update_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># fetch the attached descriptors</span>
+        <span class="n">descriptors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_descriptors</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">descriptor</span> <span class="ow">in</span> <span class="n">descriptors</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">descriptor</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># resets everything.</span></div>
 
 
 
@@ -684,6 +740,13 @@ document.write(`
 <div class="viewcode-block" id="StatAtlas.get_points">
 <a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.get_points.html#structures.map.StatAtlas.get_points">[docs]</a>
     <span class="k">def</span> <span class="nf">get_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the underlying ``COUNTS`` table for the atlas.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :py:class:`astropy.table.Table`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">warnings</span>
 
         <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
@@ -700,10 +763,10 @@ document.write(`
         <span class="p">)</span>
 
         <span class="n">_p</span><span class="p">,</span> <span class="n">_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">count_positions</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">wrap_at</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-            <span class="n">count_positions</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+            <span class="n">count_positions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">)</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+            <span class="n">count_positions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">)</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">_p</span><span class="p">,</span> <span class="n">_t</span> <span class="o">=</span> <span class="n">_spherical_coordinates_to_healpix</span><span class="p">(</span><span class="n">_p</span><span class="p">,</span> <span class="n">_t</span><span class="p">)</span>
+        <span class="n">_p</span><span class="p">,</span> <span class="n">_t</span> <span class="o">=</span> <span class="n">convert_coordinates</span><span class="p">(</span><span class="n">_p</span><span class="p">,</span> <span class="n">_t</span><span class="p">,</span> <span class="n">from_system</span><span class="o">=</span><span class="s2">&quot;latlon&quot;</span><span class="p">,</span> <span class="n">to_system</span><span class="o">=</span><span class="s2">&quot;healpix&quot;</span><span class="p">)</span>
 
         <span class="n">_out</span><span class="p">[</span><span class="s2">&quot;PIX_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">_t</span><span class="p">,</span> <span class="n">_p</span><span class="p">)</span>
 
@@ -764,16 +827,18 @@ document.write(`
 
 <div class="viewcode-block" id="StatAtlas.reset">
 <a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.reset.html#structures.map.StatAtlas.reset">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resetting Atlas at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DBNAME</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="k">def</span> <span class="nf">_write_build_output_to_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">output_object</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># =========================================== #</span>
         <span class="c1"># Writing the map to an HDU of the correct name</span>
+        <span class="n">object_type</span> <span class="o">=</span> <span class="n">object_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">object_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
                 <span class="c1"># The map already exists and we cannot overwrite.</span>
@@ -790,702 +855,10 @@ document.write(`
             <span class="n">image_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;ISMAP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">image_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;METH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_object</span><span class="o">.</span><span class="n">method</span>
             <span class="n">image_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asctime</span><span class="p">()</span>
+            <span class="n">image_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CSYS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CSYS</span>
 
             <span class="n">hdul</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_hdu</span><span class="p">)</span>
             <span class="n">hdul</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-<div class="viewcode-block" id="StatAtlas.build_poisson_map">
-<a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.build_poisson_map.html#structures.map.StatAtlas.build_poisson_map">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_poisson_map</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;GP&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Build a Poisson map in the Atlas for a specific object type.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        object_type: str</span>
-<span class="sd">            A particular object type in this PoissonAtlas from which to generate the map.</span>
-<span class="sd">        method: str</span>
-<span class="sd">            The method by which to calculate the map.</span>
-<span class="sd">        overwrite: bool, optional</span>
-<span class="sd">            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?</span>
-<span class="sd">        inplace: bool, optional</span>
-<span class="sd">            [Default ``True``]. If ``True``, the map is written directly to file. If ``False`` it is returned to the user.</span>
-<span class="sd">        *args</span>
-<span class="sd">            Additional arguments.</span>
-<span class="sd">        **kwargs</span>
-<span class="sd">            Additional keyword arguments.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">_count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
-        <span class="n">_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;build_poisson_map_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating </span><span class="si">{</span><span class="n">object_type</span><span class="si">}</span><span class="s2"> map using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="c1"># ======================================================= #</span>
-        <span class="c1"># Managing different methods</span>
-        <span class="c1"># ======================================================= #</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;MAP&quot;</span><span class="p">]:</span>
-            <span class="c1"># These methods take object type, *args, **kwargs as their arguments.</span>
-            <span class="c1">#</span>
-            <span class="c1">#</span>
-            <span class="n">_output</span> <span class="o">=</span> <span class="n">_method</span><span class="p">(</span><span class="n">object_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># These methods take X,Y, *args, **kwargs</span>
-            <span class="c1">#</span>
-            <span class="c1">#</span>
-            <span class="n">positions</span> <span class="o">=</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span>
-                <span class="n">ra</span><span class="o">=</span><span class="n">_count_data</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">_count_data</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span>
-            <span class="p">)</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span> <span class="n">positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">rad</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">_r</span> <span class="o">=</span> <span class="n">_count_data</span><span class="p">[</span><span class="s2">&quot;RAD&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">arcmin</span>
-            <span class="n">Y</span> <span class="o">=</span> <span class="n">_count_data</span><span class="p">[</span><span class="n">object_type</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">_r</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;rad&quot;</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-
-            <span class="n">_output</span> <span class="o">=</span> <span class="n">_method</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="c1"># ===================================================== #</span>
-        <span class="c1"># Writing data</span>
-        <span class="c1"># ===================================================== #</span>
-        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_write_build_output_to_fits</span><span class="p">(</span><span class="n">object_type</span><span class="p">,</span> <span class="n">_output</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_output</span></div>
-
-
-<div class="viewcode-block" id="StatAtlas.build_poisson_maps">
-<a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.build_poisson_maps.html#structures.map.StatAtlas.build_poisson_maps">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_poisson_maps</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">object_types</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
-        <span class="n">methods</span><span class="o">=</span><span class="s2">&quot;MAP&quot;</span><span class="p">,</span>
-        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">build_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">build_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Construct all or a subset of the available object type Poisson maps for this Atlas.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        object_types: list of str or str, optional</span>
-<span class="sd">            The object types to generate Poisson maps for. If ``all`` (default), then all of the object types in the ``COUNTS``</span>
-<span class="sd">            table are used.</span>
-<span class="sd">        methods: list of str or str, optional</span>
-<span class="sd">            The method to use for the map generation. If this is a list, it must match the length of ``object_types`` and each</span>
-<span class="sd">            of the Poisson maps will be generated using the specified method. If ``methods`` is a single ``str``, then a single</span>
-<span class="sd">            method will be used for all of the generation procedures.</span>
-<span class="sd">        build_args: list of list, optional</span>
-<span class="sd">            List of additional arguments to pass to each of the generation methods individually. By default, this is ``None``, and will result</span>
-<span class="sd">            in empty lists being appended to the arguments of each generation method. If specified, this parameter must be a list of length ``object_types.size``</span>
-<span class="sd">            with each element also being a list (or arbitrary size) containing any additional args to pass.</span>
-<span class="sd">        build_kwargs: list of dict, optional</span>
-<span class="sd">            Similar to ``build_args``, ``build_kwargs`` may be specified to pass particular keyword arguments along to the individual generation methods.</span>
-<span class="sd">            If left unspecified, no kwargs are passed to the sub-generation processes.</span>
-<span class="sd">        overwrite: bool, optional</span>
-<span class="sd">            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?</span>
-<span class="sd">        **kwargs</span>
-<span class="sd">            Additional keyword arguments.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># ======================================================================== #</span>
-        <span class="c1"># Setup</span>
-        <span class="c1"># ======================================================================== #</span>
-        <span class="n">_count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">object_types</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-            <span class="c1"># the object types need to be grabbed. Removing RA,DEC,RAD,PIX_ID,TIME</span>
-            <span class="n">object_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_count_data</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">object_types</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">object_type</span>
-                <span class="k">for</span> <span class="n">object_type</span> <span class="ow">in</span> <span class="n">object_types</span>
-                <span class="k">if</span> <span class="n">object_type</span> <span class="ow">in</span> <span class="n">_count_data</span><span class="o">.</span><span class="n">columns</span>
-            <span class="p">]</span>
-
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating Poisson maps for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> object types...&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Managing the methods</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">methods</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-                <span class="n">object_types</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Attempted to pass </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span><span class="si">}</span><span class="s2"> methods for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> object types.&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Kwarg `methods` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span><span class="si">}</span><span class="s2"> when it was expected to be `str` or `Collection`.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Managing the build args / kwargs</span>
-        <span class="k">if</span> <span class="n">build_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">build_args</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">))]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">build_args</span><span class="p">,</span> <span class="n">Collection</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Kwarg `build_args` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">build_args</span><span class="p">)</span><span class="si">}</span><span class="s2"> which is not a subclass of `Collection`.&quot;</span>
-
-        <span class="k">if</span> <span class="n">build_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">build_kwargs</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">))]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">build_args</span><span class="p">,</span> <span class="n">Collection</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Kwarg `build_kwargs` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">build_args</span><span class="p">)</span><span class="si">}</span><span class="s2"> which is not a subclass of `Collection`.&quot;</span>
-
-        <span class="c1"># ======================================================================== #</span>
-        <span class="c1"># Map Generation Processes</span>
-        <span class="c1"># ======================================================================== #</span>
-        <span class="k">with</span> <span class="n">logging_redirect_tqdm</span><span class="p">(</span><span class="n">loggers</span><span class="o">=</span><span class="p">[</span><span class="n">mainlog</span><span class="p">]):</span>
-            <span class="k">for</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">bargs</span><span class="p">,</span> <span class="n">bkwargs</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="nb">zip</span><span class="p">(</span><span class="n">object_types</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">build_args</span><span class="p">,</span> <span class="n">build_kwargs</span><span class="p">),</span>
-                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">),</span>
-                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Constructing Poisson Maps&quot;</span><span class="p">,</span>
-                <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
-                <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">):</span>
-                <span class="n">bkwargs</span><span class="p">[</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                    <span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="n">bkwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-                <span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span>
-                    <span class="n">object_type</span><span class="p">,</span>
-                    <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-                    <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
-                    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="o">*</span><span class="n">bargs</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">bkwargs</span><span class="p">,</span>
-                <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="StatAtlas.build_poisson_map_gp">
-<a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.build_poisson_map_gp.html#structures.map.StatAtlas.build_poisson_map_gp">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_poisson_map_gp</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">training_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Build the poisson map using a Haversine based Gaussian Process regression methodology.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        X: array-like</span>
-<span class="sd">            An array of size ``N,2`` containing the coordinates :math:`\phi,\theta` (in that order).</span>
-
-<span class="sd">            .. warning::</span>
-
-<span class="sd">                The coordinates MUST be in valid LAT/LON format: :math:`-\pi&lt;\phi&lt;\pi` and :math:`-\pi/2&lt;\theta&lt;\pi/2`.</span>
-<span class="sd">                If this is not done, then the Gaussian Process regression will fail to correctly compute distances between</span>
-<span class="sd">                points on the sphere and the resulting map may be entirely erroneous.</span>
-
-<span class="sd">        Y: array-like</span>
-<span class="sd">            The density values (``N,1``) at each of the provided coordinate positions.</span>
-
-<span class="sd">            .. hint::</span>
-
-<span class="sd">                Behind the scene, this is converted to the log-density to avoid issues with the GP regressor allowing</span>
-<span class="sd">                negative densities. It is then rectified after the GP has been created.</span>
-<span class="sd">        training_kw: dict</span>
-<span class="sd">            Training key-word arguments specific to this ML algorithm.</span>
-
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |</span>
-<span class="sd">            +===================================+=================================================+====================+========================+</span>
-<span class="sd">            | ``training_proportion``           | The proportion of the provided data to use as   | ``float``          | ``0.2``                |</span>
-<span class="sd">            |                                   | the training set.                               |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | ``cv_groups``                     | The number of groups to split the training      | ``int``            | ``5``                  |</span>
-<span class="sd">            |                                   | set into for cross-validation.                  |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-<span class="sd">            | ``length_scale``                  | The initial guess for the Haversine Kernel&#39;s    | ``float``          | ``1.0``                |</span>
-<span class="sd">            |                                   | characteristic length scale.                    |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-<span class="sd">            | ``length_scale_bounds``           | Bounds on the characteristic length scale.      | ``tuple``          | ``(1e-2,1e2)``         |</span>
-<span class="sd">            |                                   |                                                 |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-<span class="sd">            | ``alpha_cv``                      | The :math:`\alpha` values for the GP regressor  | ``list``           | Log spaced from        |</span>
-<span class="sd">            |                                   | to be compared during cross-validation.         | [if not bounds,    | ``1e-8`` to ``1e0``    |</span>
-<span class="sd">            |                                   | If a 2-``tuple``, then linearly spaced between  | then must match    |                        |</span>
-<span class="sd">            |                                   | bounds. Else, individual values.                | ``cv_groups`` ]    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-
-<span class="sd">        parallel_kw: dict</span>
-<span class="sd">            Additional kwargs to pass for parallelism capabilities.</span>
-
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |</span>
-<span class="sd">            +===================================+=================================================+====================+========================+</span>
-<span class="sd">            | ``multiprocess``                  | If ``True``, then multi-core processing is      | ``bool``           | ``False``              |</span>
-<span class="sd">            |                                   | enabled. Otherwise single-core.                 |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | ``nproc``                         | The number of processors to utilize.            | ``int``            | ``n_cpu``              |</span>
-<span class="sd">            |                                   | [Cannot exceed ``cv_groups``]                   |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
-        <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-
-        <span class="kn">from</span> <span class="nn">pyXMIP.stats._gaussian_process</span> <span class="kn">import</span> <span class="n">Haversine_RBF</span>
-
-        <span class="c1"># -- Defaults -- #</span>
-        <span class="n">_default_training_kw</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;training_proportion&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
-            <span class="s2">&quot;cv_groups&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-            <span class="s2">&quot;length_scale&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;length_scale_bounds&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">),</span>
-            <span class="s2">&quot;alpha_cv&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
-        <span class="p">}</span>
-        <span class="n">_default_parallel_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;multiprocess&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;nproc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
-
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generating map from GPR (HVSINE-RBF).&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">logging_redirect_tqdm</span><span class="p">(</span><span class="n">loggers</span><span class="o">=</span><span class="p">[</span><span class="n">mainlog</span><span class="p">]):</span>
-            <span class="n">_process_progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">total</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;GP HVSINE-RBF - Setup&quot;</span><span class="p">,</span>
-                <span class="n">bar_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{desc}</span><span class="s2">: </span><span class="si">{percentage:3.0f}</span><span class="s2">%|</span><span class="si">{bar}</span><span class="s2">|&quot;</span><span class="p">,</span>
-                <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
-                <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># Arguments / kwargs</span>
-                <span class="n">training_kw</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="p">(</span>
-                        <span class="n">v</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="n">training_kw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">training_kw</span><span class="p">)</span>
-                        <span class="k">else</span> <span class="n">training_kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_default_training_kw</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">}</span>
-                <span class="n">parallel_kw</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="p">(</span>
-                        <span class="n">v</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="n">parallel_kw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parallel_kw</span><span class="p">)</span>
-                        <span class="k">else</span> <span class="n">parallel_kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_default_parallel_kw</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">}</span>
-
-                <span class="c1"># X should be Nx2, Y should be Nx1 in shape.</span>
-                <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="p">)</span>  <span class="c1"># This will yield an error if the arrays are not correct.</span>
-
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># splitting training data and testing data.</span>
-                <span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">X_TEST</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">,</span> <span class="n">Y_TEST</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-                    <span class="n">X</span><span class="p">,</span>
-                    <span class="n">Y</span><span class="p">,</span>
-                    <span class="n">train_size</span><span class="o">=</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;training_proportion&quot;</span><span class="p">],</span>
-                    <span class="n">shuffle</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;shuffle_features&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-                    <span class="n">random_state</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;random_state&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-                <span class="p">)</span>
-
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># Generating the Kernel and Cross-validating.</span>
-                <span class="n">kernel</span> <span class="o">=</span> <span class="n">Haversine_RBF</span><span class="p">(</span>
-                    <span class="n">length_scale</span><span class="o">=</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;length_scale&quot;</span><span class="p">],</span>
-                    <span class="n">length_scale_bounds</span><span class="o">=</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;length_scale_bounds&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
-
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;GP HVSINE-RBF - Cross Validating&quot;</span>
-                <span class="c1"># If there are no CV groups, we just fit the regressor and proceed.</span>
-                <span class="k">if</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;cv_groups&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
-                    <span class="c1"># cross-validation doesn&#39;t occur. We simply proceed to fit.</span>
-                    <span class="n">_gaussian_process_regressor</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span>
-                        <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-                    <span class="p">)</span>
-                    <span class="n">_cv_return_data</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># cross-validation does occur</span>
-                    <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
-
-                    <span class="n">_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
-                        <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="kc">None</span>
-                    <span class="p">)</span>  <span class="c1"># Remove alpha if it is present to allow for X-val.</span>
-                    <span class="n">_gaussian_process_regressor</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span>
-                        <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-                    <span class="p">)</span>
-
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="nb">len</span><span class="p">(</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;alpha_cv&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
-                        <span class="ow">and</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;cv_groups&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span>
-                    <span class="p">):</span>
-                        <span class="c1"># we have a query region.</span>
-                        <span class="n">_gscv</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
-                            <span class="n">_gaussian_process_regressor</span><span class="p">,</span>
-                            <span class="p">{</span>
-                                <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span>
-                                    <span class="o">*</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;alpha_cv&quot;</span><span class="p">],</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;cv_groups&quot;</span><span class="p">]</span>
-                                <span class="p">)</span>
-                            <span class="p">},</span>
-                        <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">_gscv</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
-                            <span class="n">_gaussian_process_regressor</span><span class="p">,</span>
-                            <span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;alpha_cv&quot;</span><span class="p">]},</span>
-                        <span class="p">)</span>
-
-                    <span class="c1"># pulling scores</span>
-                    <span class="n">_gscv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">)</span>
-                    <span class="n">_cv_return_data</span> <span class="o">=</span> <span class="n">_gscv</span><span class="o">.</span><span class="n">cv_results_</span>
-                    <span class="n">_alpha_fixed</span> <span class="o">=</span> <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;param_alpha&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                            <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">]</span>
-                            <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">])</span>
-                        <span class="p">)</span>
-                    <span class="p">]</span>
-
-                    <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
-                    <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="s2">&quot;GP HVSINE-RBF - Fitting to training set&quot;</span>
-                    <span class="p">)</span>
-                    <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;CV determined alpha to be </span><span class="si">{</span><span class="n">_alpha_fixed</span><span class="si">}</span><span class="s2"> with mean test score </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s1">&#39;mean_test_score&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># creating the regressor</span>
-                    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_alpha_fixed</span>
-                    <span class="n">_gaussian_process_regressor</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span>
-                        <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-                    <span class="p">)</span>
-
-                <span class="c1"># ===============================================================</span>
-                <span class="c1"># Training fully</span>
-                <span class="n">_gaussian_process_regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">)</span>
-
-                <span class="c1"># ===============================================================</span>
-                <span class="c1"># Getting scores.</span>
-                <span class="n">_return_score</span> <span class="o">=</span> <span class="n">_gaussian_process_regressor</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_TEST</span><span class="p">,</span> <span class="n">Y_TEST</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-                <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fit to training set yielded score of </span><span class="si">{</span><span class="n">_return_score</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;GP HVSINE-RBF - Predicting Poisson Map&quot;</span>
-                <span class="c1"># =================================================================</span>
-                <span class="c1"># Generating the actual sky map.</span>
-                <span class="n">map_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-                    <span class="p">]</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-                <span class="n">map_values</span><span class="p">,</span> <span class="n">map_std</span> <span class="o">=</span> <span class="n">_gaussian_process_regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
-                    <span class="n">map_positions</span><span class="p">,</span> <span class="n">return_std</span><span class="o">=</span><span class="kc">True</span>
-                <span class="p">)</span>
-
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GP HVSINE-RBF - [COMPLETE]&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
-            <span class="nb">map</span><span class="o">=</span><span class="n">map_values</span><span class="p">,</span>
-            <span class="n">std_map</span><span class="o">=</span><span class="n">map_std</span><span class="p">,</span>
-            <span class="n">training_info</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">_return_score</span><span class="p">,</span> <span class="s2">&quot;cv_info&quot;</span><span class="p">:</span> <span class="n">_cv_return_data</span><span class="p">},</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;GP&quot;</span><span class="p">,</span>
-            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">_alpha_fixed</span><span class="p">},</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="StatAtlas.build_poisson_map_NNR">
-<a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.build_poisson_map_NNR.html#structures.map.StatAtlas.build_poisson_map_NNR">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_poisson_map_NNR</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">training_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Build the poisson map using a Haversine based KNN radius matching approach.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        X: array-like</span>
-<span class="sd">            An array of size ``N,2`` containing the coordinates :math:`\phi,\theta` (in that order).</span>
-
-<span class="sd">            .. warning::</span>
-
-<span class="sd">                The coordinates MUST be in valid LAT/LON format: :math:`-\pi&lt;\phi&lt;\pi` and :math:`-\pi/2&lt;\theta&lt;\pi/2`.</span>
-<span class="sd">                If this is not done, then the Gaussian Process regression will fail to correctly compute distances between</span>
-<span class="sd">                points on the sphere and the resulting map may be entirely erroneous.</span>
-
-<span class="sd">        Y: array-like</span>
-<span class="sd">            The density values (``N,1``) at each of the provided coordinate positions.</span>
-
-<span class="sd">            .. hint::</span>
-
-<span class="sd">                Behind the scene, this is converted to the log-density to avoid issues with the GP regressor allowing</span>
-<span class="sd">                negative densities. It is then rectified after the GP has been created.</span>
-<span class="sd">        training_kw: dict</span>
-<span class="sd">            Training key-word arguments specific to this ML algorithm.</span>
-
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |</span>
-<span class="sd">            +===================================+=================================================+====================+========================+</span>
-<span class="sd">            | ``training_proportion``           | The proportion of the provided data to use as   | ``float``          | ``0.2``                |</span>
-<span class="sd">            |                                   | the training set.                               |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | ``cv_groups``                     | The number of groups to split the training      | ``int``            | ``5``                  |</span>
-<span class="sd">            |                                   | set into for cross-validation.                  |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-<span class="sd">            | ``radius``                        | The initial guess for the KNN search radius.    | ``float``          | ``1.0``                |</span>
-<span class="sd">            |                                   |                                                 |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-<span class="sd">            | ``radius_bounds``                 | Bounds on the characteristic KNNR scale (deg)   | ``tuple``          | ``(0.5,10)``           |</span>
-<span class="sd">            |                                   |                                                 |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-
-<span class="sd">        parallel_kw: dict</span>
-<span class="sd">            Additional kwargs to pass for parallelism capabilities.</span>
-
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | Training Key Word Argument        | Description                                     | Expected Type      | Default                |</span>
-<span class="sd">            +===================================+=================================================+====================+========================+</span>
-<span class="sd">            | ``multiprocess``                  | If ``True``, then multi-core processing is      | ``bool``           | ``False``              |</span>
-<span class="sd">            |                                   | enabled. Otherwise single-core.                 |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+--------------------+------------------------+</span>
-<span class="sd">            | ``nproc``                         | The number of processors to utilize.            | ``int``            | ``n_cpu``              |</span>
-<span class="sd">            |                                   | [Cannot exceed ``cv_groups``]                   |                    |                        |</span>
-<span class="sd">            +-----------------------------------+-------------------------------------------------+---------------------------------------------+</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-        <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">RadiusNeighborsRegressor</span>
-
-        <span class="c1"># -- Defaults -- #</span>
-        <span class="n">_default_training_kw</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;training_proportion&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
-            <span class="s2">&quot;cv_groups&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;radius_bounds&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;rad&quot;</span><span class="p">)),</span>
-        <span class="p">}</span>
-        <span class="n">_default_parallel_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;multiprocess&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;nproc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
-
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generating map from NNR (HVSINE).&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">logging_redirect_tqdm</span><span class="p">(</span><span class="n">loggers</span><span class="o">=</span><span class="p">[</span><span class="n">mainlog</span><span class="p">]):</span>
-            <span class="n">_process_progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">total</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;NNR HVSINE - Setup&quot;</span><span class="p">,</span>
-                <span class="n">bar_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{desc}</span><span class="s2">: </span><span class="si">{percentage:3.0f}</span><span class="s2">%|</span><span class="si">{bar}</span><span class="s2">|&quot;</span><span class="p">,</span>
-                <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
-                <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># Arguments / kwargs</span>
-                <span class="n">training_kw</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="p">(</span>
-                        <span class="n">v</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="n">training_kw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">training_kw</span><span class="p">)</span>
-                        <span class="k">else</span> <span class="n">training_kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_default_training_kw</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">}</span>
-                <span class="n">parallel_kw</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="p">(</span>
-                        <span class="n">v</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="n">parallel_kw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parallel_kw</span><span class="p">)</span>
-                        <span class="k">else</span> <span class="n">parallel_kw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_default_parallel_kw</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">}</span>
-
-                <span class="c1"># X should be Nx2, Y should be Nx1 in shape.</span>
-                <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="p">)</span>  <span class="c1"># This will yield an error if the arrays are not correct.</span>
-
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># splitting training data and testing data.</span>
-                <span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">X_TEST</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">,</span> <span class="n">Y_TEST</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-                    <span class="n">X</span><span class="p">,</span>
-                    <span class="n">Y</span><span class="p">,</span>
-                    <span class="n">train_size</span><span class="o">=</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;training_proportion&quot;</span><span class="p">],</span>
-                    <span class="n">shuffle</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;shuffle_features&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-                    <span class="n">random_state</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;random_state&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-                <span class="p">)</span>
-
-                <span class="c1"># ================================================== #</span>
-                <span class="c1"># Generating the Kernel and Cross-validating.</span>
-
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;NNR HVSINE - Cross Validating&quot;</span>
-                <span class="c1"># If there are no CV groups, we just fit the regressor and proceed.</span>
-                <span class="k">if</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;cv_groups&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
-                    <span class="c1"># cross-validation doesn&#39;t occur. We simply proceed to fit.</span>
-                    <span class="n">_nnr_regressor</span> <span class="o">=</span> <span class="n">RadiusNeighborsRegressor</span><span class="p">(</span>
-                        <span class="n">radius</span><span class="o">=</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">],</span>
-                        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;haversine&quot;</span><span class="p">,</span>
-                        <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;brute&quot;</span><span class="p">,</span>
-                        <span class="n">weights</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="s2">&quot;distance&quot;</span><span class="p">),</span>
-                        <span class="n">n_jobs</span><span class="o">=</span><span class="p">(</span>
-                            <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;nproc&quot;</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;multiprocess&quot;</span><span class="p">]</span>
-                            <span class="k">else</span> <span class="kc">None</span>
-                        <span class="p">),</span>
-                    <span class="p">)</span>
-                    <span class="n">_cv_return_data</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># cross-validation does occur</span>
-                    <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
-
-                    <span class="n">_nnr_regressor</span> <span class="o">=</span> <span class="n">RadiusNeighborsRegressor</span><span class="p">(</span>
-                        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;haversine&quot;</span><span class="p">,</span>
-                        <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;brute&quot;</span><span class="p">,</span>
-                        <span class="n">weights</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="s2">&quot;distance&quot;</span><span class="p">),</span>
-                        <span class="n">n_jobs</span><span class="o">=</span><span class="p">(</span>
-                            <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;nproc&quot;</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;multiprocess&quot;</span><span class="p">]</span>
-                            <span class="k">else</span> <span class="kc">None</span>
-                        <span class="p">),</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># we have a query region.</span>
-                    <span class="n">_gscv</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
-                        <span class="n">_nnr_regressor</span><span class="p">,</span>
-                        <span class="p">{</span>
-                            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span>
-                                <span class="o">*</span><span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;radius_bounds&quot;</span><span class="p">],</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;cv_groups&quot;</span><span class="p">]</span>
-                            <span class="p">)</span>
-                        <span class="p">},</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># pulling scores</span>
-                    <span class="n">_gscv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">)</span>
-                    <span class="n">_cv_return_data</span> <span class="o">=</span> <span class="n">_gscv</span><span class="o">.</span><span class="n">cv_results_</span>
-                    <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;param_radius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;param_radius&quot;</span><span class="p">][</span>
-                        <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">])</span>
-                    <span class="p">]</span>
-                    <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_cv_return_data</span><span class="p">[</span>
-                        <span class="s2">&quot;mean_test_score&quot;</span>
-                    <span class="p">][</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">])]</span>
-                    <span class="n">_radius_fixed</span> <span class="o">=</span> <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;param_radius&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                            <span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">]</span>
-                            <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">])</span>
-                        <span class="p">)</span>
-                    <span class="p">]</span>
-
-                    <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
-                    <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;NNR HVSINE - Fitting to training set&quot;</span>
-                    <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;CV determined radius to be </span><span class="si">{</span><span class="n">_radius_fixed</span><span class="si">}</span><span class="s2"> with mean test score </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">_cv_return_data</span><span class="p">[</span><span class="s1">&#39;mean_test_score&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
-                    <span class="p">)</span>
-
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_radius_fixed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">_radius_fixed</span><span class="p">):</span>
-                        <span class="n">_radius_fixed</span> <span class="o">=</span> <span class="n">_radius_fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_radius_fixed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span>
-                        <span class="n">_radius_fixed</span>
-                    <span class="p">):</span>
-                        <span class="n">mainlog</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Failed to find a valid radius from CV. Using default </span><span class="si">{</span><span class="n">training_kw</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">_radius_fixed</span> <span class="o">=</span> <span class="n">training_kw</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">pass</span>
-
-                    <span class="c1"># creating the regressor</span>
-                    <span class="n">_nnr_regressor</span> <span class="o">=</span> <span class="n">RadiusNeighborsRegressor</span><span class="p">(</span>
-                        <span class="n">radius</span><span class="o">=</span><span class="n">_radius_fixed</span><span class="p">,</span>
-                        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;haversine&quot;</span><span class="p">,</span>
-                        <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;brute&quot;</span><span class="p">,</span>
-                        <span class="n">weights</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="s2">&quot;distance&quot;</span><span class="p">),</span>
-                        <span class="n">n_jobs</span><span class="o">=</span><span class="p">(</span>
-                            <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;nproc&quot;</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="n">parallel_kw</span><span class="p">[</span><span class="s2">&quot;multiprocess&quot;</span><span class="p">]</span>
-                            <span class="k">else</span> <span class="kc">None</span>
-                        <span class="p">),</span>
-                    <span class="p">)</span>
-
-                <span class="c1"># ===============================================================</span>
-                <span class="c1"># Training fully</span>
-                <span class="n">_nnr_regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_TRAIN</span><span class="p">,</span> <span class="n">Y_TRAIN</span><span class="p">)</span>
-
-                <span class="c1"># ===============================================================</span>
-                <span class="c1"># Getting scores.</span>
-                <span class="n">_return_score</span> <span class="o">=</span> <span class="n">_nnr_regressor</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_TEST</span><span class="p">,</span> <span class="n">Y_TEST</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-                <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fit to training set yielded score of </span><span class="si">{</span><span class="n">_return_score</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;NNR HVSINE - Predicting Poisson Map&quot;</span>
-                <span class="c1"># =================================================================</span>
-                <span class="c1"># Generating the actual sky map.</span>
-                <span class="n">map_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_positions</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-                    <span class="p">]</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-                <span class="n">map_values</span> <span class="o">=</span> <span class="n">_nnr_regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">map_positions</span><span class="p">)</span>
-                <span class="n">map_values</span> <span class="o">=</span> <span class="n">map_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">map_values</span><span class="o">.</span><span class="n">size</span><span class="p">,))</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-                <span class="n">_process_progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;NNR HVSINE - [COMPLETE]&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
-            <span class="nb">map</span><span class="o">=</span><span class="n">map_values</span><span class="p">,</span>
-            <span class="n">std_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">training_info</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">_return_score</span><span class="p">,</span> <span class="s2">&quot;cv_info&quot;</span><span class="p">:</span> <span class="n">_cv_return_data</span><span class="p">},</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NNR&quot;</span><span class="p">,</span>
-            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">_radius_fixed</span><span class="p">},</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="StatAtlas.build_poisson_map_MAP">
-<a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.build_poisson_map_MAP.html#structures.map.StatAtlas.build_poisson_map_MAP">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_poisson_map_MAP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generating map from posterior (MAP).&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">logging_redirect_tqdm</span><span class="p">(</span><span class="n">loggers</span><span class="o">=</span><span class="p">[</span><span class="n">mainlog</span><span class="p">]):</span>
-            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-
-                <span class="c1"># ===============================================#</span>
-                <span class="c1"># Constructing grids</span>
-                <span class="n">_pix_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">)</span>
-                <span class="n">_map_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">)</span>
-                <span class="n">_point_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
-
-                <span class="n">_non_empty_pix_ids</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">pid</span> <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">_pix_ids</span> <span class="k">if</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">_point_data</span><span class="p">[</span><span class="s2">&quot;PIX_ID&quot;</span><span class="p">]</span>
-                <span class="p">]</span>
-
-                <span class="k">for</span> <span class="n">pix_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                    <span class="n">_non_empty_pix_ids</span><span class="p">,</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;posterior (MAP) - Calculating&quot;</span><span class="p">,</span>
-                    <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
-                    <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="p">):</span>
-                    <span class="n">_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-                        <span class="n">_point_data</span><span class="p">[</span><span class="n">object_id</span><span class="p">][</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">_point_data</span><span class="p">[</span><span class="s2">&quot;PIX_ID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pix_id</span><span class="p">)</span>
-                        <span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="n">_r</span> <span class="o">=</span> <span class="n">_point_data</span><span class="p">[</span><span class="s2">&quot;RAD&quot;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">_point_data</span><span class="p">[</span><span class="s2">&quot;PIX_ID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pix_id</span><span class="p">)]</span>
-
-                    <span class="c1"># -- convert radii to rad -- #</span>
-                    <span class="n">_r</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;rad&quot;</span><span class="p">)</span>
-                    <span class="n">_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">_r</span><span class="o">**</span><span class="mi">2</span>
-                    <span class="n">_map_array</span><span class="p">[</span><span class="n">pix_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_c</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">_a</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
-            <span class="nb">map</span><span class="o">=</span><span class="n">_map_array</span><span class="p">,</span>
-            <span class="n">std_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">training_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;MAP&quot;</span><span class="p">,</span>
-            <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="StatAtlas.generate">
 <a class="viewcode-back" href="../../_as_gen/structures.map.StatAtlas.generate.html#structures.map.StatAtlas.generate">[docs]</a>
@@ -1522,12 +895,331 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="PoissonAtlas">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.html#structures.map.PoissonAtlas">[docs]</a>
+<span class="k">class</span> <span class="nc">PoissonAtlas</span><span class="p">(</span><span class="n">StatAtlas</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Special case class of :py:class:`StatAtlas` for Poisson maps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_map">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_map.html#structures.map.PoissonAtlas.build_poisson_map">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_map</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;KNN&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a Poisson map in the Atlas for a specific object type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        object_type: str</span>
+<span class="sd">            A particular object type in this PoissonAtlas from which to generate the map.</span>
+<span class="sd">        method: str</span>
+<span class="sd">            The method by which to calculate the map.</span>
+<span class="sd">        overwrite: bool, optional</span>
+<span class="sd">            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?</span>
+<span class="sd">        inplace: bool, optional</span>
+<span class="sd">            [Default ``True``]. If ``True``, the map is written directly to file. If ``False`` it is returned to the user.</span>
+<span class="sd">        *args</span>
+<span class="sd">            Additional arguments.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ======================================================= #</span>
+        <span class="c1"># SETUP</span>
+        <span class="c1"># ======================================================= #</span>
+        <span class="n">_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;build_poisson_map_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating </span><span class="si">{</span><span class="n">object_type</span><span class="si">}</span><span class="s2"> map using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ======================================================= #</span>
+        <span class="c1"># RUNNING</span>
+        <span class="c1"># ======================================================= #</span>
+        <span class="n">_output</span> <span class="o">=</span> <span class="n">_method</span><span class="p">(</span><span class="n">object_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># ===================================================== #</span>
+        <span class="c1"># Writing data</span>
+        <span class="c1"># ===================================================== #</span>
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_build_output_to_fits</span><span class="p">(</span><span class="n">object_type</span><span class="p">,</span> <span class="n">_output</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_output</span></div>
+
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_maps">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_maps.html#structures.map.PoissonAtlas.build_poisson_maps">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_maps</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">object_types</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">methods</span><span class="o">=</span><span class="s2">&quot;MAP&quot;</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">build_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">build_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct all or a subset of the available object type Poisson maps for this Atlas.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        object_types: list of str or str, optional</span>
+<span class="sd">            The object types to generate Poisson maps for. If ``all`` (default), then all of the object types in the ``COUNTS``</span>
+<span class="sd">            table are used.</span>
+<span class="sd">        methods: list of str or str, optional</span>
+<span class="sd">            The method to use for the map generation. If this is a list, it must match the length of ``object_types`` and each</span>
+<span class="sd">            of the Poisson maps will be generated using the specified method. If ``methods`` is a single ``str``, then a single</span>
+<span class="sd">            method will be used for all of the generation procedures.</span>
+<span class="sd">        build_args: list of list, optional</span>
+<span class="sd">            List of additional arguments to pass to each of the generation methods individually. By default, this is ``None``, and will result</span>
+<span class="sd">            in empty lists being appended to the arguments of each generation method. If specified, this parameter must be a list of length ``object_types.size``</span>
+<span class="sd">            with each element also being a list (or arbitrary size) containing any additional args to pass.</span>
+<span class="sd">        build_kwargs: list of dict, optional</span>
+<span class="sd">            Similar to ``build_args``, ``build_kwargs`` may be specified to pass particular keyword arguments along to the individual generation methods.</span>
+<span class="sd">            If left unspecified, no kwargs are passed to the sub-generation processes.</span>
+<span class="sd">        overwrite: bool, optional</span>
+<span class="sd">            [Default ``True``]. Allow the overwriting of pre-existing maps of the same name?</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ======================================================================== #</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># ======================================================================== #</span>
+        <span class="n">_count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>  <span class="c1"># fetch the point data to process.</span>
+
+        <span class="c1"># -- managing args / kwargs -- #</span>
+        <span class="k">if</span> <span class="n">object_types</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="n">object_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">_count_data</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># Removing RA,DEC,RAD,PIX_ID,TIME</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">object_types</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">object_type</span>
+                <span class="k">for</span> <span class="n">object_type</span> <span class="ow">in</span> <span class="n">object_types</span>
+                <span class="k">if</span> <span class="n">object_type</span> <span class="ow">in</span> <span class="n">_count_data</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">]</span>
+
+        <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating Poisson maps for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> object types...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># -- Managing computation methods -- #</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">methods</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">object_types</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Attempted to pass </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span><span class="si">}</span><span class="s2"> methods for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> object types.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Kwarg `methods` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span><span class="si">}</span><span class="s2"> when it was expected to be `str` or `Collection`.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Managing the build args / kwargs</span>
+        <span class="k">if</span> <span class="n">build_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">build_args</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">))]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">build_args</span><span class="p">,</span> <span class="n">Collection</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Kwarg `build_args` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">build_args</span><span class="p">)</span><span class="si">}</span><span class="s2"> which is not a subclass of `Collection`.&quot;</span>
+
+        <span class="k">if</span> <span class="n">build_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">build_kwargs</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">))]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">build_args</span><span class="p">,</span> <span class="n">Collection</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Kwarg `build_kwargs` has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">build_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2"> which is not a subclass of `Collection`.&quot;</span>
+
+        <span class="c1"># ======================================================================== #</span>
+        <span class="c1"># Map Generation Processes</span>
+        <span class="c1"># ======================================================================== #</span>
+        <span class="k">with</span> <span class="n">logging_redirect_tqdm</span><span class="p">(</span><span class="n">loggers</span><span class="o">=</span><span class="p">[</span><span class="n">mainlog</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">bargs</span><span class="p">,</span> <span class="n">bkwargs</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">object_types</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">build_args</span><span class="p">,</span> <span class="n">build_kwargs</span><span class="p">),</span>
+                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">object_types</span><span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Constructing Poisson Maps&quot;</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
+                <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">bkwargs</span><span class="p">[</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="n">bkwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;progress_bar&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span>
+                    <span class="n">object_type</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                    <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+                    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="o">*</span><span class="n">bargs</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">bkwargs</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_map_regressor">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_map_regressor.html#structures.map.PoissonAtlas.build_poisson_map_regressor">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_map_regressor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">regressor</span><span class="p">,</span>
+        <span class="n">object_type</span><span class="p">,</span>
+        <span class="n">retrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cross_validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">training_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">param_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cv_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a poisson map with a regressor.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor</span>
+<span class="sd">        retrain</span>
+<span class="sd">        cross_validate</span>
+<span class="sd">        training_kw</span>
+<span class="sd">        param_kw</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># =================================================== #</span>
+        <span class="c1"># SETUP</span>
+        <span class="c1"># =================================================== #</span>
+        <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">convert_skycoord</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_positions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="s2">&quot;icrs&quot;</span><span class="p">),</span> <span class="s2">&quot;math_convention&quot;</span>
+        <span class="p">)</span>
+        <span class="n">map_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># --&gt; This is done in oposite order for haversine.</span>
+
+        <span class="c1"># get the points that are being fitted.</span>
+        <span class="n">count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">cv_kw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cv_kw</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># ================================================= #</span>
+        <span class="c1"># Cross Validation</span>
+        <span class="c1"># ================================================= #</span>
+        <span class="k">if</span> <span class="n">cross_validate</span><span class="p">:</span>
+            <span class="n">cross_validation_data</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">cross_validate</span><span class="p">(</span>
+                <span class="n">count_data</span><span class="p">,</span>
+                <span class="n">object_type</span><span class="p">,</span>
+                <span class="n">training_kw</span><span class="o">=</span><span class="n">training_kw</span><span class="p">,</span>
+                <span class="n">param_kw</span><span class="o">=</span><span class="n">param_kw</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">cv_kw</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Parse the data and find the best score</span>
+            <span class="n">test_scores</span> <span class="o">=</span> <span class="n">cross_validation_data</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">]</span>
+            <span class="n">best_score</span><span class="p">,</span> <span class="n">best_params</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">test_scores</span><span class="p">),</span>
+                <span class="n">cross_validation_data</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">cross_validation_data</span><span class="p">[</span><span class="s2">&quot;rank_test_score&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cv_score_threshold&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># the user has specified a cross validation score threshold.</span>
+                <span class="n">_threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cv_score_threshold&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">best_score</span> <span class="o">&gt;=</span> <span class="n">_threshold</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Score threshold was </span><span class="si">{</span><span class="n">_threshold</span><span class="si">}</span><span class="s2"> and best CV score was </span><span class="si">{</span><span class="n">best_score</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+            <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CROSS-VALIDATED </span><span class="si">{</span><span class="n">object_type</span><span class="si">}</span><span class="s2">. PARAMS:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">best_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">regressor</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">best_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param_kw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">regressor</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_kw</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="c1"># ================================================= #</span>
+        <span class="c1"># Training</span>
+        <span class="c1"># ================================================= #</span>
+        <span class="k">if</span> <span class="n">retrain</span><span class="p">:</span>
+            <span class="n">training_kw</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">training_kw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">training_kw</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">train_model</span><span class="p">(</span><span class="n">count_data</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">**</span><span class="n">training_kw</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score_threshold&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># the user has specified a cross validation score threshold.</span>
+                <span class="n">_threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;score_threshold&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">_threshold</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Score threshold was </span><span class="si">{</span><span class="n">_threshold</span><span class="si">}</span><span class="s2"> and best test score was </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="c1"># ================================================= #</span>
+        <span class="c1"># Output</span>
+        <span class="c1"># ================================================= #</span>
+        <span class="n">_out_map</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">map_positions</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="nb">map</span><span class="o">=</span><span class="n">_out_map</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">regressor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_map_KNN">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_map_KNN.html#structures.map.PoissonAtlas.build_poisson_map_KNN">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_map_KNN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">pyXMIP.stats.map_regression</span> <span class="kn">import</span> <span class="n">KNNeighborMapRegressor</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_poisson_map_regressor</span><span class="p">(</span>
+            <span class="n">KNNeighborMapRegressor</span><span class="p">(),</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_map_RNN">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_map_RNN.html#structures.map.PoissonAtlas.build_poisson_map_RNN">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_map_RNN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">pyXMIP.stats.map_regression</span> <span class="kn">import</span> <span class="n">RNNeighborMapRegressor</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_poisson_map_regressor</span><span class="p">(</span>
+            <span class="n">RNNeighborMapRegressor</span><span class="p">(),</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PoissonAtlas.build_poisson_map_MAP">
+<a class="viewcode-back" href="../../_as_gen/structures.map.PoissonAtlas.build_poisson_map_MAP.html#structures.map.PoissonAtlas.build_poisson_map_MAP">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_poisson_map_MAP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">pyXMIP.stats.map_regression</span> <span class="kn">import</span> <span class="n">BayesianPoissonMapRegressor</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="c1"># -- pull counts data -- #</span>
+        <span class="n">count_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
+
+        <span class="c1"># -- setup the regressor -- #</span>
+        <span class="n">regressor</span> <span class="o">=</span> <span class="n">BayesianPoissonMapRegressor</span><span class="p">(</span>
+            <span class="n">prior</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prior&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">model</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">estimates</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">build_map_MAP</span><span class="p">(</span><span class="n">count_table</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># -- returning the map -- #</span>
+        <span class="nb">map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">)</span>
+        <span class="nb">map</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">estimates</span><span class="p">)]</span> <span class="o">=</span> <span class="n">estimates</span>
+
+        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="nb">map</span><span class="o">=</span><span class="nb">map</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">regressor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="Map">
 <a class="viewcode-back" href="../../_as_gen/structures.map.Map.html#structures.map.Map">[docs]</a>
 <span class="k">class</span> <span class="nc">Map</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representation of a callable HEALPix map in an Atlas.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NPIX</span> <span class="o">=</span> <span class="n">_AtlasHeaderParam</span><span class="p">()</span>
+    <span class="n">NSIDE</span> <span class="o">=</span> <span class="n">_AtlasHeaderParam</span><span class="p">()</span>
+    <span class="n">CSYS</span> <span class="o">=</span> <span class="n">_MapHeaderParam</span><span class="p">()</span>
+    <span class="n">CD</span> <span class="o">=</span> <span class="n">_MapHeaderParam</span><span class="p">()</span>
+    <span class="n">ED</span> <span class="o">=</span> <span class="n">_MapHeaderParam</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Map.__init__">
 <a class="viewcode-back" href="../../_as_gen/structures.map.Map.__init__.html#structures.map.Map.__init__">[docs]</a>
@@ -1554,10 +1246,7 @@ document.write(`
                 <span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">hudl</span>
             <span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;There is no SkyMap </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">hudl</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_npix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nside</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">npix2nside</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_npix</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">hudl</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span></div>
 
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
@@ -1569,32 +1258,118 @@ document.write(`
 <span class="sd">        position: :py:class:`astropy.coordinates.SkyCoord`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">position</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-            <span class="n">position</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">_spherical_coordinates_to_healpix</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
-
-        <span class="n">pixels</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nside</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+        <span class="n">pixels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_healpix_id</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">pixels</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_descriptors</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># fetching descriptors.</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">m</span>
+            <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">_AtlasHeaderParam</span><span class="p">,</span> <span class="n">_MapHeaderParam</span><span class="p">))</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_update_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># fetch the attached descriptors</span>
+        <span class="n">descriptors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_descriptors</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">descriptor</span> <span class="ow">in</span> <span class="n">descriptors</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">descriptor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># resets everything.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">hudl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
+            <span class="n">hudl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">hudl</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ED</span> <span class="o">=</span> <span class="n">asctime</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">coordinate_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The :py:class:`astropy.coordinates.GenericFrame` for the Atlas&#39;s coordinate system&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="n">hudl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CSYS&quot;</span><span class="p">])</span></div>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="n">hudl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CSYS&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Map.transform_map_coordinates">
+<a class="viewcode-back" href="../../_as_gen/structures.map.Map.transform_map_coordinates.html#structures.map.Map.transform_map_coordinates">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform_map_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># -- coercing the frame type -- #</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># -- converting -- #</span>
+        <span class="n">_th</span><span class="p">,</span> <span class="n">_ph</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">pix2ang</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">))</span>
+        <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span> <span class="o">=</span> <span class="n">convert_coordinates</span><span class="p">(</span>
+            <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">from_system</span><span class="o">=</span><span class="s2">&quot;healpix&quot;</span><span class="p">,</span> <span class="n">to_system</span><span class="o">=</span><span class="s2">&quot;latlon&quot;</span>
+        <span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rad&quot;</span><span class="p">)</span>
+        <span class="n">output_array</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hudl</span><span class="p">:</span>
+                <span class="n">hudl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CSYS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">hudl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">output_array</span>
+                <span class="n">hudl</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ED</span> <span class="o">=</span> <span class="n">asctime</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_attributes</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">output_array</span>
+
+        <span class="k">return</span> <span class="n">output_array</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pixel_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The SkyCoord positions of the healpix pixels.&quot;&quot;&quot;</span>
+        <span class="n">_th</span><span class="p">,</span> <span class="n">_ph</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">pix2ang</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NPIX</span><span class="p">))</span>
+        <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span> <span class="o">=</span> <span class="n">convert_coordinates</span><span class="p">(</span>
+            <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">from_system</span><span class="o">=</span><span class="s2">&quot;healpix&quot;</span><span class="p">,</span> <span class="n">to_system</span><span class="o">=</span><span class="s2">&quot;latlon&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rad&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Map.get_healpix_id">
+<a class="viewcode-back" href="../../_as_gen/structures.map.Map.get_healpix_id.html#structures.map.Map.get_healpix_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_healpix_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_frame</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">positions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span> <span class="o">=</span> <span class="n">convert_skycoord</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="s2">&quot;healpix&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_ph</span><span class="p">,</span> <span class="n">_th</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">_ph</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+</div>
 
 
 
-<span class="k">def</span> <span class="nf">_healpix_coordinates_to_spherical</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">theta</span>
+<span class="k">def</span> <span class="nf">_parse_default_kwarg_groups</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># -- setting args and kwargs -- #</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">}</span>
 
+    <span class="k">for</span> <span class="n">def_k</span><span class="p">,</span> <span class="n">def_v</span> <span class="ow">in</span> <span class="n">defaults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">def_k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">v</span> <span class="k">if</span> <span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="n">def_k</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="p">[</span><span class="n">def_k</span><span class="p">])</span> <span class="k">else</span> <span class="n">out</span><span class="p">[</span><span class="n">def_k</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">def_v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
 
-<span class="k">def</span> <span class="nf">_spherical_coordinates_to_healpix</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">_healpix_coordinates_to_spherical</span><span class="p">(</span>
-        <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span>
-    <span class="p">)</span>  <span class="c1"># --&gt; this is a self-inverse transformation.</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
 </pre></div>
 
                 </article>

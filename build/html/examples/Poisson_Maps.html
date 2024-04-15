@@ -1,0 +1,1324 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Poisson Mapping &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/Poisson_Maps';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Poisson Mapping</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="Poisson-Mapping">
+<h1>Poisson Mapping<a class="headerlink" href="#Poisson-Mapping" title="Link to this heading">#</a></h1>
+<p><img alt="a" src="https://img.shields.io/badge/Subject:-Reduction_Processes-blue" /> <img alt="b" src="https://img.shields.io/badge/Difficult:-medium-blue" /> <img alt="c" src="https://img.shields.io/badge/Author:-Eliza_Diggins-green" /></p>
+<p>In the pyXMIP package, a special reduction procedure (called <code class="docutils literal notranslate"><span class="pre">PoissonPointReduction</span></code>) can be used during match reduction. The idea behind this reduction is that, for some object types and databases, there is a chance that (within a given radius) a match to such an object could occur randomly. This probability, which is Poisson distributed, is critical for correctly identifying spurious matches, but it can be difficult to get. In this notebook, we’re going to walk through all the ins and outs
+of Poisson Mapping; the process pyXMIP uses to obtain those probabilities.</p>
+<section id="Contents">
+<h2>Contents<a class="headerlink" href="#Contents" title="Link to this heading">#</a></h2>
+<hr class="docutils" />
+<ul>
+<li><p><a class="reference internal" href="#Introduction"><span class="std std-ref">Introduction</span></a></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#Representing-Poisson-Maps"><span class="std std-ref">Representing Poisson Maps</span></a></p></li>
+<li><p><a class="reference internal" href="#Poisson-Atlases"><span class="std std-ref">Poisson Atlases</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#The-Counts-Table"><span class="std std-ref">Building the Counts Table</span></a></p></li>
+<li><p><a class="reference internal" href="#Map-HDUs"><span class="std std-ref">Map HDUs</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#Poisson-Maps"><span class="std std-ref">Poisson Maps</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#Constructing-Poisson-Maps"><span class="std std-ref">Constructing Poisson Maps</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#Density-Estimation"><span class="std std-ref">Density Estimation</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#Maximum-A-Posteriori-Regression"><span class="std std-ref">Maximum a Posteriori (MAP) Estimation</span></a></p></li>
+<li><p><a class="reference internal" href="#K-Nearest-Neighbor-Regression"><span class="std std-ref">K-Nearest Neighbors (KNN) Estimation</span></a></p></li>
+<li><p class="rubric" id="r-nearest-neighbors-rnn-estimation"><a class="reference internal" href="#R-Nearest-Neighbor-Regression"><span class="std std-ref">R-Nearest Neighbors (RNN) Estimation</span></a></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="Introduction">
+<h1>Introduction<a class="headerlink" href="#Introduction" title="Link to this heading">#</a></h1>
+<p>The Poisson distribution describes the likelihood that a given event with frequency <span class="math notranslate nohighlight">\(\omega\)</span> will occur <span class="math notranslate nohighlight">\(k\)</span> number of times in a period / space <span class="math notranslate nohighlight">\(\Delta\)</span>. It takes the form</p>
+<div class="math notranslate nohighlight">
+\[P(k | \omega,\Delta) = \frac{(\omega \Delta)^{k}\exp\left(-\omega \Delta\right)}{k!}.\]</div>
+<p>In the context of pyXMIP, the question becomes “Given a catalog source at some <span class="math notranslate nohighlight">\(\textbf{r}\)</span> on the sky and a possible match at <span class="math notranslate nohighlight">\(\textbf{r}'\)</span>, what’s the probability that <span class="math notranslate nohighlight">\(\textbf{r}'\)</span> would occur randomly given the type of source and the database it was matched from. Let <span class="math notranslate nohighlight">\(\delta\)</span> be the separation on the sky between the two points and <span class="math notranslate nohighlight">\(\lambda(\phi,\theta)\)</span> be the <strong>density of that source type</strong> on the sky (specific to the given database). Then the probability that
+the match happened randomly is</p>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{random}}(\textbf{r}'|\textbf{r}) = P_{\mathrm{Poisson}}(k \ge 1 | \delta, \lambda) = 1- \exp\left[-2\pi(1-\cos(\delta))\lambda(\textbf{r})\right] \underbrace{\approx}_{\delta \ll 1} 1- \exp\left[-\pi\delta^2\lambda(\textbf{r})\right].\]</div>
+<p>Thus, if we can figure out the <strong>density function</strong> <span class="math notranslate nohighlight">\(\lambda(\textbf{r})\)</span>, it is actually quite easy to conduct this calculation!</p>
+<p>This special function, <span class="math notranslate nohighlight">\(\lambda(\textbf{r})\)</span> is called the <strong>Poisson Map</strong> for the given database and source type. A great deal of sophistication has gone into the determination of the Poisson map, but on its surface, its a relatively simple idea!</p>
+<hr class="docutils" />
+<section id="Representing-Poisson-Maps">
+<h2>Representing Poisson Maps<a class="headerlink" href="#Representing-Poisson-Maps" title="Link to this heading">#</a></h2>
+<p><img alt="image0" src="https://healpix.jpl.nasa.gov/images/healpixGridRefinement.jpg" /></p>
+<p>The first step in representing functions on the sky is to determine how we’re going to store them for interpolation. On a Euclidean space, this is a relatively simple undertaking: we just use a grid. On a spherical surface, it’s not quite as simple.</p>
+<p>The solution used in pyXMIP is what are called HEALPix grids. HEALPix is a scheme for breaking up the sky into tiles of equal area so that the entire sky is covered. You can read more details about HEALPix <a class="reference external" href="https://healpix.jpl.nasa.gov/">here</a>. For our uses, there are a few key things worth knowing.</p>
+<p><img alt="image1" src="https://healpix.jpl.nasa.gov/images/exampleEarthTopo.jpg" /><img alt="image2" src="https://healpix.jpl.nasa.gov/images/exampleCMB.jpg" /></p>
+<ul>
+<li><p>HEALPix grids may have any of a number of different resolutions. This is dictated by the <span class="math notranslate nohighlight">\(N_{\mathrm{side}}\)</span> parameter</p>
+<div class="math notranslate nohighlight">
+\[N_{\mathrm{side}} = 2^k, \; k\in \mathbb{N}\]</div>
+</li>
+<li><p>The area of a given tile is</p>
+<div class="math notranslate nohighlight">
+\[\Omega_{\mathrm{pix}} = \theta_{\mathrm{pix}}^2 = \frac{3}{\pi} \left(\frac{1.097 \mathrm{sr}}{N_{\mathrm{sides}}^2}\right)\]</div>
+</li>
+</ul>
+</section>
+<section id="Poisson-Atlases">
+<h2>Poisson Atlases<a class="headerlink" href="#Poisson-Atlases" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> class is the critical class for representing sets of Poisson maps. On its surface, <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> instances simply wrap <code class="docutils literal notranslate"><span class="pre">.fits</span></code> files containing 2 sets of extensions:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">BinTable</span></code> extension <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> (only 1)</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> is built by randomly sampling from points on the sky. For each point, the database is queried for all the objects within angular radius <span class="math notranslate nohighlight">\(\delta\)</span>. The numbers of each object type are then counted and written to the <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table. This is the raw data that eventually becomes a Poisson map.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ImageArray</span></code> extensions with the names of different types of astronomical objects. (As may as there are object types).</p>
+<ul>
+<li><p>Each of these <code class="docutils literal notranslate"><span class="pre">ImageArray</span></code> objects is a <span class="math notranslate nohighlight">\(1\times N_{\mathrm{pix}}\)</span> array containing the finished Poisson maps once we have completed the process of calculating them.</p></li>
+</ul>
+</li>
+</ul>
+<p>From the <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> class, you can add points to <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code>, re-construct a Poisson map on disk, or extract a map for use. This tutorial will show all of these things.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyXMIP.structures.databases</span> <span class="kn">import</span> <span class="n">SIMBAD</span><span class="p">,</span> <span class="n">NED</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">pprint</span> <span class="k">as</span> <span class="nb">print</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># This can be skipped if you don&#39;t have rich installed.</span>
+
+<span class="c1"># -- Opening the atlases attached to two of our database classes -- #</span>
+
+<span class="n">ned_atlas</span><span class="p">,</span> <span class="n">simbad_atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">(),</span> <span class="n">SIMBAD</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ned_atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span><span class="si">}</span><span class="s2"> count entries in NED and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">simbad_atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span><span class="si">}</span><span class="s2"> in SIMBAD.&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'There are 1400 count entries in NED and 2800 in SIMBAD.'</span>
+</pre></div>
+</div>
+<section id="The-Counts-Table">
+<h3>The Counts Table<a class="headerlink" href="#The-Counts-Table" title="Link to this heading">#</a></h3>
+<p>The first stage in generating maps is to fill the <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table in a given atlas. In pyXMIP, all of the available remote databases (SIMBAD, NED, etc.) already have built-in <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> instances with large <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> tables; however, it is sometimes advantageous to add new points, or reset a table. Additionally, if you are generating a <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> from scratch, the <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table will have to be generated.</p>
+<p>To start, let’s take a look at an existing <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ned_atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div><i>Table length=5</i>
+<table id="table140237481842704" class="table-striped table-bordered table-condensed">
+<thead><tr><th>*</th><th>**</th><th>*Ass</th><th>*Cl</th><th>AbLS</th><th>Blue*</th><th>C*</th><th>EmLS</th><th>EmObj</th><th>exG*</th><th>Flare*</th><th>G</th><th>GammaS</th><th>GClstr</th><th>GGroup</th><th>GPair</th><th>GTrpl</th><th>G_Lens</th><th>HII</th><th>IrS</th><th>MCld</th><th>Neb</th><th>Nova</th><th>Other</th><th>PN</th><th>PofG</th><th>Psr</th><th>QGroup</th><th>QSO</th><th>Q_Lens</th><th>RadioS</th><th>Red*</th><th>RfN</th><th>SN</th><th>SNR</th><th>UvES</th><th>UvS</th><th>V*</th><th>VisS</th><th>WD*</th><th>WR*</th><th>XrayS</th><th>!*</th><th>!**</th><th>!*Ass</th><th>!*Cl</th><th>!Blue*</th><th>!C*</th><th>!EmObj</th><th>!Flar*</th><th>!HII</th><th>!MCld</th><th>!Neb</th><th>!Nova</th><th>!PN</th><th>!Psr</th><th>!RfN</th><th>!Red*</th><th>!SN</th><th>!SNR</th><th>!V*</th><th>!WD*</th><th>!WR*</th><th>RA</th><th>DEC</th><th>RAD</th><th>TIME</th><th>PIX_ID</th></tr></thead>
+<thead><tr><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>int64</th><th>float64</th><th>float64</th><th>float64</th><th>str24</th><th>int64</th></tr></thead>
+<tr><td>9</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>11</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>127.06354556382279</td><td>19.699859125009866</td><td>1.0</td><td>Sat Apr 13 16:42:42 2024</td><td>4604</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>42</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>150.91677719378922</td><td>-55.99060307986951</td><td>1.0</td><td>Sat Apr 13 16:42:42 2024</td><td>12712</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>18</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>29.480381978969227</td><td>-3.649246189401835</td><td>1.0</td><td>Sat Apr 13 16:42:42 2024</td><td>7287</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>31</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>277.31384807206604</td><td>20.25787057346707</td><td>1.0</td><td>Sat Apr 13 16:42:42 2024</td><td>4524</td></tr>
+<tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>7</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>153.76386104507992</td><td>20.47860421719199</td><td>1.0</td><td>Sat Apr 13 16:42:42 2024</td><td>4478</td></tr>
+</table></div></div>
+</div>
+<p>As you can see there are a bunch of columns corresponding to each of the recognized object types in the given database. In this case, we’re looking at IPAC-NED, so there are quite a number of object types. In each row, the number represents the <strong>number of objects in the point sample</strong>. Information about the point sample is contained in the final 5 columns. <code class="docutils literal notranslate"><span class="pre">RAD</span></code> provides the size of the sample area (radius in arcmin), and <code class="docutils literal notranslate"><span class="pre">PIX_ID</span></code> corresponds to the HEALPix location of that search.</p>
+<p>What if we want to add more points to our atlas to improve the statistics? That’s easily achieved:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+
+<span class="c1"># Adding new points to the PoissonAtlas instances.</span>
+<span class="c1">#</span>
+<span class="c1"># 300 -&gt; number of samples, 1 arcmin -&gt; size of search area, thread_kw -&gt; threaded querying for speed.</span>
+<span class="c1">#</span>
+<span class="n">ned_atlas</span><span class="o">.</span><span class="n">sample_from_database</span><span class="p">(</span>
+    <span class="mi">300</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">thread_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max_workers&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">simbad_atlas</span><span class="o">.</span><span class="n">sample_from_database</span><span class="p">(</span>
+    <span class="mi">500</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">thread_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max_workers&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:05:10,986 Adding 300 counting queries to /home/ediggins/pyXs/pyXMIP/bin/psn_maps/NED.poisson.fits atlas.
+pyXs : [DEBUG    ] 2024-04-13 23:05:10,990 LINKED DATABASE: &lt;class &#39;pyXMIP.structures.databases.NED&#39;&gt;
+pyXs : [INFO     ] 2024-04-13 23:05:10,992 Querying for 300 random counts on NED.
+pyXs : [DEBUG    ] 2024-04-13 23:05:11,001 Querying with threading.
+100%|██████████| 300/300 [00:19&lt;00:00, 15.42it/s]
+pyXs : [INFO     ] 2024-04-13 23:05:30,592 Appended 300 samples to COUNTS.
+pyXs : [INFO     ] 2024-04-13 23:05:30,593 Adding 500 counting queries to /home/ediggins/pyXs/pyXMIP/bin/psn_maps/SIMBAD.poisson.fits atlas.
+pyXs : [DEBUG    ] 2024-04-13 23:05:30,595 LINKED DATABASE: &lt;class &#39;pyXMIP.structures.databases.SIMBAD&#39;&gt;
+pyXs : [INFO     ] 2024-04-13 23:05:30,596 Querying for 500 random counts on SIMBAD.
+pyXs : [DEBUG    ] 2024-04-13 23:05:30,597 Querying with threading.
+100%|██████████| 500/500 [00:26&lt;00:00, 18.59it/s]
+pyXs : [INFO     ] 2024-04-13 23:05:58,029 Appended 500 samples to COUNTS.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ned_atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span><span class="si">}</span><span class="s2"> count entries in NED and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">simbad_atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span><span class="si">}</span><span class="s2"> in SIMBAD.&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'There are 1700 count entries in NED and 3300 in SIMBAD.'</span>
+</pre></div>
+</div>
+<p>We can also get a general idea of the point densities by directly accessing the tables:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyXMIP.utilities.geo</span> <span class="kn">import</span> <span class="n">convert_skycoord</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.plot</span> <span class="kn">import</span> <span class="n">set_style</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
+
+<span class="n">set_style</span><span class="p">()</span>  <span class="c1"># --&gt; Enforce pyXMIP custom style guide.</span>
+
+<span class="c1"># -- pull a default poisson map&#39;s data -- #</span>
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">SIMBAD</span><span class="o">.</span><span class="n">get_default_poisson_atlas</span><span class="p">()</span>
+
+<span class="c1"># Fetch the point data.</span>
+<span class="n">point_data</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
+
+<span class="c1"># -- pull the raw point data out of the map -- #</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;RAD&quot;</span><span class="p">]</span>
+<span class="n">positions</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># --&gt; convert the sky positions to the convention for plotting in matplotlib.</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">convert_skycoord</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="s2">&quot;latlon&quot;</span><span class="p">)</span>
+
+<span class="c1"># -- plot -- #</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;mollweide&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">SymLogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">linthresh</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gnuplot</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">density</span><span class="p">)),</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">),</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\log \Sigma$, $\left[\mathrm{counts\; arcmin^{-2}}\right]$&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;RA, $\mathrm</span><span class="si">{deg}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;DEC, $\mathrm</span><span class="si">{deg}</span><span class="s2">$&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_11_0.png" src="../_images/examples_Poisson_Maps_11_0.png" />
+</div>
+</div>
+<p>So far so good! We’ve seen how the <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table works and how we can plot it, now it’s time to explore what we can do with it in the long-run.</p>
+</section>
+<section id="Map-HDUs">
+<h3>Map HDUs<a class="headerlink" href="#Map-HDUs" title="Link to this heading">#</a></h3>
+<p>For the sake of completeness, it’s worth briefly mentioning the other component of a <code class="docutils literal notranslate"><span class="pre">SkyAtlas</span></code> (the parent class of <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code>): <code class="docutils literal notranslate"><span class="pre">MapHDU</span></code>s.</p>
+<p>For those unfamiliar with the <code class="docutils literal notranslate"><span class="pre">fits</span></code> file format, <code class="docutils literal notranslate"><span class="pre">HDU</span></code> are <strong>Heirarchical Data Units</strong>, and store data in the <code class="docutils literal notranslate"><span class="pre">fits</span></code> system. We’ve already encountered one: <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code>. The other HDU’s in the <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> file are actually images; more accurately, they’re <code class="docutils literal notranslate"><span class="pre">HEALPix</span></code> maps. We can load them as <code class="docutils literal notranslate"><span class="pre">Map</span></code> classes to use for various useful processes as discussed below. For now, we’ll simply show some basic properties of them.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Accessing properties of the HEALPix grids:</span>
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">SIMBAD</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;The SIMBAD atlas has N=</span><span class="si">{</span><span class="n">atlas</span><span class="o">.</span><span class="n">NPIX</span><span class="si">}</span><span class="s2"> pixels, corresponding to N_SIDES=</span><span class="si">{</span><span class="n">atlas</span><span class="o">.</span><span class="n">NSIDE</span><span class="si">}</span><span class="s2">.&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># What maps are available?</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atlas</span><span class="o">.</span><span class="n">map_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> map(s): </span><span class="si">{</span><span class="n">atlas</span><span class="o">.</span><span class="n">map_names</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<span class="c1"># What&#39;s the native coordinate system of this object?</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The native coordinate system is </span><span class="si">{</span><span class="n">atlas</span><span class="o">.</span><span class="n">CSYS</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The SIMBAD atlas has N=13872 pixels, corresponding to N_SIDES=34.'</span>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">"There are 1 map(s): ['*']."</span>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The native coordinate system is ICRS'</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="Poisson-Maps">
+<h2>Poisson Maps<a class="headerlink" href="#Poisson-Maps" title="Link to this heading">#</a></h2>
+<p>We’re now well and truly aquainted with the <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> class; it’s now time to meet it’s constituent class: <code class="docutils literal notranslate"><span class="pre">Map</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Map</span></code> class is effectively a <strong>function on the sky</strong>. In the backend, it turns a <code class="docutils literal notranslate"><span class="pre">HEALPix</span></code> grid into a callable function! Let’s explore some of the simpler functionality of these maps to get aquainted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+
+<span class="c1"># What maps are available?</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The available maps are </span><span class="si">{</span><span class="n">atlas</span><span class="o">.</span><span class="n">map_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># load a map</span>
+<span class="n">irs_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_map</span><span class="p">(</span><span class="s2">&quot;IrS&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">"The available maps are ['*', 'UVS', 'IRS']"</span>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [DEBUG    ] 2024-04-13 23:05:59,026 Loading Map object from /home/ediggins/pyXs/pyXMIP/bin/psn_maps/NED.poisson.fits [Name=IRS].
+</pre></div></div>
+</div>
+<p>Just like <code class="docutils literal notranslate"><span class="pre">Atlas</span></code> types, <code class="docutils literal notranslate"><span class="pre">Map</span></code> types have the typical <code class="docutils literal notranslate"><span class="pre">HEALPix</span></code> parameters:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;The NED IrS has N=</span><span class="si">{</span><span class="n">irs_map</span><span class="o">.</span><span class="n">NPIX</span><span class="si">}</span><span class="s2"> pixels, corresponding to N_SIDES=</span><span class="si">{</span><span class="n">irs_map</span><span class="o">.</span><span class="n">NSIDE</span><span class="si">}</span><span class="s2">.&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The NED IrS map was last edited on </span><span class="si">{</span><span class="n">irs_map</span><span class="o">.</span><span class="n">ED</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="c1"># print(f&quot;The NED IrS map was building using {irs_map.METH}.&quot;)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The NED IrS has N=13872 pixels, corresponding to N_SIDES=34.'</span>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The NED IrS map was last edited on Sat Apr 13 22:25:41 2024.'</span>
+</pre></div>
+</div>
+<p>Let’s consider an example. At <span class="math notranslate nohighlight">\(\mathrm{RA} = 0 \;\mathrm{rad}\)</span> and <span class="math notranslate nohighlight">\(\mathrm{DEC} = 0\; \mathrm{rad}\)</span>, what’s the likelihood of finding 3 IrS sources within an area of radius <span class="math notranslate nohighlight">\(\delta = 5\; \mathrm{arcmin}\)</span>?</p>
+<div class="math notranslate nohighlight">
+\[P(k=3,\phi_0,\theta_0,\delta) = (\pi\delta^2 \lambda(\phi_0,\theta_0))^{3} \exp\left(-\pi\delta^2 \lambda(\phi_0,\theta_0)\right) / 3!\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">position</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rad&quot;</span><span class="p">)</span>
+
+<span class="c1"># compute the density</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">irs_map</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The density at (0,0) is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">density</span><span class="p">,</span><span class="n">decimals</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> counts / arcmin^2&quot;</span><span class="p">)</span>
+
+<span class="c1"># area</span>
+<span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">density</span>
+
+<span class="c1"># value</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rate</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The probability is </span><span class="si">{</span><span class="n">prob</span><span class="si">}</span><span class="s2">. The expected value is </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.0 1.5707963267948966
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The density at (0,0) is 2.944 counts / arcmin^2'</span>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'The probability is 7.815837430702794e-95. The expected value is 231.22788344826247.'</span>
+</pre></div>
+</div>
+<p>You can also visualize maps quite easily. Let’s look at a simple example:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- fetch an atlas -- #</span>
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+
+<span class="c1"># -- build a map -- #</span>
+<span class="n">psn_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span>
+    <span class="s2">&quot;IrS&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;RNN&quot;</span><span class="p">,</span>
+    <span class="n">training_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;training_fraction&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">},</span>
+    <span class="n">param_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]},</span>
+    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:32:17,783 Generating IrS map using RNN.
+pyXs : [DEBUG    ] 2024-04-13 23:32:17,822 Cross-validating &lt;pyXMIP.stats.map_regression.RNNeighborMapRegressor object at 0x7f8b1a04f590&gt;.
+pyXs : [DEBUG    ] 2024-04-13 23:32:18,311 CROSS-VALIDATED IrS. PARAMS:
+pyXs : [DEBUG    ] 2024-04-13 23:32:18,312 radius = 0.5
+pyXs : [DEBUG    ] 2024-04-13 23:32:18,312 weights = distance
+pyXs : [DEBUG    ] 2024-04-13 23:32:18,316 Training RadiusNeighborsRegressor(metric=&#39;haversine&#39;, radius=0.5, weights=&#39;distance&#39;) on 1275 data-points
+</pre></div></div>
+</div>
+<p>We can now access the map we generated:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_map</span><span class="p">(</span><span class="s2">&quot;IrS&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hp</span>
+
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="nb">map</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [DEBUG    ] 2024-04-13 23:32:19,471 Loading Map object from /home/ediggins/pyXs/pyXMIP/bin/psn_maps/NED.poisson.fits [Name=IRS].
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_24_1.png" src="../_images/examples_Poisson_Maps_24_1.png" />
+</div>
+</div>
+<p>We can also change the coordinate system if we want:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">map</span><span class="o">.</span><span class="n">transform_map_coordinates</span><span class="p">(</span><span class="s2">&quot;Galactic&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="nb">map</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[-2.89069807 -2.92286377 -2.94347106 ...  0.23001574  0.25089458
+  0.21872889] [1.09244016 1.0738412  1.1024804  ... 2.02078292 2.04915249 2.06775146]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_26_1.png" src="../_images/examples_Poisson_Maps_26_1.png" />
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="Constructing-Poisson-Maps">
+<h1>Constructing Poisson Maps<a class="headerlink" href="#Constructing-Poisson-Maps" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p><img alt="d" src="https://img.shields.io/badge/Difficult:-tricky-orange" /></p>
+<p>For most basic uses, the information presented is already more than sufficient. For the most part, Poisson maps are drawn upon behind the scenes and don’t need to be messed with. There are some scenarios in which you’ll need a more sophisticated understanding:</p>
+<ul class="simple">
+<li><p>Creating your own databases with linked Poisson Atlases.</p></li>
+<li><p>Fine-grain control of the statistics.</p></li>
+<li><p>Further development.</p></li>
+</ul>
+<p>In this section, we’re going to discuss the nitty-gritty of generating Poisson maps.</p>
+<section id="Density-Estimation">
+<h2>Density Estimation<a class="headerlink" href="#Density-Estimation" title="Link to this heading">#</a></h2>
+<p>As described above, <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> objects have a <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> table with the Poisson counts data. The question becomes how we generate the corresponding Poisson maps given these samples. This problem is an example of a generic set of problems known as density estimation problems. PyXMIP provides for a variety of different approaches which are summarized below.</p>
+<p>To begin, let’s get a visual sense of what needs to happen. To start, let’s open the <code class="docutils literal notranslate"><span class="pre">SIMBAD</span></code> <code class="docutils literal notranslate"><span class="pre">PoissonAtlas</span></code> class and look at the distribution of points.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyXMIP.utilities.geo</span> <span class="kn">import</span> <span class="n">convert_skycoord</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.plot</span> <span class="kn">import</span> <span class="n">set_style</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
+
+<span class="n">set_style</span><span class="p">()</span>  <span class="c1"># --&gt; Enforce pyXMIP custom style guide.</span>
+
+<span class="c1"># -- pull a default poisson map&#39;s data -- #</span>
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">SIMBAD</span><span class="o">.</span><span class="n">get_default_poisson_atlas</span><span class="p">()</span>
+
+<span class="c1"># Fetch the point data.</span>
+<span class="n">point_data</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
+
+<span class="c1"># -- pull the raw point data out of the map -- #</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span> <span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;RAD&quot;</span><span class="p">]</span>
+<span class="n">positions</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># --&gt; convert the sky positions to the convention for plotting in matplotlib.</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">convert_skycoord</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="s2">&quot;latlon&quot;</span><span class="p">)</span>
+
+<span class="c1"># -- plot -- #</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;mollweide&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">SymLogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">linthresh</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gnuplot</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">density</span><span class="p">)),</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">),</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\log \Sigma_\star$, $\left[\mathrm{counts\; arcmin^{-2}}\right]$&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;RA, $\mathrm</span><span class="si">{deg}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;DEC, $\mathrm</span><span class="si">{deg}</span><span class="s2">$&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_29_0.png" src="../_images/examples_Poisson_Maps_29_0.png" />
+</div>
+</div>
+<p>Based on this plot, it’s quite clear that the stellar density peaks around the galactic plane (as one would expect!). The problem is that, for a HEALPix grid of this size, we’re likely to always have some blank spots. What we’d like to do is interpolate these points over the entire sphere to get a smooth distribution of points.</p>
+<p>PyXMIP implements a variety of methods for doing this:</p>
+<p><strong>Map Generation Methods</strong>:</p>
+<ul class="simple">
+<li><p>Maximum A Posteriori (MAP)</p></li>
+</ul>
+<hr class="docutils" />
+<section id="Maximum-A-Posteriori-Regression">
+<h3>Maximum A Posteriori Regression<a class="headerlink" href="#Maximum-A-Posteriori-Regression" title="Link to this heading">#</a></h3>
+<p>Maximum <em>a posteriori</em> estimation is a <strong>Bayesian</strong> technique which provides <strong>point-estimates</strong> for the correct poisson density <span class="math notranslate nohighlight">\(\lambda(\phi,\theta)\)</span> at each of the <code class="docutils literal notranslate"><span class="pre">HEALPix</span></code> cells.</p>
+<p>Under the hood, MAP is actually quite complex because (depending on what information the user provides), it can either be very easy of quite difficult. There are two key-word arguments that can be passed with the MAP method:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>: A <code class="docutils literal notranslate"><span class="pre">callable</span></code> <span class="math notranslate nohighlight">\(f(\phi,\theta;\mathbf{\Theta})\)</span>, where <span class="math notranslate nohighlight">\(\mathbf{\Theta}\)</span> is a vector of additional parameters.</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> kwarg allows the user to get a Baysian fit to the Poisson distribution with</p>
+<div class="math notranslate nohighlight">
+\[\lambda(\phi,\theta) = f(\phi,\theta,\mathbf{\Theta}_{\mathrm{MAP}}).\]</div>
+<p>This may be useful if you’re confident you know the model <span class="math notranslate nohighlight">\(f\)</span> and you want to use that as a constraint on the resulting map.</p>
+</li>
+<li><p>When in use, this leads to a non-local Bayesian solver because we are now no longer able to address the problem cell-by-cell.</p></li>
+<li><p><strong>Not Yet Implemented</strong></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prior</span></code>: A <code class="docutils literal notranslate"><span class="pre">callable</span></code> function <span class="math notranslate nohighlight">\(p(\phi,\theta,\mathbf{\Theta})\)</span> which provides the spatially variable prior for the parameters <span class="math notranslate nohighlight">\(\mathbf{\Theta}\)</span>.</p>
+<ul class="simple">
+<li><p><strong>Not Yet Implemented</strong></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Pros and Cons</strong>:</p>
+<ul class="simple">
+<li><p><em>Pros</em>:</p>
+<ul>
+<li><p>Very quick method and easy to check that things make sense.</p></li>
+<li><p>No need for training or cross validation. No fiddling necessary.</p></li>
+<li><p>Allows a robust confidence interval on <span class="math notranslate nohighlight">\(\lambda\)</span>.</p></li>
+</ul>
+</li>
+<li><p><em>Cons</em>:</p>
+<ul>
+<li><p>Local (when <code class="docutils literal notranslate"><span class="pre">model=None</span></code>). Thus, only useful when <code class="docutils literal notranslate"><span class="pre">COUNTS</span></code> is quite large.</p></li>
+<li><p>Requires complex, non-linear methods to solve when either <code class="docutils literal notranslate"><span class="pre">prior</span></code> or <code class="docutils literal notranslate"><span class="pre">model</span></code> is specified.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Usage</strong>:</p>
+<p>Let’s take a look at a very simple example without priors or a model:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">atlas</span> <span class="o">=</span> <span class="n">SIMBAD</span><span class="o">.</span><span class="n">get_default_poisson_atlas</span><span class="p">()</span>
+<span class="n">psn_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;MAP&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:09:11,580 Generating * map using MAP.
+pyXs : [DEBUG    ] 2024-04-13 23:09:11,662 Building MAP estimate for &lt;pyXMIP.stats.map_regression.BayesianPoissonMapRegressor object at 0x7f8b48476cd0&gt;.
+pyXs : [DEBUG    ] 2024-04-13 23:09:11,662 MAP estimator -- ANALYTIC [no p, no m]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "8db60f8989984eae820b9caf68269c66", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hp</span>
+
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_32_0.png" src="../_images/examples_Poisson_Maps_32_0.png" />
+</div>
+</div>
+<p>MAP is really at it’s best for very common object types:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- pull a default poisson map&#39;s data -- #</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.structures.databases</span> <span class="kn">import</span> <span class="n">NED</span>
+
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_default_poisson_atlas</span><span class="p">()</span>
+<span class="n">psn_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span><span class="s2">&quot;IrS&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;MAP&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hp</span>
+
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">)</span>
+<span class="n">hp</span><span class="o">.</span><span class="n">graticule</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:15:28,037 Generating IrS map using MAP.
+pyXs : [DEBUG    ] 2024-04-13 23:15:28,075 Building MAP estimate for &lt;pyXMIP.stats.map_regression.BayesianPoissonMapRegressor object at 0x7f8b1a57c850&gt;.
+pyXs : [DEBUG    ] 2024-04-13 23:15:28,076 MAP estimator -- ANALYTIC [no p, no m]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f049dda554fe44eea30d373a66e1ecd7", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_34_2.png" src="../_images/examples_Poisson_Maps_34_2.png" />
+</div>
+</div>
+<p>So now we can see what’s going on here. The MAP estimator is a point-estimate, it doesn’t smooth the map. This doesn’t mean that it’s not useful. If you have a rich enough set of data, it might be one of the most accurate options!</p>
+</section>
+<hr class="docutils" />
+<section id="K-Nearest-Neighbor-Regression">
+<h3>K-Nearest Neighbor Regression<a class="headerlink" href="#K-Nearest-Neighbor-Regression" title="Link to this heading">#</a></h3>
+<p>The <span class="math notranslate nohighlight">\(k\)</span>-nearest neighbors approach (KNN) is a fully implemented machine learning approach to density estimation. We highly suggest you read the API documentation on all of the options.</p>
+<p>In general terms, KNN can be implemented with between 1 and 3 steps:</p>
+<ul class="simple">
+<li><p><strong>Cross-Validation</strong>: Controlled by the <code class="docutils literal notranslate"><span class="pre">cross-validatate</span></code> kwarg. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then a portion of the training set is held for cross-validation of the relevant hyper-parameters. In this case, <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code> or <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p>
+<ul>
+<li><p>CV parameters can be provided in <code class="docutils literal notranslate"><span class="pre">training_kw</span></code> and the parameter grid to run the CV on is specified in <code class="docutils literal notranslate"><span class="pre">param_kw</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Training</strong>: Fits the regressor to the available data. Additional training kwargs are added via <code class="docutils literal notranslate"><span class="pre">training_kw</span></code>.</p>
+<ul>
+<li><p>The most useful kwarg is <code class="docutils literal notranslate"><span class="pre">training_fraction</span></code>, which determines what fraction of the available data is used for training versus testing.</p></li>
+</ul>
+</li>
+<li><p><strong>Interpolation</strong>: Use the fitted model to interpolate over all of the <code class="docutils literal notranslate"><span class="pre">HEALPix</span></code> grids.</p></li>
+</ul>
+<p>It should be noted that you can also enforce a <code class="docutils literal notranslate"><span class="pre">score_threshold</span></code> or <code class="docutils literal notranslate"><span class="pre">cv_threshold</span></code> to require a specific score before allowing the process to proceed. Additionally <code class="docutils literal notranslate"><span class="pre">inplace=False</span></code> allows you to validate the map without it being written immediately to the underlying <code class="docutils literal notranslate"><span class="pre">.fits</span></code> file.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- fetch the atlas -- #</span>
+<span class="n">atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+
+<span class="c1"># -- build the Poisson Map -- #</span>
+<span class="n">psn_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span>
+    <span class="s2">&quot;IrS&quot;</span><span class="p">,</span>  <span class="c1"># The object type to model.</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;KNN&quot;</span><span class="p">,</span>  <span class="c1"># Method to use: KNN</span>
+    <span class="n">training_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;training_fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>  <span class="c1"># training kwargs.</span>
+    <span class="n">param_kw</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;n_neighbors&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+        <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
+    <span class="p">},</span>  <span class="c1"># parameter kwargs.</span>
+    <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Not writing to .fits</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:23:39,749 Generating IrS map using KNN.
+pyXs : [DEBUG    ] 2024-04-13 23:23:39,813 Cross-validating &lt;pyXMIP.stats.map_regression.KNNeighborMapRegressor object at 0x7f8b1bb9ee90&gt;.
+pyXs : [DEBUG    ] 2024-04-13 23:23:39,926 CROSS-VALIDATED IrS. PARAMS:
+pyXs : [DEBUG    ] 2024-04-13 23:23:39,926 n_neighbors = 6
+pyXs : [DEBUG    ] 2024-04-13 23:23:39,927 weights = distance
+pyXs : [DEBUG    ] 2024-04-13 23:23:39,939 Training KNeighborsRegressor(metric=&#39;haversine&#39;, n_neighbors=6, weights=&#39;distance&#39;) on 850 data-points
+</pre></div></div>
+</div>
+<p><strong>That was easy!</strong> Let’s take a look at why pyXMIP is telling us:</p>
+<ul class="simple">
+<li><p>The first logging output tells us that we’re generating a KNN map of object type *.</p></li>
+<li><p>The first thing that happens is that the regression model is cross-validated to determine the optimal number of neighbors <span class="math notranslate nohighlight">\(n\)</span> to use.</p></li>
+<li><p>Then the model trains against the data.</p></li>
+</ul>
+<p>Now, let’s investigate what came out of this!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># look at the output from the map!</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psn_map</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">namespace</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">map</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">array</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.58179432</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.43984073</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.71969866</span>, <span style="color: #808000; text-decoration-color: #808000">...</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.70693879</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5.06894115</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│      </span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.79061815</span><span style="font-weight: bold">])</span>, <span style="color: #808000; text-decoration-color: #808000">method</span>=<span style="color: #008000; text-decoration-color: #008000">'KNNeighborMapRegressor'</span><span style="font-weight: bold">)</span>
+</pre></div>
+</div>
+<p><strong>NOTE</strong>: if you set <code class="docutils literal notranslate"><span class="pre">inplace=True</span></code>, then the map will be written directly to disk and you will need to retrieve it with <code class="docutils literal notranslate"><span class="pre">atlas.get_map('*')</span></code>. In some cases, you may just want to get the HEALPix grid back immediately, in which case, you can use <code class="docutils literal notranslate"><span class="pre">inplace=False</span></code>.</p>
+<p>Let’s go ahead and look at this map!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hp</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">psn_map</span><span class="o">.</span><span class="n">map</span>
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="n">notext</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">hp</span><span class="o">.</span><span class="n">graticule</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_41_0.png" src="../_images/examples_Poisson_Maps_41_0.png" />
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="R-Nearest-Neighbor-Regression">
+<h3>R-Nearest Neighbor Regression<a class="headerlink" href="#R-Nearest-Neighbor-Regression" title="Link to this heading">#</a></h3>
+<p>R-Nearest Neightbor Regression (RNN) is very similar to KNN but with a minor twist: RNN uses a constant circular size to search for points instead of finding it’s nearest neighbors. All of the parameters are the same except instead of <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>, we now use <code class="docutils literal notranslate"><span class="pre">radius</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">atlas</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
+<span class="n">psn_map</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">build_poisson_map</span><span class="p">(</span>
+    <span class="s2">&quot;IrS&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;RNN&quot;</span><span class="p">,</span>
+    <span class="n">training_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;training_fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="n">param_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]},</span>
+    <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hp</span>
+
+<span class="n">hp</span><span class="o">.</span><span class="n">mollview</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="n">notext</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">hp</span><span class="o">.</span><span class="n">graticule</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+pyXs : [INFO     ] 2024-04-13 23:27:31,666 Generating IrS map using RNN.
+pyXs : [DEBUG    ] 2024-04-13 23:27:31,915 Cross-validating &lt;pyXMIP.stats.map_regression.RNNeighborMapRegressor object at 0x7f8b1ac7b950&gt;.
+pyXs : [DEBUG    ] 2024-04-13 23:27:32,489 CROSS-VALIDATED IrS. PARAMS:
+pyXs : [DEBUG    ] 2024-04-13 23:27:32,490 radius = 0.5
+pyXs : [DEBUG    ] 2024-04-13 23:27:32,491 weights = distance
+pyXs : [DEBUG    ] 2024-04-13 23:27:32,497 Training RadiusNeighborsRegressor(metric=&#39;haversine&#39;, radius=0.5, weights=&#39;distance&#39;) on 850 data-points
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_Poisson_Maps_43_1.png" src="../_images/examples_Poisson_Maps_43_1.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Poisson Mapping</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Contents">Contents</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Introduction">Introduction</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Representing-Poisson-Maps">Representing Poisson Maps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Poisson-Atlases">Poisson Atlases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#The-Counts-Table">The Counts Table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Map-HDUs">Map HDUs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Poisson-Maps">Poisson Maps</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Constructing-Poisson-Maps">Constructing Poisson Maps</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Density-Estimation">Density Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Maximum-A-Posteriori-Regression">Maximum A Posteriori Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#K-Nearest-Neighbor-Regression">K-Nearest Neighbor Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#R-Nearest-Neighbor-Regression">R-Nearest Neighbor Regression</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/examples/Poisson_Maps.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

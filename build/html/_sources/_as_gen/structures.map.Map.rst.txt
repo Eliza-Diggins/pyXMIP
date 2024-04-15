@@ -15,6 +15,8 @@ structures.map.Map
       :recursive:
    
       ~Map.__init__
+      ~Map.get_healpix_id
+      ~Map.transform_map_coordinates
    
    
 
@@ -26,6 +28,13 @@ structures.map.Map
       :toctree:
       :recursive:
    
+      ~Map.CD
+      ~Map.CSYS
+      ~Map.ED
+      ~Map.NPIX
+      ~Map.NSIDE
       ~Map.coordinate_frame
+      ~Map.data
+      ~Map.pixel_positions
    
    

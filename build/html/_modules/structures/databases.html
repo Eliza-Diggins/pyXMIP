@@ -390,7 +390,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">tqdm.contrib.logging</span> <span class="kn">import</span> <span class="n">logging_redirect_tqdm</span>
 
 <span class="kn">from</span> <span class="nn">pyXMIP.schema</span> <span class="kn">import</span> <span class="n">SourceTableSchema</span>
-<span class="kn">from</span> <span class="nn">pyXMIP.structures.map</span> <span class="kn">import</span> <span class="n">StatAtlas</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.structures.map</span> <span class="kn">import</span> <span class="n">PoissonAtlas</span>
 <span class="kn">from</span> <span class="nn">pyXMIP.structures.table</span> <span class="kn">import</span> <span class="n">SourceTable</span>
 <span class="kn">from</span> <span class="nn">pyXMIP.utilities._registries</span> <span class="kn">import</span> <span class="n">_Registry</span>
 <span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">_bin_directory</span><span class="p">,</span> <span class="n">enforce_units</span><span class="p">,</span> <span class="n">mainlog</span>
@@ -520,7 +520,7 @@ document.write(`
         <span class="k">if</span> <span class="n">threading</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
 
-            <span class="kn">from</span> <span class="nn">pyXMIP.utilities.mp_utils</span> <span class="kn">import</span> <span class="n">split</span>
+            <span class="kn">from</span> <span class="nn">pyXMIP.utilities._mp_utils</span> <span class="kn">import</span> <span class="n">split</span>
 
             <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Querying with threading.&quot;</span><span class="p">)</span>
             <span class="n">max_workers</span> <span class="o">=</span> <span class="n">thread_kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_workers&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
@@ -667,7 +667,7 @@ document.write(`
         <span class="k">if</span> <span class="n">threading</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
 
-            <span class="kn">from</span> <span class="nn">pyXMIP.utilities.mp_utils</span> <span class="kn">import</span> <span class="n">split</span>
+            <span class="kn">from</span> <span class="nn">pyXMIP.utilities._mp_utils</span> <span class="kn">import</span> <span class="n">split</span>
 
             <span class="n">mainlog</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Querying with threading.&quot;</span><span class="p">)</span>
             <span class="n">max_workers</span> <span class="o">=</span> <span class="n">thread_kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_workers&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
@@ -763,36 +763,36 @@ document.write(`
         <span class="k">with</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
             <span class="n">output_tables</span><span class="o">.</span><span class="n">append_to_sql</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_MATCH&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SourceDatabase.get_poisson_map">
-<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.get_poisson_map.html#structures.databases.SourceDatabase.get_poisson_map">[docs]</a>
+<div class="viewcode-block" id="SourceDatabase.get_poisson_atlas">
+<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.get_poisson_atlas.html#structures.databases.SourceDatabase.get_poisson_atlas">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_poisson_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_poisson_atlas</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the currently set PoissonMap instance.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">StatAtlas</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">poisson_map</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PoissonAtlas</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">poisson_map</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="n">mainlog</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Class </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> has no map at </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">poisson_map</span><span class="si">}</span><span class="s2">. Defaulting.&quot;</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_default_poisson_map</span><span class="p">()</span></div>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_default_poisson_atlas</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="SourceDatabase.get_default_poisson_map">
-<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.get_default_poisson_map.html#structures.databases.SourceDatabase.get_default_poisson_map">[docs]</a>
+<div class="viewcode-block" id="SourceDatabase.get_default_poisson_atlas">
+<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.get_default_poisson_atlas.html#structures.databases.SourceDatabase.get_default_poisson_atlas">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_default_poisson_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_default_poisson_atlas</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">StatAtlas</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">default_poisson_map</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PoissonAtlas</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">default_poisson_map</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;It appears there is no existing PoissonAtlas at </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">default_poisson_map</span><span class="si">}</span><span class="s2">. You will have to generate one.&quot;</span>
             <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SourceDatabase.set_poisson_map">
-<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.set_poisson_map.html#structures.databases.SourceDatabase.set_poisson_map">[docs]</a>
+<div class="viewcode-block" id="SourceDatabase.set_poisson_atlas">
+<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.set_poisson_atlas.html#structures.databases.SourceDatabase.set_poisson_atlas">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_poisson_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_poisson_atlas</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">poisson_map</span> <span class="o">=</span> <span class="n">path</span></div>
 
 
@@ -806,22 +806,22 @@ document.write(`
         <span class="p">)</span>
 
         <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding data to the Poisson map at </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">poisson_map</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="n">psmap</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_poisson_map</span><span class="p">()</span>
+        <span class="n">psmap</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_poisson_atlas</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
             <span class="n">psmap</span><span class="o">.</span><span class="n">append_to_fits</span><span class="p">(</span><span class="n">point_data</span><span class="p">,</span> <span class="s2">&quot;COUNTS&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SourceDatabase.create_poisson_map">
-<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.create_poisson_map.html#structures.databases.SourceDatabase.create_poisson_map">[docs]</a>
+<div class="viewcode-block" id="SourceDatabase.create_poisson_atlas">
+<a class="viewcode-back" href="../../_as_gen/structures.databases.SourceDatabase.create_poisson_atlas.html#structures.databases.SourceDatabase.create_poisson_atlas">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_poisson_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_poisson_atlas</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">default_poisson_map</span><span class="p">)</span>
-        <span class="n">psn</span> <span class="o">=</span> <span class="n">StatAtlas</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">psn</span> <span class="o">=</span> <span class="n">PoissonAtlas</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">cls</span><span class="o">.</span><span class="n">set_poisson_map</span><span class="p">(</span><span class="n">psn</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">set_poisson_atlas</span><span class="p">(</span><span class="n">psn</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">psn</span></div>
 </div>
 
@@ -977,6 +977,21 @@ document.write(`
 
 
 <span class="n">DEFAULT_DATABASE_REGISTRY</span> <span class="o">=</span> <span class="n">DBRegistry</span><span class="o">.</span><span class="n">_default_registry</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="add_points_to_poisson_map">
+<a class="viewcode-back" href="../../_as_gen/structures.databases.add_points_to_poisson_map.html#structures.databases.add_points_to_poisson_map">[docs]</a>
+<span class="k">def</span> <span class="nf">add_points_to_poisson_map</span><span class="p">(</span><span class="n">database_name</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">radii</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">radii</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">radii</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">radii</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="n">radii</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">arcmin</span>
+
+    <span class="n">database</span> <span class="o">=</span> <span class="n">DEFAULT_DATABASE_REGISTRY</span><span class="p">[</span><span class="n">database_name</span><span class="p">]</span>
+
+    <span class="n">database</span><span class="o">.</span><span class="n">add_sources_to_poisson</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span>

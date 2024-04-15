@@ -5,6 +5,20 @@ pyXMIP Quickstart Guide
 
 On this page, you can find a variety of important guides for getting started with pyXMIP!
 
+
+.. card-carousel:: 1
+
+    .. card:: pyXMIP Overview
+        :link: quickstart/overview.rst
+
+        A great first stop introduction to the core ideas behind pyXMIP.
+
+        +++
+
+        |beginner| |5min|
+
+
+
 Installation + Setup
 --------------------
 
@@ -22,7 +36,7 @@ Guides in this section are for beginning users and concern basic setup and confi
         |beginner| |5min|
 
     .. card:: Configuration
-        :link: quickstart/config.rst
+        :link: quickstart/configuration.rst
 
         Learn how to change the configuration settings for your base installation.
 
@@ -55,6 +69,16 @@ provide critical examples for all users to understand.
         +++
 
         |beginner| |5min|
+
+    .. card:: Poisson Maps
+        :link: examples/Poisson_Maps
+        :link-type: doc
+
+        Introduction to the Poisson Mapping procedures and their purpose within ``pyXMIP``.
+
+        +++
+
+        |intermediate| |30min|
 
 
 .. |beginner| image:: https://img.shields.io/badge/Difficulty-Beginner-green

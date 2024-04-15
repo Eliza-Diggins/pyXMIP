@@ -17,12 +17,12 @@ structures.databases.SIMBAD
       ~SIMBAD.__init__
       ~SIMBAD.add_sources_to_poisson
       ~SIMBAD.count
-      ~SIMBAD.create_poisson_map
-      ~SIMBAD.get_default_poisson_map
-      ~SIMBAD.get_poisson_map
+      ~SIMBAD.create_poisson_atlas
+      ~SIMBAD.get_default_poisson_atlas
+      ~SIMBAD.get_poisson_atlas
       ~SIMBAD.query_radius
       ~SIMBAD.random_sample_count
-      ~SIMBAD.set_poisson_map
+      ~SIMBAD.set_poisson_atlas
       ~SIMBAD.source_match
    
    

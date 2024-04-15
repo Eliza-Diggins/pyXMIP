@@ -5,6 +5,15 @@
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+
+   
+      add_points_to_poisson_map
+   
    
 
    

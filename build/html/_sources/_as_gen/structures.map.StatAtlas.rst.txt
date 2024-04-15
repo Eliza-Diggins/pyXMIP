@@ -16,11 +16,6 @@ structures.map.StatAtlas
    
       ~StatAtlas.__init__
       ~StatAtlas.append_to_fits
-      ~StatAtlas.build_poisson_map
-      ~StatAtlas.build_poisson_map_MAP
-      ~StatAtlas.build_poisson_map_NNR
-      ~StatAtlas.build_poisson_map_gp
-      ~StatAtlas.build_poisson_maps
       ~StatAtlas.generate
       ~StatAtlas.get_map
       ~StatAtlas.get_points

@@ -17,12 +17,12 @@ structures.databases.RemoteDatabase
       ~RemoteDatabase.__init__
       ~RemoteDatabase.add_sources_to_poisson
       ~RemoteDatabase.count
-      ~RemoteDatabase.create_poisson_map
-      ~RemoteDatabase.get_default_poisson_map
-      ~RemoteDatabase.get_poisson_map
+      ~RemoteDatabase.create_poisson_atlas
+      ~RemoteDatabase.get_default_poisson_atlas
+      ~RemoteDatabase.get_poisson_atlas
       ~RemoteDatabase.query_radius
       ~RemoteDatabase.random_sample_count
-      ~RemoteDatabase.set_poisson_map
+      ~RemoteDatabase.set_poisson_atlas
       ~RemoteDatabase.source_match
    
    

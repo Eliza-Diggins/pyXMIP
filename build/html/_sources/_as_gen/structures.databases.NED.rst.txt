@@ -17,12 +17,12 @@ structures.databases.NED
       ~NED.__init__
       ~NED.add_sources_to_poisson
       ~NED.count
-      ~NED.create_poisson_map
-      ~NED.get_default_poisson_map
-      ~NED.get_poisson_map
+      ~NED.create_poisson_atlas
+      ~NED.get_default_poisson_atlas
+      ~NED.get_poisson_atlas
       ~NED.query_radius
       ~NED.random_sample_count
-      ~NED.set_poisson_map
+      ~NED.set_poisson_atlas
       ~NED.source_match
    
    
