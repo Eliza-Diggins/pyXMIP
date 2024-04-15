@@ -87,9 +87,10 @@ class SourceTable(Table):
     def count_types(self):
         if len(self) != 0:
             _types = pd.Series(self[self.schema.TYPE])
+            _types = _types.astype("str").radd("|").add("|")
             return Table(
                 {
-                    k: [len(_types[_types.str.contains(f"|{re.escape(k)}|")])]
+                    k: [len(_types[_types.str.contains(f"{re.escape(f'|{k}|')}")])]
                     for k in self.schema["object_map"]
                 }
             )

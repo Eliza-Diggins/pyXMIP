@@ -18,3 +18,6 @@ class _Registry(dict):
             The dictionary underlying this registry.
         """
         super().__init__(mapping)
+
+    def as_list(self):
+        return list(self.values())

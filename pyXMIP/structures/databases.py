@@ -19,7 +19,7 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from pyXMIP.schema import SourceTableSchema
-from pyXMIP.structures.map import StatAtlas
+from pyXMIP.structures.map import PoissonAtlas
 from pyXMIP.structures.table import SourceTable
 from pyXMIP.utilities._registries import _Registry
 from pyXMIP.utilities.core import _bin_directory, enforce_units, mainlog
@@ -142,7 +142,7 @@ class SourceDatabase(ABC):
         if threading:
             from concurrent.futures import ThreadPoolExecutor
 
-            from pyXMIP.utilities.mp_utils import split
+            from pyXMIP.utilities._mp_utils import split
 
             mainlog.debug("Querying with threading.")
             max_workers = thread_kw.pop("max_workers", 5)
@@ -283,7 +283,7 @@ class SourceDatabase(ABC):
         if threading:
             from concurrent.futures import ThreadPoolExecutor
 
-            from pyXMIP.utilities.mp_utils import split
+            from pyXMIP.utilities._mp_utils import split
 
             mainlog.debug("Querying with threading.")
             max_workers = thread_kw.pop("max_workers", 5)
@@ -379,27 +379,27 @@ class SourceDatabase(ABC):
             output_tables.append_to_sql(f"{cls.__name__}_MATCH", engine)
 
     @classmethod
-    def get_poisson_map(cls):
+    def get_poisson_atlas(cls):
         """Get the currently set PoissonMap instance."""
         try:
-            return StatAtlas(cls.poisson_map)
+            return PoissonAtlas(cls.poisson_map)
         except FileNotFoundError:
             mainlog.warning(
                 f"Class {cls.__name__} has no map at {cls.poisson_map}. Defaulting."
             )
-            return cls.get_default_poisson_map()
+            return cls.get_default_poisson_atlas()
 
     @classmethod
-    def get_default_poisson_map(cls):
+    def get_default_poisson_atlas(cls):
         try:
-            return StatAtlas(cls.default_poisson_map)
+            return PoissonAtlas(cls.default_poisson_map)
         except FileNotFoundError:
             raise ValueError(
                 f"It appears there is no existing PoissonAtlas at {cls.default_poisson_map}. You will have to generate one."
             )
 
     @classmethod
-    def set_poisson_map(cls, path):
+    def set_poisson_atlas(cls, path):
         cls.poisson_map = path
 
     @classmethod
@@ -410,19 +410,19 @@ class SourceDatabase(ABC):
         )
 
         mainlog.info(f"Adding data to the Poisson map at {cls.poisson_map}.")
-        psmap = cls.get_poisson_map()
+        psmap = cls.get_poisson_atlas()
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             psmap.append_to_fits(point_data, "COUNTS")
 
     @classmethod
-    def create_poisson_map(cls, *args, **kwargs):
+    def create_poisson_atlas(cls, *args, **kwargs):
         kwargs["database"] = cls.__name__
         path = kwargs.pop("path", cls.default_poisson_map)
-        psn = StatAtlas.generate(path, *args, **kwargs)
+        psn = PoissonAtlas.generate(path, *args, **kwargs)
 
-        cls.set_poisson_map(psn.path)
+        cls.set_poisson_atlas(psn.path)
         return psn
 
 
@@ -558,6 +558,18 @@ class DBRegistry(_Registry):
 
 
 DEFAULT_DATABASE_REGISTRY = DBRegistry._default_registry()
+
+
+def add_points_to_poisson_map(database_name, n, radii, **kwargs):
+    if isinstance(radii, str):
+        radii = float(radii.split(" ")[0]) * units.Unit(radii.split(" ")[1])
+    elif isinstance(radii, (float, int)):
+        radii = radii * units.arcmin
+
+    database = DEFAULT_DATABASE_REGISTRY[database_name]
+
+    database.add_sources_to_poisson(n, radii, **kwargs)
+
 
 if __name__ == "__main__":
     from astropy import units

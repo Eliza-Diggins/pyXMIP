@@ -13,6 +13,7 @@ Statistics
 
     stats.utilities
     stats.gaussian_process
+    stats.map_regression
 
 Structures
 ----------
@@ -39,5 +40,5 @@ Other
     schema
     cross_reference
     utilities.core
-    utilities.mp_utils
-    utilities.text
+    utilities.geo
+    utilities.plot
