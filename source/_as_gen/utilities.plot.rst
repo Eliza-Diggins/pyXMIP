@@ -12,6 +12,7 @@
       :recursive:
 
    
+      plot_healpix
       set_style
    
    
