@@ -14,9 +14,9 @@ Installation
 Basic Usage
 '''''''''''
 
-- :ref:`pyXMIP_overview`
+- :ref:`overview`
 - :ref:`source_data`
-- :ref:`cross_matching`
+- :ref:`cross_referencing`
 
 Creating Plots
 ''''''''''''''

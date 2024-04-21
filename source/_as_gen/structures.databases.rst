@@ -13,6 +13,9 @@
 
    
       add_points_to_poisson_map
+      get_database
+      get_poisson_map
+      get_poisson_path
    
    
 

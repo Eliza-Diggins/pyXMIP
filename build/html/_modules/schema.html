@@ -594,16 +594,56 @@ document.write(`
 <span class="sd">    Additionally, the schema controls the native coordinate system, and the source type mapping from the native convention of the</span>
 <span class="sd">    source table to the SIMBAD convention adopted in pyXMIP.</span>
 
-<span class="sd">    .. admonition:: Format</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    column_map: dict</span>
+<span class="sd">        Mapping between special columns (keys) and their column names in the resulting tables (values). Only special columns</span>
+<span class="sd">        will appear in the ``column_map``. It is the backbone of the table standardization approach used in pyXMIP.</span>
+<span class="sd">    default_coord_system: str</span>
+<span class="sd">        The default coordinate system for this schema. Specificed as a string representation.</span>
+<span class="sd">    object_map: dict</span>
+<span class="sd">        Mapping between source table object types (keys) and pyXMIP convention [SIMBAD] object types (values).</span>
+<span class="sd">    Z: str</span>
+<span class="sd">        The column name in the table which contains redshift information.</span>
+<span class="sd">    TYPE: str</span>
+<span class="sd">        The column name for the object type.</span>
+<span class="sd">    NAME: str</span>
+<span class="sd">        The column denoting the name of each object in the table.</span>
+<span class="sd">    RA: str</span>
+<span class="sd">        The name of the column containing the RA coordinate.</span>
+<span class="sd">    DEC: str</span>
+<span class="sd">        The name of the column containing the DEC coordinate.</span>
+<span class="sd">    L: str</span>
+<span class="sd">        The name of the column containing galactic longitude.</span>
+<span class="sd">    B: str</span>
+<span class="sd">        The name of the column containing galactic latitude.</span>
 
-<span class="sd">        The format of the :py:class:`SourceTableSchema` contains 3 top-level headers:</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
 
-<span class="sd">        - ``column_map``: contains mappings from special ``pyXMIP`` column names to their equivalent in the native table.</span>
-<span class="sd">          - Special keys are ``Z``, ``NAME``, ``TYPE``, ``RA``, ``DEC``, ``L``, ``B``.</span>
-<span class="sd">        - ``settings``: contains the default settings for the specified schema.</span>
-<span class="sd">          - ``default_coord_system``: The default coordinate frame (represented as a string).</span>
-<span class="sd">        - ``object_map``: contains each of the possible object types from the native dataset and corresponds to the SIMBAD convention used</span>
-<span class="sd">          in ``pyXMIP``.</span>
+<span class="sd">    :py:class:`SouceTableSchema` specific schema files should have the following general format.</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        column_map: # The column map tells the schema what different columns in your catalog actually are.</span>
+<span class="sd">            RA: &quot;RA&quot;</span>
+<span class="sd">            DEC: &quot;DEC&quot;</span>
+<span class="sd">            NAME: &quot;Object Name&quot;</span>
+<span class="sd">            TYPE: &#39;Type&#39;</span>
+<span class="sd">            Z: &quot;Redshift&quot;</span>
+
+<span class="sd">        object_map:</span>
+<span class="sd">            # The object_map tells pyXMIP how to convert database object types into specific SIMBAD object types.</span>
+<span class="sd">            # This allows the code to adopt a uniform convention for object types.</span>
+
+<span class="sd">            native_object_type: SIMBAD_object_type</span>
+
+<span class="sd">        settings:</span>
+<span class="sd">            # Miscellaneous settings.</span>
+<span class="sd">            #</span>
+<span class="sd">            default_coord_system: &quot;ICRS&quot; # The default coordinate system to use.</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_coordinate_requirements</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">astro_coords</span><span class="o">.</span><span class="n">ICRS</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">,</span> <span class="s2">&quot;DEC&quot;</span><span class="p">],</span>
@@ -810,6 +850,44 @@ document.write(`
 <div class="viewcode-block" id="ReductionSchema">
 <a class="viewcode-back" href="../_as_gen/schema.ReductionSchema.html#schema.ReductionSchema">[docs]</a>
 <span class="k">class</span> <span class="nc">ReductionSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specialized :py:class:`Schema` subclass for parsing reduction schema files.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    The reduction schema is the ``pyXMIP`` code manifestation of a given reduction schema file.</span>
+
+<span class="sd">    RUN_PARAMS</span>
+<span class="sd">    ``````````</span>
+
+<span class="sd">    ``REFDBS``: list or str</span>
+<span class="sd">        The set of databases to reference.</span>
+<span class="sd">    ``POISSON``: bool</span>
+<span class="sd">        Enable Poisson mapping procedures in the reduction process.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            If ``POISSON`` is ``True``, then ``POISSON_PARAMS`` must be present.</span>
+<span class="sd">    ``INSTRUMENTAL``: bool</span>
+<span class="sd">        Enable instrumental reduction procedures.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            If ``INSTRUMENTAL`` is ``True``, then ``INSTRUMENT_PARAMS`` must be present.</span>
+<span class="sd">    ``OTYPES``: bool</span>
+<span class="sd">        Enable object type reduction procedures.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            If ``OTYPES`` is ``True``, then ``OBJECT_PARAMS`` must be present.</span>
+
+
+<span class="sd">    IO_PARAMS</span>
+<span class="sd">    `````````</span>
+<span class="sd">    ``DBPATH``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># -- RUN_PARAMS -- #</span>
     <span class="n">RUN_PARAMS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">REFDBS</span> <span class="o">=</span> <span class="n">_SCHEMAENTRY</span><span class="p">([</span><span class="s2">&quot;RUN_PARAMS&quot;</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>

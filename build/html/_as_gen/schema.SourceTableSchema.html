@@ -334,6 +334,9 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="structures.databases.html">structures.databases</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="structures.databases.add_points_to_poisson_map.html">structures.databases.add_points_to_poisson_map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_database.html">structures.databases.get_database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_poisson_map.html">structures.databases.get_poisson_map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_poisson_path.html">structures.databases.get_poisson_path</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.DBRegistry.html">structures.databases.DBRegistry</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.__init__.html">structures.databases.DBRegistry.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.as_list.html">structures.databases.DBRegistry.as_list</a></li>
@@ -517,6 +520,7 @@ document.write(`
 <li class="toctree-l2 has-children"><a class="reference internal" href="structures.map.Map.html">structures.map.Map</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.__init__.html">structures.map.Map.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.get_healpix_id.html">structures.map.Map.get_healpix_id</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.Map.plot.html">structures.map.Map.plot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.transform_map_coordinates.html">structures.map.Map.transform_map_coordinates</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.coordinate_frame.html">structures.map.Map.coordinate_frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.data.html">structures.map.Map.data</a></li>
@@ -655,53 +659,41 @@ document.write(`
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="cross_reference.html">cross_reference</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="cross_reference.add_catalog.html">cross_reference.add_catalog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cross_reference.cross_match.html">cross_reference.cross_match</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cross_reference.cross_match_table.html">cross_reference.cross_match_table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cross_reference.reduce_match_database.html">cross_reference.reduce_match_database</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.IdentityReductionProcess.html">cross_reference.IdentityReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.__init__.html">cross_reference.IdentityReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.get_parameter_names.html">cross_reference.IdentityReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.get_sql_query.html">cross_reference.IdentityReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.parameters.html">cross_reference.IdentityReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.html">cross_reference.InstrumentReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.__init__.html">cross_reference.InstrumentReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.get_parameter_names.html">cross_reference.InstrumentReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.get_sql_query.html">cross_reference.InstrumentReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.column_name.html">cross_reference.InstrumentReductionProcess.column_name</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.parameters.html">cross_reference.InstrumentReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.ReductionProcess.html">cross_reference.ReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-23"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.__init__.html">cross_reference.ReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.get_parameter_names.html">cross_reference.ReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.get_sql_query.html">cross_reference.ReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.parameters.html">cross_reference.ReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.SeparationReductionProcess.html">cross_reference.SeparationReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-24"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.__init__.html">cross_reference.SeparationReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.get_parameter_names.html">cross_reference.SeparationReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.get_sql_query.html">cross_reference.SeparationReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.parameters.html">cross_reference.SeparationReductionProcess.parameters</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.CrossMatchDatabase.html">cross_reference.CrossMatchDatabase</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.__init__.html">cross_reference.CrossMatchDatabase.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.add_catalog.html">cross_reference.CrossMatchDatabase.add_catalog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.build_meta_table.html">cross_reference.CrossMatchDatabase.build_meta_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.check_meta.html">cross_reference.CrossMatchDatabase.check_meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.correct_column_names.html">cross_reference.CrossMatchDatabase.correct_column_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.correct_object_types.html">cross_reference.CrossMatchDatabase.correct_object_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.drop_table.html">cross_reference.CrossMatchDatabase.drop_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.from_file.html">cross_reference.CrossMatchDatabase.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_add.html">cross_reference.CrossMatchDatabase.meta_add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_remove.html">cross_reference.CrossMatchDatabase.meta_remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_reset.html">cross_reference.CrossMatchDatabase.meta_reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.query.html">cross_reference.CrossMatchDatabase.query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.has_catalog.html">cross_reference.CrossMatchDatabase.has_catalog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.match_tables.html">cross_reference.CrossMatchDatabase.match_tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta.html">cross_reference.CrossMatchDatabase.meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.tables.html">cross_reference.CrossMatchDatabase.tables</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.core.html">utilities.core</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-25"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.core.html">utilities.core</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.enforce_units.html">utilities.core.enforce_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.getFromDict.html">utilities.core.getFromDict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.setInDict.html">utilities.core.setInDict</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.geo.html">utilities.geo</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-26"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.geo.html">utilities.geo</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-23"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.geo.convert_coordinates.html">utilities.geo.convert_coordinates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.geo.convert_skycoord.html">utilities.geo.convert_skycoord</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.plot.html">utilities.plot</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-27"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.plot.html">utilities.plot</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-24"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.plot_healpix.html">utilities.plot.plot_healpix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.set_style.html">utilities.plot.set_style</a></li>
 </ul>
@@ -775,17 +767,137 @@ document.write(`
 <p>The <a class="reference internal" href="#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceTableSchema</span></code></a> informs <code class="xref py py-class docutils literal notranslate"><span class="pre">table.SourceTable</span></code> of special roles for particular columns in the dataset.
 Additionally, the schema controls the native coordinate system, and the source type mapping from the native convention of the
 source table to the SIMBAD convention adopted in pyXMIP.</p>
-<div class="admonition-format admonition">
-<p class="admonition-title">Format</p>
-<p>The format of the <a class="reference internal" href="#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceTableSchema</span></code></a> contains 3 top-level headers:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">column_map</span></code>: contains mappings from special <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> column names to their equivalent in the native table.
-- Special keys are <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">TYPE</span></code>, <code class="docutils literal notranslate"><span class="pre">RA</span></code>, <code class="docutils literal notranslate"><span class="pre">DEC</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">settings</span></code>: contains the default settings for the specified schema.
-- <code class="docutils literal notranslate"><span class="pre">default_coord_system</span></code>: The default coordinate frame (represented as a string).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">object_map</span></code>: contains each of the possible object types from the native dataset and corresponds to the SIMBAD convention used
-in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>.</p></li>
-</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.column_map">
+<span class="sig-name descname"><span class="pre">column_map</span></span><a class="headerlink" href="#schema.SourceTableSchema.column_map" title="Link to this definition">#</a></dt>
+<dd><p>Mapping between special columns (keys) and their column names in the resulting tables (values). Only special columns
+will appear in the <code class="docutils literal notranslate"><span class="pre">column_map</span></code>. It is the backbone of the table standardization approach used in pyXMIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.default_coord_system">
+<span class="sig-name descname"><span class="pre">default_coord_system</span></span><a class="headerlink" href="#schema.SourceTableSchema.default_coord_system" title="Link to this definition">#</a></dt>
+<dd><p>The default coordinate system for this schema. Specificed as a string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.object_map">
+<span class="sig-name descname"><span class="pre">object_map</span></span><a class="headerlink" href="#schema.SourceTableSchema.object_map" title="Link to this definition">#</a></dt>
+<dd><p>Mapping between source table object types (keys) and pyXMIP convention [SIMBAD] object types (values).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.Z">
+<span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#schema.SourceTableSchema.Z" title="Link to this definition">#</a></dt>
+<dd><p>The column name in the table which contains redshift information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><a class="headerlink" href="#schema.SourceTableSchema.TYPE" title="Link to this definition">#</a></dt>
+<dd><p>The column name for the object type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.NAME">
+<span class="sig-name descname"><span class="pre">NAME</span></span><a class="headerlink" href="#schema.SourceTableSchema.NAME" title="Link to this definition">#</a></dt>
+<dd><p>The column denoting the name of each object in the table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.RA">
+<span class="sig-name descname"><span class="pre">RA</span></span><a class="headerlink" href="#schema.SourceTableSchema.RA" title="Link to this definition">#</a></dt>
+<dd><p>The name of the column containing the RA coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.DEC">
+<span class="sig-name descname"><span class="pre">DEC</span></span><a class="headerlink" href="#schema.SourceTableSchema.DEC" title="Link to this definition">#</a></dt>
+<dd><p>The name of the column containing the DEC coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.L">
+<span class="sig-name descname"><span class="pre">L</span></span><a class="headerlink" href="#schema.SourceTableSchema.L" title="Link to this definition">#</a></dt>
+<dd><p>The name of the column containing galactic longitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schema.SourceTableSchema.B">
+<span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#schema.SourceTableSchema.B" title="Link to this definition">#</a></dt>
+<dd><p>The name of the column containing galactic latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">SouceTableSchema</span></code> specific schema files should have the following general format.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">column_map</span><span class="p">:</span><span class="w"> </span><span class="c1"># The column map tells the schema what different columns in your catalog actually are.</span>
+<span class="w">    </span><span class="nt">RA</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RA&quot;</span>
+<span class="w">    </span><span class="nt">DEC</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DEC&quot;</span>
+<span class="w">    </span><span class="nt">NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Object</span><span class="nv"> </span><span class="s">Name&quot;</span>
+<span class="w">    </span><span class="nt">TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Type&#39;</span>
+<span class="w">    </span><span class="nt">Z</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Redshift&quot;</span>
+
+<span class="nt">object_map</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># The object_map tells pyXMIP how to convert database object types into specific SIMBAD object types.</span>
+<span class="w">    </span><span class="c1"># This allows the code to adopt a uniform convention for object types.</span>
+
+<span class="w">    </span><span class="nt">native_object_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SIMBAD_object_type</span>
+
+<span class="nt">settings</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Miscellaneous settings.</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nt">default_coord_system</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ICRS&quot;</span><span class="w"> </span><span class="c1"># The default coordinate system to use.</span>
+</pre></div>
 </div>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
@@ -913,7 +1025,19 @@ in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></c
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.column_map"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.column_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.default_coord_system"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.default_coord_system</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.object_map"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.object_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.Z"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.Z</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.TYPE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.NAME"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.NAME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.RA"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.RA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.DEC"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.DEC</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.L"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.L</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#schema.SourceTableSchema.B"><code class="docutils literal notranslate"><span class="pre">SourceTableSchema.B</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

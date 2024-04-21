@@ -1,13 +1,63 @@
-.. _cross_matching:
+.. _cross_Referencing:
 =========================
+Cross Referencing
+=========================
+
 Cross Matching
-=========================
+--------------
 
-Loading Your Catalog
---------------------
+The first step in the cross identification process is **cross-matching**. During this stage, our goal is to find all
+of the plausible object matches to the sources in your catalog. After the cross-matching process is completed, we then
+undertake the **reduction** process to determine which of the identified matches is actually the **best match**.
 
-Matching Sources
-----------------
+Cross matching in ``pyXMIP`` is super simple and can be done either via the command line or via python directly!
+
+.. hint::
+
+    Under the hood, ``pyXMIP`` will load your catalog into an ``astropy`` table. Thus, most common formats are are acceptable including
+    ``.fits``, ``.csv``, ``.txt``, etc.
+
+    If you experience difficulties with loading, your first stop should be assuring that the filetype you've stored your catalog in is
+    actually valid.
+
+To cross match a catalog stored in (for example) ``example.fits``, we can do either of the following:
+
+.. tab-set::
+
+    .. tab-item:: CLI
+
+        To use the command line interface (CLI), we can simply use the 1-line command
+
+        .. code-block:: bash
+
+            >>> pyxmip xmatch run "path/to/example.fits" "output_path.db"
+
+        There are also two optional flags: ``-db`` and ``-f``. ``-f`` will allow you to overwrite existing ``.db`` output
+        files with the same path. ``-db db1 db2 ... dbN`` allows you to overwrite the default set of databases to use for
+        cross matching and instead use your own.
+
+        .. hint::
+
+            For this to work, the specified databases must be included in ``DEFAULT_DATABASE_REGISTRY``.
+
+    .. tab-item:: Python
+
+        To accomplish this task from within a python script, we need only do the following:
+
+        .. code-block:: python
+
+            from pyXMIP.cross_reference import cross_match
+
+            cross_match("input_path","output_path")
+
+        Full details can be found at :py:func:`cross_reference.cross_match`.
+
+Exploring Cross Referencing Outputs
+'''''''''''''''''''''''''''''''''''
+
+Once you've obtained a cross-referencing output, a lot of information can be obtained from the resulting database.
+
+
 
 Match Reduction
 ---------------

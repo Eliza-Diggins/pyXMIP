@@ -510,7 +510,25 @@ document.write(`
     <span class="k">def</span> <span class="nf">append_to_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">)</span></div>
-</div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_convert_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">type_column</span><span class="o">=</span><span class="s2">&quot;TYPE&quot;</span><span class="p">):</span>
+        <span class="c1"># -- omap -- #</span>
+        <span class="n">omap</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">object_map</span>
+
+        <span class="c1"># -- pull the table&#39;s types -- #</span>
+        <span class="n">_types</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">type_column</span><span class="p">]</span>
+        <span class="n">_types</span> <span class="o">=</span> <span class="n">_types</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>  <span class="c1"># --&gt; convert to the string subsets.</span>
+
+        <span class="c1"># -- Fixing the table types -- #</span>
+        <span class="n">_types</span> <span class="o">=</span> <span class="n">_types</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">omap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;NSM_</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">type_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">_types</span>
+
+        <span class="k">return</span> <span class="n">table</span></div>
 
 </pre></div>
 

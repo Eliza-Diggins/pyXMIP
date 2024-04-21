@@ -394,6 +394,7 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">enforce_units</span><span class="p">,</span> <span class="n">mainlog</span>
 <span class="kn">from</span> <span class="nn">pyXMIP.utilities.geo</span> <span class="kn">import</span> <span class="n">convert_coordinates</span><span class="p">,</span> <span class="n">convert_skycoord</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.plot</span> <span class="kn">import</span> <span class="n">_enforce_style</span><span class="p">,</span> <span class="n">plot_healpix</span>
 
 
 <span class="k">class</span> <span class="nc">_AtlasHeaderParam</span><span class="p">:</span>
@@ -1355,6 +1356,13 @@ document.write(`
         <span class="n">ids</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NSIDE</span><span class="p">,</span> <span class="n">_th</span><span class="p">,</span> <span class="n">_ph</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ids</span></div>
+
+
+<div class="viewcode-block" id="Map.plot">
+<a class="viewcode-back" href="../../_as_gen/structures.map.Map.plot.html#structures.map.Map.plot">[docs]</a>
+    <span class="nd">@_enforce_style</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">plot_healpix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
 

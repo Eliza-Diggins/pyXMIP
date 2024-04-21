@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cross Matching &#8212; pyXMIP  documentation</title>
+    <title>Cross Referencing &#8212; pyXMIP  documentation</title>
   
   
   
@@ -351,7 +351,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Cross Matching</li>
+    <li class="breadcrumb-item active" aria-current="page">Cross Referencing</li>
   </ul>
 </nav>
 </div>
@@ -368,13 +368,54 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="cross-matching">
-<span id="id1"></span><h1>Cross Matching<a class="headerlink" href="#cross-matching" title="Link to this heading">#</a></h1>
-<section id="loading-your-catalog">
-<h2>Loading Your Catalog<a class="headerlink" href="#loading-your-catalog" title="Link to this heading">#</a></h2>
+  <section id="cross-referencing">
+<span id="id1"></span><h1>Cross Referencing<a class="headerlink" href="#cross-referencing" title="Link to this heading">#</a></h1>
+<section id="cross-matching">
+<h2>Cross Matching<a class="headerlink" href="#cross-matching" title="Link to this heading">#</a></h2>
+<p>The first step in the cross identification process is <strong>cross-matching</strong>. During this stage, our goal is to find all
+of the plausible object matches to the sources in your catalog. After the cross-matching process is completed, we then
+undertake the <strong>reduction</strong> process to determine which of the identified matches is actually the <strong>best match</strong>.</p>
+<p>Cross matching in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is super simple and can be done either via the command line or via python directly!</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> will load your catalog into an <code class="docutils literal notranslate"><span class="pre">astropy</span></code> table. Thus, most common formats are are acceptable including
+<code class="docutils literal notranslate"><span class="pre">.fits</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, etc.</p>
+<p>If you experience difficulties with loading, your first stop should be assuring that the filetype you’ve stored your catalog in is
+actually valid.</p>
+</div>
+<p>To cross match a catalog stored in (for example) <code class="docutils literal notranslate"><span class="pre">example.fits</span></code>, we can do either of the following:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+CLI</label><div class="sd-tab-content docutils">
+<p>To use the command line interface (CLI), we can simply use the 1-line command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span><span class="s2">&quot;path/to/example.fits&quot;</span><span class="w"> </span><span class="s2">&quot;output_path.db&quot;</span>
+</pre></div>
+</div>
+<p>There are also two optional flags: <code class="docutils literal notranslate"><span class="pre">-db</span></code> and <code class="docutils literal notranslate"><span class="pre">-f</span></code>. <code class="docutils literal notranslate"><span class="pre">-f</span></code> will allow you to overwrite existing <code class="docutils literal notranslate"><span class="pre">.db</span></code> output
+files with the same path. <code class="docutils literal notranslate"><span class="pre">-db</span> <span class="pre">db1</span> <span class="pre">db2</span> <span class="pre">...</span> <span class="pre">dbN</span></code> allows you to overwrite the default set of databases to use for
+cross matching and instead use your own.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For this to work, the specified databases must be included in <code class="docutils literal notranslate"><span class="pre">DEFAULT_DATABASE_REGISTRY</span></code>.</p>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Python</label><div class="sd-tab-content docutils">
+<p>To accomplish this task from within a python script, we need only do the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyXMIP.cross_reference</span> <span class="kn">import</span> <span class="n">cross_match</span>
+
+<span class="n">cross_match</span><span class="p">(</span><span class="s2">&quot;input_path&quot;</span><span class="p">,</span><span class="s2">&quot;output_path&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Full details can be found at <a class="reference internal" href="../_as_gen/cross_reference.cross_match.html#cross_reference.cross_match" title="cross_reference.cross_match"><code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match()</span></code></a>.</p>
+</div>
+</div>
+<section id="exploring-cross-referencing-outputs">
+<h3>Exploring Cross Referencing Outputs<a class="headerlink" href="#exploring-cross-referencing-outputs" title="Link to this heading">#</a></h3>
+<p>Once you’ve obtained a cross-referencing output, a lot of information can be obtained from the resulting database.</p>
 </section>
-<section id="matching-sources">
-<h2>Matching Sources<a class="headerlink" href="#matching-sources" title="Link to this heading">#</a></h2>
 </section>
 <section id="match-reduction">
 <h2>Match Reduction<a class="headerlink" href="#match-reduction" title="Link to this heading">#</a></h2>
@@ -401,8 +442,8 @@ confidence in the success of the given sub-processes’ model given the availabl
 <section id="sub-process-overview">
 <h3>Sub-Process Overview<a class="headerlink" href="#sub-process-overview" title="Link to this heading">#</a></h3>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-0">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
 Instrumental Matching</label><div class="sd-tab-content docutils">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -421,8 +462,8 @@ the cost function of a given match <span class="math notranslate nohighlight">\(
 \[c_{\mathrm{instrument}}(x|y) = 1 - \sqrt{2\pi \sigma^2} N(\delta_{xy},\sigma),\]</div>
 <p>where <span class="math notranslate nohighlight">\(\delta_{xy}\)</span> is the angular distance between the catalog object and the potential match object.</p>
 </div>
-<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-1">
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-3">
 Object Type Matching</label><div class="sd-tab-content docutils">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -439,8 +480,8 @@ then include a mapping of object types to cost values from 0 to 1 depending on t
 inherit the same cost.</p>
 </div>
 </div>
-<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-2">
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-4">
 Poisson Modeling</label><div class="sd-tab-content docutils">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -490,8 +531,8 @@ which subprocesses should be enabled, etc.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">INSTRUMENT_PARAMS</span></code>: Parameters for the instrument specific sub-process.</p></li>
 </ul>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-3">
+<input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-5">
 RUN_PARAMS</label><div class="sd-tab-content docutils">
 <table class="longtable table table-center" id="id2" style="width: 100%">
 <caption><span class="caption-text">RUN_PARAM table</span><a class="headerlink" href="#id2" title="Link to this table">#</a></caption>
@@ -542,8 +583,8 @@ RUN_PARAMS</label><div class="sd-tab-content docutils">
 </tbody>
 </table>
 </div>
-<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-4">
+<input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-6">
 IO_PARAMS</label><div class="sd-tab-content docutils">
 <table class="table" id="id3">
 <caption><span class="caption-text">Table Title</span><a class="headerlink" href="#id3" title="Link to this table">#</a></caption>
@@ -619,8 +660,10 @@ IO_PARAMS</label><div class="sd-tab-content docutils">
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-your-catalog">Loading Your Catalog</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matching-sources">Matching Sources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-matching">Cross Matching</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-cross-referencing-outputs">Exploring Cross Referencing Outputs</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#match-reduction">Match Reduction</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-overview">Mathematical Overview</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sub-process-overview">Sub-Process Overview</a></li>

@@ -63,7 +63,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/cross_reference';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cross_reference.add_catalog" href="cross_reference.add_catalog.html" />
+    <link rel="next" title="cross_reference.cross_match" href="cross_reference.cross_match.html" />
     <link rel="prev" title="schema.SourceTableSchema.object_map" href="schema.SourceTableSchema.object_map.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -334,6 +334,9 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="structures.databases.html">structures.databases</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="structures.databases.add_points_to_poisson_map.html">structures.databases.add_points_to_poisson_map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_database.html">structures.databases.get_database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_poisson_map.html">structures.databases.get_poisson_map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structures.databases.get_poisson_path.html">structures.databases.get_poisson_path</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="structures.databases.DBRegistry.html">structures.databases.DBRegistry</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.__init__.html">structures.databases.DBRegistry.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.databases.DBRegistry.as_list.html">structures.databases.DBRegistry.as_list</a></li>
@@ -517,6 +520,7 @@ document.write(`
 <li class="toctree-l2 has-children"><a class="reference internal" href="structures.map.Map.html">structures.map.Map</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.__init__.html">structures.map.Map.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.get_healpix_id.html">structures.map.Map.get_healpix_id</a></li>
+<li class="toctree-l3"><a class="reference internal" href="structures.map.Map.plot.html">structures.map.Map.plot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.transform_map_coordinates.html">structures.map.Map.transform_map_coordinates</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.coordinate_frame.html">structures.map.Map.coordinate_frame</a></li>
 <li class="toctree-l3"><a class="reference internal" href="structures.map.Map.data.html">structures.map.Map.data</a></li>
@@ -655,53 +659,41 @@ document.write(`
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">cross_reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="cross_reference.add_catalog.html">cross_reference.add_catalog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cross_reference.cross_match.html">cross_reference.cross_match</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cross_reference.cross_match_table.html">cross_reference.cross_match_table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cross_reference.reduce_match_database.html">cross_reference.reduce_match_database</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.IdentityReductionProcess.html">cross_reference.IdentityReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.__init__.html">cross_reference.IdentityReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.get_parameter_names.html">cross_reference.IdentityReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.get_sql_query.html">cross_reference.IdentityReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.IdentityReductionProcess.parameters.html">cross_reference.IdentityReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.html">cross_reference.InstrumentReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.__init__.html">cross_reference.InstrumentReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.get_parameter_names.html">cross_reference.InstrumentReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.get_sql_query.html">cross_reference.InstrumentReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.column_name.html">cross_reference.InstrumentReductionProcess.column_name</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.InstrumentReductionProcess.parameters.html">cross_reference.InstrumentReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.ReductionProcess.html">cross_reference.ReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-23"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.__init__.html">cross_reference.ReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.get_parameter_names.html">cross_reference.ReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.get_sql_query.html">cross_reference.ReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.ReductionProcess.parameters.html">cross_reference.ReductionProcess.parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.SeparationReductionProcess.html">cross_reference.SeparationReductionProcess</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-24"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.__init__.html">cross_reference.SeparationReductionProcess.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.get_parameter_names.html">cross_reference.SeparationReductionProcess.get_parameter_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.get_sql_query.html">cross_reference.SeparationReductionProcess.get_sql_query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_reference.SeparationReductionProcess.parameters.html">cross_reference.SeparationReductionProcess.parameters</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="cross_reference.CrossMatchDatabase.html">cross_reference.CrossMatchDatabase</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.__init__.html">cross_reference.CrossMatchDatabase.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.add_catalog.html">cross_reference.CrossMatchDatabase.add_catalog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.build_meta_table.html">cross_reference.CrossMatchDatabase.build_meta_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.check_meta.html">cross_reference.CrossMatchDatabase.check_meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.correct_column_names.html">cross_reference.CrossMatchDatabase.correct_column_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.correct_object_types.html">cross_reference.CrossMatchDatabase.correct_object_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.drop_table.html">cross_reference.CrossMatchDatabase.drop_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.from_file.html">cross_reference.CrossMatchDatabase.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_add.html">cross_reference.CrossMatchDatabase.meta_add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_remove.html">cross_reference.CrossMatchDatabase.meta_remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta_reset.html">cross_reference.CrossMatchDatabase.meta_reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.query.html">cross_reference.CrossMatchDatabase.query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.has_catalog.html">cross_reference.CrossMatchDatabase.has_catalog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.match_tables.html">cross_reference.CrossMatchDatabase.match_tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.meta.html">cross_reference.CrossMatchDatabase.meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_reference.CrossMatchDatabase.tables.html">cross_reference.CrossMatchDatabase.tables</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.core.html">utilities.core</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-25"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.core.html">utilities.core</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.enforce_units.html">utilities.core.enforce_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.getFromDict.html">utilities.core.getFromDict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.core.setInDict.html">utilities.core.setInDict</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.geo.html">utilities.geo</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-26"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.geo.html">utilities.geo</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-23"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.geo.convert_coordinates.html">utilities.geo.convert_coordinates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.geo.convert_skycoord.html">utilities.geo.convert_skycoord</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.plot.html">utilities.plot</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-27"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utilities.plot.html">utilities.plot</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-24"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.plot_healpix.html">utilities.plot.plot_healpix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.set_style.html">utilities.plot.set_style</a></li>
 </ul>
@@ -765,38 +757,26 @@ document.write(`
                   
   <section id="module-cross_reference">
 <span id="cross-reference"></span><h1>cross_reference<a class="headerlink" href="#module-cross_reference" title="Link to this heading">#</a></h1>
-<p>Cross-Referencing toolkit</p>
+<p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> cross-referencing toolkit module.</p>
+<p class="rubric">Notes</p>
+<p>The <a class="reference internal" href="#module-cross_reference" title="cross_reference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cross_reference</span></code></a> module is the core of the user-tools in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. This module allows you to cross reference tables,
+run queries and reduce results.</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.add_catalog.html#cross_reference.add_catalog" title="cross_reference.add_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_catalog</span></code></a>(catalog_path, database_path, ...)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.cross_match.html#cross_reference.cross_match" title="cross_reference.cross_match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_match</span></code></a>(input_path, output_path[, ...])</p></td>
+<td><p>Cross match a table of known objects against a set of databases and output the result to a path of your choice.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cross_reference.cross_match.html#cross_reference.cross_match" title="cross_reference.cross_match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_match</span></code></a>(input_path, output_path[, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.cross_match_table.html#cross_reference.cross_match_table" title="cross_reference.cross_match_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_match_table</span></code></a>(table, output_path[, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cross_reference.reduce_match_database.html#cross_reference.reduce_match_database" title="cross_reference.reduce_match_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_match_database</span></code></a>(schema[, overwrite])</p></td>
-<td><p>Reduce the directed match database as characterized by the schema.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="cross_reference.cross_match_table.html#cross_reference.cross_match_table" title="cross_reference.cross_match_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_match_table</span></code></a>(table, output_path[, ...])</p></td>
+<td><p>Cross match a table of known objects against a set of databases and output the result to a path of your choice.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.IdentityReductionProcess.html#cross_reference.IdentityReductionProcess" title="cross_reference.IdentityReductionProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IdentityReductionProcess</span></code></a>(database_path[, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cross_reference.InstrumentReductionProcess.html#cross_reference.InstrumentReductionProcess" title="cross_reference.InstrumentReductionProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstrumentReductionProcess</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.ReductionProcess.html#cross_reference.ReductionProcess" title="cross_reference.ReductionProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReductionProcess</span></code></a>(database_path[, databases, ...])</p></td>
-<td><p>Abstract class representation for a standard cross-match reduction process.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cross_reference.SeparationReductionProcess.html#cross_reference.SeparationReductionProcess" title="cross_reference.SeparationReductionProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SeparationReductionProcess</span></code></a>(database_path[, ...])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cross_reference.CrossMatchDatabase.html#cross_reference.CrossMatchDatabase" title="cross_reference.CrossMatchDatabase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossMatchDatabase</span></code></a>(path)</p></td>
+<td><p>Class wrapper for the underlying <code class="docutils literal notranslate"><span class="pre">SQL</span></code> database files where cross-matching data is contained.</p></td>
 </tr>
 </tbody>
 </table>
@@ -822,11 +802,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="cross_reference.add_catalog.html"
+       href="cross_reference.cross_match.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">cross_reference.add_catalog</p>
+        <p class="prev-next-title">cross_reference.cross_match</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

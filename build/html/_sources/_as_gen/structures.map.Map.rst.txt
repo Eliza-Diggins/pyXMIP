@@ -16,6 +16,7 @@ structures.map.Map
    
       ~Map.__init__
       ~Map.get_healpix_id
+      ~Map.plot
       ~Map.transform_map_coordinates
    
    
