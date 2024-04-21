@@ -1,0 +1,69 @@
+# -------------------------------------------------------------------------------------- #
+# PYXMIP scripting setup yaml                                                            #
+# -------------------------------------------------------------------------------------- #
+config:
+  help: "Configuration commands for pyXMIP."
+  leaves:
+    get:
+      help: "Get a configuration value from pyXMIP config."
+      is_leaf: true
+      args:
+        - [['option_name'],{'help':"The option to show.",'nargs':'+'}]
+      function: "get_config"
+    set:
+      help: "Set a configuration value in the pyXMIP config."
+      is_leaf: true
+      args:
+        - [['option_name'],{'help':"The option to set.",'nargs':'+'}]
+        - [['option_value'],{'help':"The value to set it to."}]
+      function: "set_config"
+    show:
+      help: "Print the pyXMIP configuration file."
+      is_leaf: true
+      args: []
+      function: "print_config"
+# -------------------------------------------------------------------------------------- #
+database:
+  help: "Database commands for pyXMIP."
+  leaves:
+    avail:
+      help: "Show the available databases."
+      is_leaf: true
+      args: []
+      function: "get_available_databases"
+    poisson:
+      help: "Commands specific to the attached poisson maps for the databases."
+      leaves:
+        path:
+          is_leaf: true
+          args:
+            - [["database"],{'help':'The database to pull a poisson map path from.'}]
+          function: "get_poisson_path"
+# -------------------------------------------------------------------------------------- #
+xmatch:
+  help: "Cross matching commands"
+  leaves:
+    run:
+      is_leaf: true
+      help: "Run the cross-matching algorithm on a file."
+      args:
+        - [["input_path"],{'help':'The path to the catalog you want to cross-reference'}]
+        - [['output_path'],{'help': 'The path to output the data to (SQL database).'}]
+        - [['-db','--databases'],{'help':'Databases to include','nargs':'+'}]
+        - [['-f','--force'],{'help':'Allow overwriting of existing data.','action':'store_true'}]
+      function: "xmatch_run"
+# -------------------------------------------------------------------------------------- #
+reduce:
+  help: "Reduction commands."
+  leaves: {}
+# -------------------------------------------------------------------------------------- #
+version:
+  help: "See the version of pyXMIP."
+  is_leaf: true
+  args: []
+  function: "print_version"
+cite:
+  help: "See the version of pyXMIP."
+  is_leaf: true
+  args: []
+  function: "print_version"

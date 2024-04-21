@@ -209,16 +209,56 @@ class SourceTableSchema(Schema):
     Additionally, the schema controls the native coordinate system, and the source type mapping from the native convention of the
     source table to the SIMBAD convention adopted in pyXMIP.
 
-    .. admonition:: Format
+    Attributes
+    ----------
+    column_map: dict
+        Mapping between special columns (keys) and their column names in the resulting tables (values). Only special columns
+        will appear in the ``column_map``. It is the backbone of the table standardization approach used in pyXMIP.
+    default_coord_system: str
+        The default coordinate system for this schema. Specificed as a string representation.
+    object_map: dict
+        Mapping between source table object types (keys) and pyXMIP convention [SIMBAD] object types (values).
+    Z: str
+        The column name in the table which contains redshift information.
+    TYPE: str
+        The column name for the object type.
+    NAME: str
+        The column denoting the name of each object in the table.
+    RA: str
+        The name of the column containing the RA coordinate.
+    DEC: str
+        The name of the column containing the DEC coordinate.
+    L: str
+        The name of the column containing galactic longitude.
+    B: str
+        The name of the column containing galactic latitude.
 
-        The format of the :py:class:`SourceTableSchema` contains 3 top-level headers:
+    Notes
+    -----
 
-        - ``column_map``: contains mappings from special ``pyXMIP`` column names to their equivalent in the native table.
-          - Special keys are ``Z``, ``NAME``, ``TYPE``, ``RA``, ``DEC``, ``L``, ``B``.
-        - ``settings``: contains the default settings for the specified schema.
-          - ``default_coord_system``: The default coordinate frame (represented as a string).
-        - ``object_map``: contains each of the possible object types from the native dataset and corresponds to the SIMBAD convention used
-          in ``pyXMIP``.
+    :py:class:`SouceTableSchema` specific schema files should have the following general format.
+
+    .. code-block:: yaml
+
+        column_map: # The column map tells the schema what different columns in your catalog actually are.
+            RA: "RA"
+            DEC: "DEC"
+            NAME: "Object Name"
+            TYPE: 'Type'
+            Z: "Redshift"
+
+        object_map:
+            # The object_map tells pyXMIP how to convert database object types into specific SIMBAD object types.
+            # This allows the code to adopt a uniform convention for object types.
+
+            native_object_type: SIMBAD_object_type
+
+        settings:
+            # Miscellaneous settings.
+            #
+            default_coord_system: "ICRS" # The default coordinate system to use.
+
+
     """
     _coordinate_requirements = {
         astro_coords.ICRS: ["RA", "DEC"],
@@ -416,6 +456,44 @@ class SourceTableSchema(Schema):
 
 
 class ReductionSchema(Schema):
+    """
+    Specialized :py:class:`Schema` subclass for parsing reduction schema files.
+
+    Notes
+    -----
+
+    The reduction schema is the ``pyXMIP`` code manifestation of a given reduction schema file.
+
+    RUN_PARAMS
+    ``````````
+
+    ``REFDBS``: list or str
+        The set of databases to reference.
+    ``POISSON``: bool
+        Enable Poisson mapping procedures in the reduction process.
+
+        .. note::
+
+            If ``POISSON`` is ``True``, then ``POISSON_PARAMS`` must be present.
+    ``INSTRUMENTAL``: bool
+        Enable instrumental reduction procedures.
+
+        .. note::
+
+            If ``INSTRUMENTAL`` is ``True``, then ``INSTRUMENT_PARAMS`` must be present.
+    ``OTYPES``: bool
+        Enable object type reduction procedures.
+
+        .. note::
+            If ``OTYPES`` is ``True``, then ``OBJECT_PARAMS`` must be present.
+
+
+    IO_PARAMS
+    `````````
+    ``DBPATH``
+
+    """
+
     # -- RUN_PARAMS -- #
     RUN_PARAMS = _SCHEMAENTRY([], required=True, dtype=dict)
     REFDBS = _SCHEMAENTRY(["RUN_PARAMS"], required=True, dtype=(list, str))

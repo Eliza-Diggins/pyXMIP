@@ -23,6 +23,7 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 
 from pyXMIP.utilities.core import enforce_units, mainlog
 from pyXMIP.utilities.geo import convert_coordinates, convert_skycoord
+from pyXMIP.utilities.plot import _enforce_style, plot_healpix
 
 
 class _AtlasHeaderParam:
@@ -914,6 +915,10 @@ class Map:
         ids = hp.ang2pix(self.NSIDE, _th, _ph)
 
         return ids
+
+    @_enforce_style
+    def plot(self, *args, **kwargs):
+        return plot_healpix(self.data, *args, **kwargs)
 
 
 def _parse_default_kwarg_groups(defaults, kwargs):

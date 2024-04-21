@@ -12,13 +12,13 @@ system:
   logging:
     main:
       enabled: true # Use this to disable any logging. This will stop output to terminal!
-      format: "%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s" # Logger's string format for output
-      level: "DEBUG" # Only logging passed to this level or higher are displayed.
-      stream: "STDERR" # Can be STDERR or STDOUT.
+      format: '%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s' # Logger's string format for output
+      level: DEBUG    # Only logging passed to this level or higher are displayed.
+      stream: STDERR   # Can be STDERR or STDOUT.
     developer:
       # ! The developer logger passes detailed logging messages to file
       enabled: false
-      output_directory: null # You have to set this before the development logger will function.
+      output_directory:      # You have to set this before the development logger will function.
   add_ons:
     rich: false
 
@@ -43,10 +43,10 @@ plotting:
     ytick.labelleft: true
     ytick.labelright: false
     ytick.minor.visible: true
-    xtick.direction: "in"
-    ytick.direction: "in"
+    xtick.direction: in
+    ytick.direction: in
     # -- Font Settings -- #
-    font.style: "normal"
+    font.style: normal
     font.size: 12
     # -- Image -- #
-    image.cmap: 'inferno'
+    image.cmap: inferno

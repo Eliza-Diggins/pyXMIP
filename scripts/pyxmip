@@ -3,156 +3,56 @@
 Main pyXMIP command-line interface message passing script.
 """
 import argparse
+import os
+import pathlib as pt
 
-from pyXMIP.cross_reference import cross_match
-from pyXMIP.structures.databases import add_points_to_poisson_map
-from pyXMIP.utilities._text import get_citation, print_cli_header, show_config
+import _script_commands as sc
+
+# ================================================================================= #
+# Reading the yaml file
+# ================================================================================= #
+import yaml
+from _script_commands import build_cli_parsers_recursive
+
 from pyXMIP.utilities.core import mainlog
 
-_defaults = {
-    "cite": {"args": [], "kwargs": [], "link_function": get_citation, "credit": False},
-    "config": {
-        "show": {
-            "args": [],
-            "kwargs": [],
-            "link_function": show_config,
-            "credit": False,
-        }
-    },
-    "database": {
-        "poisson": {
-            "add": {
-                "args": ["database", "n", "radii"],
-                "kwargs": [],
-                "link_function": add_points_to_poisson_map,
-                "credit": False,
-            }
-        }
-    },
-    "xmatch": {
-        "match": {
-            "args": ["input_path", "output_path"],
-            "kwargs": ["databases", "overwrite"],
-            "link_function": cross_match,
-            "credit": True,
-        }
-    },
-}
+scripts_path = os.path.join(pt.Path(__file__).parents[0], "scripts.yaml")
+
+with open(scripts_path, "r") as file:
+    _yaml_cli = yaml.load(file, yaml.FullLoader)
+
 
 # ================================================================================= #
 # CLI Configuration
 # ================================================================================= #
+# Setup the main parser and add the commands subparser.
 _main_parser = argparse.ArgumentParser(prog="pyxmip")
-_subparsers = _main_parser.add_subparsers(
+_command_subparser = _main_parser.add_subparsers(
     title="commands", help="Available pyXMIP commands."
 )
-
-# -- CONFIGURATION -- #
-_configuration_parser = _subparsers.add_parser(
-    "config", help="Interact with you pyXMIP configuration"
-)
-_configuration_command = _configuration_parser.add_subparsers(
-    title="sub-commands", help="configuration sub-commands"
+_command_parsers = build_cli_parsers_recursive(
+    _yaml_cli, parent_parser=_command_subparser
 )
 
-# configuration show
-_configuration_show_parser = _configuration_command.add_parser(
-    "show", help="show the configuration"
-)
-
-
-# -- CITATIONS -- #
-_citation_parser = _subparsers.add_parser("cite", help="Get citation info for pyXMIP.")
-_citation_parser.set_defaults(link_function=get_citation)
-
-# -- INFO -- #
-_info_parser = _subparsers.add_parser(
-    "info", help="Get additional info in specific pyXMIP objects."
-)
-
-# -- DATABASES -- #
-_database_parser = _subparsers.add_parser("database", help="Commands for databases.")
-_database_command = _database_parser.add_subparsers(
-    title="sub-commands", help="database sub-commands"
-)
-
-# database poisson
-_database_poisson_parser = _database_command.add_parser(
-    "poisson", help="commands for interacting with Poisson maps."
-)
-_database_poisson_command = _database_poisson_parser.add_subparsers(
-    title="sub-commands", help="database poisson sub-commands"
-)
-
-# database poisson add
-_database_poisson_add_parser = _database_poisson_command.add_parser(
-    "add", help="Add new points to the poisson map data."
-)
-_database_poisson_add_parser.add_argument(
-    "database", type=str, help="The database name to add to."
-)
-_database_poisson_add_parser.add_argument(
-    "n", type=int, help="The number of points to sample"
-)
-_database_poisson_add_parser.add_argument(
-    "-r",
-    "--radii",
-    type=str,
-    help="The radius to sample. [r unit].",
-    default="1 arcmin",
-)
-
-# cross-matching
-_xmatch_parser = _subparsers.add_parser("xmatch", help="Cross-matching commands.")
-_xmatch_command = _xmatch_parser.add_subparsers(
-    title="sub-commands", help="xmatch sub-commands"
-)
-_xmatch_match_parser = _xmatch_command.add_parser(
-    "match", help="Match against a database"
-)
-_xmatch_match_parser.add_argument(
-    "input_path", type=str, help="The path to the source data."
-)
-_xmatch_match_parser.add_argument("output_path", type=str, help="The output path.")
-_xmatch_match_parser.add_argument(
-    "-d",
-    "--databases",
-    nargs="+",
-    default=None,
-    help="The databases to reference against.",
-)
-_xmatch_match_parser.add_argument(
-    "-o",
-    "--overwrite",
-    action="store_true",
-    help="Allow automatic overwrite if output already exists.",
-)
-
-# ------- Parser Map ------- #
-_parser_map = {
-    _xmatch_match_parser: _defaults["xmatch"]["match"],
-    _configuration_show_parser: _defaults["config"]["show"],
-    _citation_parser: _defaults["cite"],
-    _database_poisson_add_parser: _defaults["database"]["poisson"]["add"],
-}
-
-for k, v in _parser_map.items():
-    k.set_defaults(**v)
 # ================================================================================ #
 # RUN
 # ================================================================================ #
-args = _main_parser.parse_args()
+args = dict(_main_parser.parse_args().__dict__)
 
-if not hasattr(args, "link_function"):
+operation_function = args.pop("operation_function", None)
+if operation_function is None:
+    from pyXMIP.utilities._text import print_cli_header
+
     print_cli_header()
-    mainlog.error("Unrecognized command!")
+    mainlog.error("Please enter a sub-command.")
+    exit(1)
+elif operation_function == "unimplemented":
+    from pyXMIP.utilities._text import print_cli_header
+
+    print_cli_header()
+    mainlog.error("This is not yet implemented.")
     exit(1)
 
-if args.credit:
-    print_cli_header()
-
-passed_args = [getattr(args, arg_name) for arg_name in args.args]
-passed_kwargs = {k: getattr(args, k) for k in args.kwargs}
-
-args.link_function(*passed_args, **passed_kwargs)
-exit(0)
+else:
+    getattr(sc, operation_function)(**args)
+    exit(0)

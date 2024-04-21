@@ -571,11 +571,13 @@ def add_points_to_poisson_map(database_name, n, radii, **kwargs):
     database.add_sources_to_poisson(n, radii, **kwargs)
 
 
-if __name__ == "__main__":
-    from astropy import units
+def get_database(database_name):
+    return DEFAULT_DATABASE_REGISTRY.get(database_name)
 
-    p = SIMBAD.query_radius(SkyCoord(ra=1, dec=1, unit="deg"), 10 * units.arcmin)
-    print(list(p["OTYPES"]))
-    print(p.count_types()["LM*"])
-    # print(p['TYPE'])
-    # print(p.count_types())
+
+def get_poisson_map(database_name):
+    return get_database(database_name).get_poisson_atlas()
+
+
+def get_poisson_path(database_name):
+    return get_database(database_name).poisson_map

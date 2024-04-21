@@ -1,3 +1,4 @@
+.. _overview:
 .. image:: ../images/logos_icons/logo_main.png
     :scale: 50%
 

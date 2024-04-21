@@ -61,7 +61,7 @@ stream = (
     if xsparams["system"]["logging"]["main"]["stream"] in ["STDOUT", "stdout"]
     else sys.stderr
 )
-mainLogger = logging.getLogger("pyXs")
+mainLogger = logging.getLogger("pyXMIP")
 
 xs_sh = logging.StreamHandler(stream=stream)
 

@@ -1,55 +1,71 @@
 """
-Cross-Referencing toolkit
-"""
-import operator
-import os
-import pathlib as pt
-from abc import ABC, abstractmethod
+``pyXMIP`` cross-referencing toolkit module.
 
-import astropy.units as units
-import numpy as np
+Notes
+-----
+
+The :py:mod:`cross_reference` module is the core of the user-tools in ``pyXMIP``. This module allows you to cross reference tables,
+run queries and reduce results.
+"""
+import pathlib as pt
+import time
+
 import pandas as pd
 import sqlalchemy as sql
 from _collections_abc import Collection
-from astropy.coordinates import SkyCoord
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-from pyXMIP.schema import ReductionSchema
 from pyXMIP.structures.databases import DEFAULT_DATABASE_REGISTRY
 from pyXMIP.structures.table import SourceTable
-from pyXMIP.utilities.core import getFromDict, mainlog, setInDict
+from pyXMIP.utilities.core import mainlog
 
 # ============================================================================================ #
 # X-Matching Processes                                                                         #
 # ============================================================================================ #
 
-_operators = {
-    "<": operator.lt,
-    "<=": operator.le,
-    "=": operator.eq,
-    ">=": operator.ge,
-    ">": operator.gt,
-}
-
 
 def cross_match(
     input_path, output_path, databases=None, overwrite=False, *args, **kwargs
 ):
+    r"""
+    Cross match a table of known objects against a set of databases and output the result to a path of your choice.
+
+    Parameters
+    ----------
+    input_path: str
+        The path to the input file (must be a table with a readable file format by ``astropy``).
+    output_path: str
+        The ``.db`` file to write the output to.
+    databases: list, optional
+        The databases to include in the cross-matching process. If ``str`` types are listed, then they are assumed to
+        be database names, otherwise it is assumed that the database classes are passed. By default, all databases are queried against.
+    overwrite: bool, optional
+        If ``True``, you will be allowed to overwrite a pre-existing ``.db`` file.
+    *args:
+        Additional arguments.
+    **kwargs:
+        Additional kwargs.
+
+    """
     mainlog.info(f"X-Matching {input_path} into {output_path}.")
 
-    # ========================================================#
-    # Managing arguments and kwargs. Enforcing types.
+    # ======================================================== #
+    # Managing arguments and kwargs. Enforcing types.          #
+    # ======================================================== #
     input_path, output_path = pt.Path(input_path), pt.Path(output_path)
-    source_table = SourceTable.read(input_path)
 
-    if databases is None:
-        databases = DEFAULT_DATABASE_REGISTRY.as_list()
-    elif not isinstance(databases, Collection):
-        databases = [databases]
-    else:
-        pass
+    # check the source table reading.
+    try:
+        source_table = SourceTable.read(input_path)
+    except Exception as excep:
+        raise ValueError(
+            f"Failed to read source table {input_path} because if error {excep.__str__()}."
+        )
 
+    # ======================================================== #
+    # Running                                                  #
+    # ======================================================== #
     return cross_match_table(
         source_table,
         output_path,
@@ -63,19 +79,53 @@ def cross_match(
 def cross_match_table(
     table, output_path, databases=None, overwrite=False, *args, **kwargs
 ):
+    r"""
+    Cross match a table of known objects against a set of databases and output the result to a path of your choice.
+
+    Parameters
+    ----------
+    table: :py:class:`astropy.table.table.Table`
+        The ``Table`` instance to cross-reference against.
+    output_path: str
+        The ``.db`` file to write the output to.
+    databases: list, optional
+        The databases to include in the cross-matching process. If ``str`` types are listed, then they are assumed to
+        be database names, otherwise it is assumed that the database classes are passed. By default, all databases are queried against.
+    overwrite: bool, optional
+        If ``True``, you will be allowed to overwrite a pre-existing ``.db`` file.
+    *args:
+        Additional arguments.
+    **kwargs:
+        Additional kwargs.
+    """
     import sqlalchemy as sql
 
-    # =====================================================#
-    # Managing args and kwargs.
+    # ===================================================== #
+    # Managing arguments and kwargs                         #
+    # ===================================================== #
     output_path = pt.Path(output_path)
 
+    # check if the databases are legit.
     if databases is None:
+        # databases become the defaults.
         databases = DEFAULT_DATABASE_REGISTRY.as_list()
+    elif not isinstance(databases, Collection):
+        databases = [databases]
+    else:
+        pass
+
+    # make sure they're actually database types.
+    for k, v in enumerate(databases):
+        if isinstance(v, str):
+            databases[k] = DEFAULT_DATABASE_REGISTRY[v]
+
     mainlog.info(
         f"Cross matching with {len(databases)} databases: {[k.__name__ for k in databases]}."
     )
 
-    # -- Dealing with the sql data -- #
+    # ===================================================== #
+    # Setting up the SQL                                    #
+    # ===================================================== #
     if output_path.exists():
         # check if the specific table is there
         _tmp_engine = sql.create_engine(f"sqlite:///{output_path}")
@@ -97,9 +147,9 @@ def cross_match_table(
                         _exec = sql.text(f"DROP TABLE '{table}'")
                         conn.execute(_exec)
 
-    # ---------------------------------------- #
-    # Cross Matching
-    # ---------------------------------------- #
+    # ===================================================== #
+    # Running                                               #
+    # ===================================================== #
     with logging_redirect_tqdm(loggers=[mainlog]):
         for database in tqdm(
             databases, desc=f"Matching from {len(databases)} databases"
@@ -107,414 +157,476 @@ def cross_match_table(
             database.source_match(output_path, table, *args, **kwargs)
 
 
-# ================================================================================================ #
-# REDUCTION MAIN FUNCTION                                                                          #
-# ================================================================================================ #
+# ========================================================= #
+# Cross Matching Table Class                                #
+# ========================================================= #
 
 
-class _REDUCTION_DESCRIPTOR:
-    def __init__(
-        self, dict_location, default=None, required=False, dtype=None, allow_set=True
-    ):
-        self.default = default
-        self.dict_location = dict_location
-        self.required = required
-        self.dtype = dtype
-        self.allow_set = allow_set
-
-    def __set_name__(self, owner, name):
-        self._name = name
-        self.dict_location += [self._name]
-
-    def __get__(self, instance, owner):
-        try:
-            return getFromDict(instance._kwargs, self.dict_location)
-        except KeyError:
-            return self.default
-
-    def __set__(self, instance, value):
-        setInDict(instance._kwargs, self.dict_location, value)
-
-
-class ReductionProcess(ABC):
+class CrossMatchDatabase:
     """
-    Abstract class representation for a standard cross-match reduction process.
+    Class wrapper for the underlying ``SQL`` database files where cross-matching data is contained.
     """
 
-    _base_sql_string = (
-        "SELECT * FROM %(table_name)s LIMIT %(chunksize)s OFFSET %(offset)s"
-    )
+    _ppp = ["META_EXISTS", "COLUMN_CORRECT", "OBJECT_CORRECT", "CATALOG_INCLUDED"]
+    _resetable_attributes = ["tables", "meta"]
 
-    # === PARAMETERS === #
-    CHUNKSIZE = _REDUCTION_DESCRIPTOR([], default=10000, dtype=int, allow_set=True)
-
-    def __init__(self, database_path, databases="all", db_registry=None, **kwargs):
-        self._kwargs = {}
-        self._sql_string = (
-            self.__class__._base_sql_string
-        )  # Allow for custom sql string generation inside of process setup.
-        self.included_databases = databases
-        self.path = database_path
-
-        for p in self.get_parameter_names():
-            p_cls = self.__class__.__dict__[p]
-
-            try:
-                setattr(self, p, getFromDict(kwargs, p_cls.dict_location))
-            except (KeyError, AttributeError):
-                # that attribute doesn't have a value.
-                if p_cls.required:
-                    raise ValueError(f"The kwarg {p} is required.")
-
-        for k, v in kwargs.items():
-            if k not in self.get_parameter_names() and v is not None:
-                mainlog.warning(
-                    f"Detected kwarg {k}, which is not recognized. Check that it is spelled correctly."
-                )
-
-        # =================================== #
-        # Managing args
-        if db_registry is None:
-            db_registry = DEFAULT_DATABASE_REGISTRY
-
-        self._engine = sql.create_engine(f"sqlite:///{database_path}")
-        # we need to lookup the available tables.
-        with self._engine.connect() as conn:
-            self._sql_tables = sql.inspect(conn).get_table_names()
-
-        if self.included_databases == "all":
-            self.included_databases = [
-                db_registry[k.split("_MATCH")[0]]
-                for k in self._sql_tables
-                if "_MATCH" in k
-            ]
-        assert all(
-            f"{k.__name__}_MATCH" in self._sql_tables for k in self.included_databases
-        ), f"Databases {[k.__name__ for k in self.included_databases if f'{k}_MATCH' not in self._sql_tables]} were not found in the match database."
-
-    def __repr__(self):
-        return f"<ReductionProcess {self.__class__.__name__}>"
-
-    def __str__(self):
-        return self.__repr__()
-
-    def __call__(self, *args, **kwargs):
+    def __init__(self, path):
         """
-        Provides the core of all reduction processes.
+        Initialize a :py:class:`CrossMatchDatabase` instance.
 
+        Parameters
+        ----------
+        path: str
+            The path to the underlying ``SQL`` database to load.
 
         """
-        mainlog.info(f"Performing {self} on {self.path}.")
 
-        # --------------------------------------------------------------------------------- #
-        # PROCESS SETUP
-        # --------------------------------------------------------------------------------- #
-        self._setup_reduction(*args, **kwargs)
-        _progress_bar = tqdm(total=len(self.included_databases), desc="", leave=False)
+        # -- Defining attributes -- #
+        self.path = path
+        self._sql_engine = sql.create_engine(f"sqlite:///{self.path}")
 
-        # --------------------------------------------------------------------------------- #
-        # PROCESS MAIN
-        # --------------------------------------------------------------------------------- #
-        with logging_redirect_tqdm(loggers=[mainlog]):
-            for (
-                database
-            ) in self.included_databases:  # iterate through each of the databases.
-                # -- Setting up the reduction process -- #
-                _progress_bar.set_description(
-                    f"{self.__class__.__name__} - {database.__name__}"
-                )
-                _database_table_name = (
-                    f"{database.__name__}_MATCH"  # Holds the actual match data.
-                )
-                _temp_database_table_name = f"{_database_table_name}_TMP"  # Where we are putting the full output.
-
-                # getting the table size
-                with self._engine.connect() as conn:
-                    _table_size = conn.execute(
-                        sql.text(f"SELECT COUNT(*) FROM {_database_table_name}")
-                    ).scalar()
-
-                offsets = np.arange(0, _table_size, self.CHUNKSIZE, dtype="uint32")
-                _chunk_pbar = tqdm(
-                    total=_table_size, desc="Chunking Execution", leave=False
-                )
-
-                # --------------------------------------------------------------------- #
-                # REDUCTION
-                # --------------------------------------------------------------------- #
-                for offset in offsets:
-                    _mem_table = pd.read_sql(
-                        self.get_sql_query(
-                            self.CHUNKSIZE, offset, _database_table_name
-                        ),
-                        self._engine,
-                    )
-                    self._process(_mem_table).to_sql(
-                        _temp_database_table_name,
-                        self._engine,
-                        index=False,
-                        if_exists="append",
-                    )
-                    _chunk_pbar.update(len(_mem_table))
-
-                with self._engine.connect() as conn:
-                    conn.execute(sql.text(f"DROP TABLE {_database_table_name}"))
-                    conn.execute(
-                        sql.text(
-                            f"ALTER TABLE {_temp_database_table_name} RENAME TO {_database_table_name}"
-                        )
-                    )
-
-                _progress_bar.update()
-                mainlog.info(
-                    f"{self.__class__.__name__} - {database.__name__} - [COMPLETE]"
-                )
-
-    def _setup_reduction(self, *args, **kwargs):
-        pass
-
-    @abstractmethod
-    def _process(self, table):
-        return table
-
-    def get_sql_query(self, cs, off, db):
-        return sql.text(f"SELECT * FROM {db} LIMIT {cs} OFFSET {off}")
+        # -- Defining property backends -- #
+        self._tables = None
+        self._meta = None
 
     @property
-    def parameters(self):
-        return {m: getattr(self, m) for m in self._get_descriptors()}
+    def tables(self):
+        """List of available tables."""
+        if self._tables is None:
+            _insp = sql.inspect(self._sql_engine)
+            table_names = _insp.get_table_names()
+            self._tables = table_names
+        return self._tables
 
-    @classmethod
-    def _get_descriptors(cls):
-        # fetching descriptors.
-        return [
-            m for m, v in cls.__dict__.items() if isinstance(v, _REDUCTION_DESCRIPTOR)
-        ]
+    @property
+    def meta(self):
+        """The ``META`` table."""
+        if self._meta is None:
+            with self._sql_engine.connect() as conn:
+                self._meta = pd.read_sql_table("META", conn)
+        return self._meta
 
-    @classmethod
-    def get_parameter_names(cls):
-        return cls._get_descriptors()
+    @property
+    def has_catalog(self):
+        """Returns ``True`` if the catalog is already loaded."""
+        return "CATALOG" in self.tables
 
-    def _enforce_parameters(self):
-        for k, v in self.parameters.items():
-            if v is None and self.__class__.__dict__[k].required:
-                raise ValueError(f"Parameter {k} is not set.")
+    @property
+    def match_tables(self):
+        """List of the available match tables."""
+        return [i for i in self.tables if i[-6:] == "_MATCH"]
 
-    def _pull_table(self, table):
-        with self._engine.connect() as conn:
-            return pd.read_sql_table(table, conn)
+    def _reset_attributes(self):
+        for u in self.__class__._resetable_attributes:
+            setattr(self, f"_{u}", None)
 
+    def drop_table(self, table_name):
+        """
+        Drop the table from the ``SQL`` database.
 
-class IdentityReductionProcess(ReductionProcess):
-    def _process(self, table):
-        return table
+        Parameters
+        ----------
+        table_name: str
+            The name of the table to delete.
 
+        Returns
+        -------
+        None
+        """
+        assert table_name in self.tables, f"Table {table_name} doesn't exist."
 
-class SeparationReductionProcess(ReductionProcess):
-    def _process(self, table):
-        catalog_coords = SkyCoord(
-            ra=table["CATALOG_RA"], dec=table["CATALOG_DEC"], unit="deg"
-        )
-        match_coords = SkyCoord(ra=table["RA"], dec=table["DEC"], unit="deg")
+        with self._sql_engine.connect() as conn:
+            query = sql.text(f"DROP TABLE {table_name}")
+            conn.execute(query)
 
-        table["SEPARATION"] = catalog_coords.separation(match_coords).to_value("arcmin")
+        mainlog.info(f"DELETED table {table_name} from {self.path}.")
 
-        return table
+    def query(self, query):
+        """
+        Query the SQL database.
 
+        Parameters
+        ----------
+        query: str
+            The SQLITE flavor SQL query for this database.
 
-class InstrumentReductionProcess(ReductionProcess):
-    column_name = "InstrumentRedScore"
+        """
+        with self._sql_engine.connect() as conn:
+            return pd.read_sql_query(sql.text(query), conn)
 
-    PSF = _REDUCTION_DESCRIPTOR([], required=True, allow_set=True, dtype=units.Quantity)
+    def build_meta_table(self, overwrite=False):
+        """
+        Generate the post-processing meta table ``META`` inside of the database.
 
-    EXT_FLAG_COL = _REDUCTION_DESCRIPTOR([], required=False, allow_set=True, dtype=str)
-    EXT_FLAG_THRESH = _REDUCTION_DESCRIPTOR(
-        [], required=False, allow_set=True, dtype=(float, int, str)
-    )
-    EXT_FLAG_COMP_OP = _REDUCTION_DESCRIPTOR([], required=False, default="=")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # -- adding additional objects -- #
-        self._ext_func = None
-        self._psf_func = None
-
-    def _setup_reduction(self, *args, **kwargs):
-        # ==================================================== #
-        # Check Columns are present
-        with self._engine.connect() as conn:
-            for table in [f"{db.__name__}_MATCH" for db in self.included_databases]:
-                assert any(
-                    [
-                        k["name"] == "SEPARATION"
-                        for k in sql.inspect(conn).get_columns(table)
-                    ]
-                ), f"Failed to find SEPARATION column in {table}. You should run a SeparationReductionProcess..."
-
-            # Check that a catalog reduction is already there
-            tables = sql.inspect(conn).get_table_names()
-
-            if self.EXT_FLAG_COL is not None:
-                assert (
-                    "CATALOG" in tables
-                ), f"Failed to find required table [because EXT_FLAG_COL is set] CATALOG in {self.path}."
-                assert any(
-                    _cname["name"] == self.EXT_FLAG_COL
-                    for _cname in sql.inspect(conn).get_columns("CATALOG")
-                ), f"Failed to find {self.EXT_FLAG_COL} in CATALOG."
-
-        # ==================================================== #
-        # Managing custom SQL pull information.
-        if self.EXT_FLAG_COL is not None:
-            # --> the sql call needs to be altered to allow for mergers.
-            self._sql_string = f" %(table_name)s.*,CATALOG.{self.EXT_FLAG_COL} FROM %(table_name)s LIMIT %(chunksize)s OFFSET %(offset)s INNER JOIN "
-
-        if self.EXT_FLAG_COL is not None:
-            # set the special SQL call to include the EXT_FLAG_COL
-
-            self._ext_func = lambda table: _operators[self.EXT_FLAG_COMP_OP](
-                table[self.EXT_FLAG_COL], self.EXT_FLAG_THRESH
-            )
-        else:
-            self._ext_func = lambda table: np.array([False] * len(table))
-
-        # -- build the PSF function -- #
-        self._psf_func = lambda table, sigma=self.PSF.to_value("arcmin"): np.exp(
-            -0.5 * (table["SEPARATION"] / sigma) ** 2
-        )
-
-    def _process(self, table):
-        table["IS_EXT"] = self._ext_func(table)
-        table[self.__class__.column_name] = np.ones(len(table))
-        table.loc[
-            table["IS_EXT"] is False, self.__class__.column_name
-        ] = self._psf_func(table.loc[table["IS_EXT"] is False, :])
-
-        del table["IS_EXT"]
-        if self.EXT_FLAG_COL is not None:
-            del table[self.EXT_FLAG_COL]
-
-        return table
-
-    def get_sql_query(self, cs, off, db):
-        if self.EXT_FLAG_COL is not None:
-            # we need to generate a special one.
-            return sql.text(
-                f"WITH TMP AS (SELECT * FROM {db} LIMIT {cs} OFFSET {off}) SELECT TMP.*,CATALOG.{self.EXT_FLAG_COL} FROM TMP INNER JOIN CATALOG USING(CATALOG_OBJECT)"
-            )
-        else:
-            return super().get_sql_query(cs, off, db)
-
-
-def reduce_match_database(schema, overwrite=False):
-    """
-    Reduce the directed match database as characterized by the schema.
-
-    Parameters
-    ----------
-    schema: str or :py:class:`pyXMIP.schema.ReductionSchema`
-        The schema for the reduction process.
-    overwrite: bool, optional
-        If ``True``, the function will allow for an overwrite of the ``REDUCED`` table in the sql database.
-
-    Returns
-    -------
-    None
-    """
-    import sqlalchemy as sql
-
-    # ---------------------------------------------- #
-    # Schema Processing and loading
-    if isinstance(schema, str):
-        # We need to load the schema from file.
-        schema = ReductionSchema.from_file(schema)
-    else:
-        # the schema is already of type schema.
-        pass
-
-    # ---------------------------------------------- #
-    # Setup
-    mainlog.info(f"Reducing X-match database {schema.DBPATH}.")
-    with logging_redirect_tqdm(loggers=[mainlog]):
-        _process_progress_bar = tqdm(
-            total=100,
-            desc="X-Match Reduction - Setup",
-            bar_format="{desc}: {percentage:3.0f}%|{bar}|",
-        )
-
-        # -- Check the database -- #
-        _sql_engine = sql.create_engine(f"sqlite:///{schema.DBPATH}")
-        assert os.path.exists(
-            schema.DBPATH
-        ), f"The DBPATH {schema.DBPATH} doesn't exist."
-
-        _sql_tables = sql.inspect(_sql_engine).get_table_names()
-
-        if "REDUCED_MATCH" in _sql_tables and not overwrite:
-            raise ValueError(
-                f"Database {schema.DBPATH} contains REDUCED_MATCH table already and overwrite = False."
-            )
-        elif "REDUCED_MATCH" in _sql_tables and overwrite:
-            mainlog.warning(
-                f"Found REDUCED_MATCH in {schema.DBPATH}. Overwrite = True --> Overwriting."
-            )
-            with _sql_engine.connect() as conn:
-                conn.execute(sql.text("DROP TABLE REDUCED"))
+        Parameters
+        ----------
+        overwrite: bool
+            If ``True``, overwrites will be allowed.
+        """
+        # ========================================= #
+        # Setting up the procedure                  #
+        # ========================================= #
+        if "META" in self.tables:
+            if overwrite:
+                with self._sql_engine.connect() as conn:
+                    conn.execute(sql.text("DROP TABLE META"))
+            else:
+                raise ValueError(
+                    "Failed to generate new META table because META already exists and overwrite=False."
+                )
         else:
             pass
 
-        _database_sql_tables = [k for k in _sql_tables if "_MATCH" in k]
-        _database_sql_names = [k.split("_MATCH")[0] for k in _database_sql_tables]
+        # ======================================== #
+        # Building the table                       #
+        # ======================================== #
+        tbl = {
+            "PROCESS": ["META_GENERATED"],
+            "TABLE": ["ALL"],
+            "DATE_RUN": [time.asctime()],
+        }
 
-        mainlog.info(
-            f"Located {len(_database_sql_names)} database tables: {_database_sql_tables}."
+        pd.DataFrame(tbl).to_sql(
+            "META", self._sql_engine, if_exists="replace", index=False
         )
+        self.meta_add("META_EXISTS", "ALL")
 
-        # -- check included databases -- #
-        if schema.REFDBS == "all":
-            schema.REFDBS = _database_sql_names
-        else:
-            schema.REFDBS = [db for db in schema.REFDBS if db in _database_sql_names]
+    def meta_add(self, process, table):
+        """
+        Add a record to the ``META`` table.
 
-        mainlog.debug(
-            f"Reduction processing on {len(schema.REFDBS)} databases: {schema.REFDBS}."
+        Parameters
+        ----------
+        process: str
+            The process to add.
+        table: str
+            The table to add.
+
+        """
+        tbl = {
+            "PROCESS": [process],
+            "TABLE": [table],
+            "DATE_RUN": [time.asctime()],
+        }
+
+        pd.DataFrame(tbl).to_sql(
+            "META", self._sql_engine, index=False, if_exists="append"
         )
+        self._reset_attributes()
 
-        _process_progress_bar.desc = "X-Match Reduction - "
-        _process_progress_bar.update(1)
+    def meta_remove(self, process, table):
+        """
+        Remove a record from the ``META`` table.
 
+        Parameters
+        ----------
+        process: str
+            The process to remove.
+        table: str
+            The table to remove.
 
-def add_catalog(catalog_path, database_path, identifier_column, overwrite=False):
-    from astropy.table import Table
+        """
+        _new_meta = self.meta.loc[
+            (self.meta["PROCESS"] != process) & (self.meta["TABLE"] != table), :
+        ]
 
-    engine = sql.create_engine(f"sqlite:///{database_path}")
+        _new_meta.to_sql("META", self._sql_engine, if_exists="replace", index=False)
+        self._reset_attributes()
 
-    tbl = Table.read(catalog_path)
+    def meta_reset(self):
+        """
+        Reset the ``META`` table.
+        """
+        self.build_meta_table(overwrite=True)
+        self._reset_attributes()
 
-    with engine.connect() as conn:
-        table_names = sql.inspect(conn).get_table_names()
+    def check_meta(self, process, table):
+        """
+        Check the ``META`` table for a record.
 
-    if "CATALOG" in table_names:
-        if overwrite:
-            mainlog.info(f"Overwriting existing CATALOG table in {database_path}.")
-            with engine.connect() as conn:
-                conn.execute(sql.text("DROP TABLE CATALOG"))
+        Parameters
+        ----------
+        process: str
+            The process to check for.
+        table: str
+            The table to check for.
 
-        else:
-            raise ValueError(
-                f"Found existing CATALOG table in {database_path} and overwrite=False."
+        Returns
+        -------
+        bool
+
+        """
+        return (
+            len(
+                self.meta.loc[
+                    (self.meta["PROCESS"] == process) & (self.meta["TABLE"] == table), :
+                ]
             )
-    else:
-        pass
+            != 0
+        )
 
-    tbl = tbl.to_pandas()
-    tbl.rename(columns={identifier_column: "CATALOG_OBJECT"}, inplace=True)
+    def correct_column_names(self, databases=None, registry=None, overwrite=False):
+        """
+        Correct the names of table columns to standardize convention.
 
-    # -- fixing datatypes -- #
-    # This must be done because strings might come back as bytestrings -> np.objects -> BLOB in sql.
-    for col, dtype in tbl.dtypes.items():
-        if dtype == object:
-            tbl[col] = tbl.loc[:, col].astype("string")
+        .. warning::
 
-    tbl.to_sql("CATALOG", engine, index=False)
+            This method is a standard part of the post-processing procedure. It is unlikely you would
+            ever need to run this manually. Proceed with caution!
+
+        Parameters
+        ----------
+        databases: list, optional
+            The databases for which this process should be performed.
+        registry: :py:class:`structures.databases.DBRegistry`, optional
+            A database registry in which all of the listed databases are found. By default, this will be the
+            built-in database registry.
+        overwrite: bool, optional
+            If ``True``, this will allow the process to run even if it has already been performed.
+
+            .. warning::
+
+                In most cases, this is unadvised because it will most likely fail.
+
+        Returns
+        -------
+        None
+
+        """
+        _pname = "COLUMN_CORRECT"
+        # ========================================= #
+        # Setting up the procedure                  #
+        # ========================================= #
+        # -- setting up kwargs and args -- #
+        if registry is None:
+            registry = DEFAULT_DATABASE_REGISTRY
+
+        if databases is None:
+            databases = [
+                registry[name.replace("_MATCH", "")] for name in self.match_tables
+            ]
+
+        # ========================================= #
+        # Run the procedure                         #
+        # ========================================= #
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            for database in tqdm(databases, desc="Fixing column convention."):
+                # -- setup and check everything is okay -- #
+                table_name = f"{database.__name__}_MATCH"
+
+                if self.check_meta(_pname, table_name):
+                    if overwrite:
+                        mainlog.warning(
+                            f"Process {_pname} has already been completed on {table_name}. Attempting to overwrite [This will probably fail]."
+                        )
+                    else:
+                        mainlog.error(
+                            f"Process {_pname} has already been completed on {table_name}. Skipping."
+                        )
+                        continue
+
+                # -- grab the schema -- #
+                _db_schema = database.class_table_schema
+
+                # -- Reduce to only particular columns -- #
+                _column_rename_map = {
+                    "CATALOG_OBJECT": "CATALOG_OBJECT",
+                    "CATALOG_RA": "CATALOG_RA",
+                    "CATALOG_DEC": "CATALOG_DEC",
+                    "RA": "RA",
+                    "DEC": "DEC",
+                    "NAME": _db_schema.NAME,
+                    "TYPE": _db_schema.TYPE,
+                }
+                with self._sql_engine.connect() as conn:
+                    for k, v in _column_rename_map.items():
+                        _query = sql.text(
+                            f"ALTER TABLE '{database.__name__}_MATCH' RENAME '{v}' to '{k}'"
+                        )
+                        conn.execute(_query)
+
+                # -- Add this process to meta -- #
+                self.meta_add(_pname, table_name)
+
+    def correct_object_types(self, databases=None, registry=None, overwrite=False):
+        """
+        Correct the object types in tables.
+
+        .. warning::
+
+            This method is a standard part of the post-processing procedure. It is unlikely you would
+            ever need to run this manually. Proceed with caution!
+
+        Parameters
+        ----------
+        databases: list, optional
+            The databases for which this process should be performed.
+        registry: :py:class:`structures.databases.DBRegistry`, optional
+            A database registry in which all of the listed databases are found. By default, this will be the
+            built-in database registry.
+        overwrite: bool, optional
+            If ``True``, this will allow the process to run even if it has already been performed.
+
+            .. warning::
+
+                In most cases, this is unadvised because it will most likely fail.
+
+        Returns
+        -------
+        None
+
+        """
+        _pname = "OBJECT_CORRECT"
+        # ========================================= #
+        # Setting up the procedure                  #
+        # ========================================= #
+        if registry is None:
+            registry = DEFAULT_DATABASE_REGISTRY
+
+        if databases is None:
+            databases = [
+                registry[name.replace("_MATCH", "")] for name in self.match_tables
+            ]
+
+        with logging_redirect_tqdm(loggers=[mainlog]):
+            for database in tqdm(
+                databases, desc="Converting object types to standards."
+            ):
+                # -- setup and check everything is okay -- #
+                table_name = f"{database.__name__}_MATCH"
+                if self.check_meta(_pname, table_name):
+                    if overwrite:
+                        mainlog.warning(
+                            f"Process {_pname} has already been completed on {table_name}. Attempting to overwrite [This will probably fail]."
+                        )
+                    else:
+                        mainlog.error(
+                            f"Process {_pname} has already been completed on {table_name}. Skipping."
+                        )
+                        continue
+
+                # -- grab the schema -- #
+                _db_schema = database.class_table_schema
+
+                # -- Reduce to only particular columns -- #
+                with self._sql_engine.connect() as conn:
+                    for val, table_chunk in enumerate(
+                        tqdm(pd.read_sql_table(table_name, conn, chunksize=10000))
+                    ):
+                        converted_chunk = SourceTable._convert_types(
+                            table_chunk, _db_schema
+                        )
+
+                        if val == 0:
+                            converted_chunk.to_sql(
+                                table_name + "_TMP",
+                                conn,
+                                if_exists="replace",
+                                index=False,
+                            )
+                        else:
+                            converted_chunk.to_sql(
+                                table_name + "_TMP",
+                                conn,
+                                if_exists="append",
+                                index=False,
+                            )
+
+                    # -- replace the tables -- #
+                    conn.execute(sql.text(f"DROP TABLE {table_name}"))
+                    conn.execute(
+                        sql.text(f"ALTER TABLE {table_name}_TMP RENAME TO {table_name}")
+                    )
+
+                self.meta_add(_pname, table_name)
+
+    def add_catalog(self, catalog_path, schema=None, overwrite=False, **kwargs):
+        r"""
+        Add the catalog to the database.
+
+        Parameters
+        ----------
+        catalog_path: str
+            The path to the catalog data file.
+        schema: :py:class:`schema.SourceTableSchema`, optional
+            The schema to associate with the catalog. If a schema is not provided then the system will attempt to construct
+            one.
+        overwrite: bool, optional
+            If ``True``, the process will run regardless of whether or not there is an existing CATALOG table.
+        kwargs:
+            Additional arguments to pass through the method.
+
+        Returns
+        -------
+        None
+        """
+        _pname = "CATALOG_INCLUDED"
+        # ========================================= #
+        # Setting up the procedure                  #
+        # ========================================= #
+
+        # -- looking for the catalog path -- #
+        catalog_path = pt.Path(catalog_path)
+        assert catalog_path.exists(), f"The catalog at {catalog_path} doesn't exist."
+
+        mainlog.info(f"Adding {catalog_path} to {self.path}.")
+        # Load the catalog into memory.
+        catalog = SourceTable.read(catalog_path, format=kwargs.pop("format", None))
+
+        # -- managing the schema -- #
+        if schema is None:
+            mainlog.warning("No schema provided for catalog. Auto-generating.")
+            schema = catalog.schema
+
+        # We need to assure that we have a NAME column.
+        assert (
+            schema.NAME is not None
+        ), "The schema doesn't have a directive for the NAME column. Try manually providing a schema."
+        mainlog.info(
+            f"Schema indicates {schema.NAME} is the object identifier. Renaming to CATALOG_OBJECT."
+        )
+        # Coercing format
+        # We attach the catalog as-is except for the name column.
+        # The name column gets renamed to CATALOG_OBJECT
+
+        catalog.rename_column(schema.NAME, "CATALOG_OBJECT")
+        catalog.remove_columns(kwargs.pop("ignore_columns", []))
+
+        # ========================================= #
+        # Run the procedure                         #
+        # ========================================= #
+        if self.has_catalog:
+            if overwrite:
+                mainlog.warning(
+                    f"Process {_pname} has already been completed. Overwriting..."
+                )
+            else:
+                mainlog.error(
+                    f"Process {_pname} has already been completed. Skipping..."
+                )
+                return None
+
+        with self._sql_engine.connect() as conn:
+            catalog.to_pandas().to_sql(
+                "CATALOG", conn, index=False, if_exists="replace"
+            )
+
+        self.meta_add(_pname, "all")
+
+    @classmethod
+    def from_file(cls, path):
+        """
+        Load a :py:class:`CrossMatchDatabase` from file.
+
+        Parameters
+        ----------
+        path: str
+            The path from which to load the database.
+
+        Returns
+        -------
+        :py:class:`CrossMatchDatabase`
+            The returned matching database.
+
+        """
+        return cls(path)

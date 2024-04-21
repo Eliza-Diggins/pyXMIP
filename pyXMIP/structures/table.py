@@ -123,3 +123,21 @@ class SourceTable(Table):
     def append_to_sql(self, table, engine):
         with engine.connect() as conn:
             self.to_pandas().to_sql(table, con=conn, if_exists="append")
+
+    @classmethod
+    def _convert_types(cls, table, schema, type_column="TYPE"):
+        # -- omap -- #
+        omap = schema.object_map
+
+        # -- pull the table's types -- #
+        _types = table[type_column]
+        _types = _types.str[1:-1].str.split("|")  # --> convert to the string subsets.
+
+        # -- Fixing the table types -- #
+        _types = _types.apply(
+            lambda x: "|" + "|".join([omap.get(l, f"NSM_{l}") for l in x]) + "|"
+        )
+
+        table.loc[:, type_column] = _types
+
+        return table
