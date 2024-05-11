@@ -35,6 +35,9 @@ def _enforce_style(func):
 
 
 def set_style():
+    """
+    Uses the ``pyXMIP`` settings in the configuration file and enforces those formatting choices on matplotlib.
+    """
     for _k, _v in xsparams["plotting"]["defaults"].items():
         plt.rcParams[_k] = _v
 
@@ -49,6 +52,48 @@ def _check_healpix(map):
     hp.pixelfunc.check_nside(hp.pixelfunc.get_nside(map))
 
     return hp.pixelfunc.get_nside(map)
+
+
+def get_hips_image(
+    center, FOV, dims, hips_path="CDS/P/DSS2/red", projection="AIT", **kwargs
+):
+    """
+    Fetch a HIPs image from arbitrary servers and return.
+
+    Parameters
+    ----------
+    center: :py:class:`astropy.coordinates.SkyCoord`
+        The coordinates corresponding to the center of the image.
+    FOV: :py:class:`astropy.coordinates.Angle` or str or float
+        The field of view for the image. This will be automatically converted the :py:class:`astropy.coordinates.Angle` regardless
+        of the input type. If conversion fails to occur, an error is raised.
+    dims: tuple of int
+        The dimensions of the returned image.
+    hips_path: str, optional
+        The server path to the HIPs image desired.
+    projection: str, optional
+        The default return projection for the output image.
+
+    """
+    from astropy.coordinates import Angle, Latitude, Longitude
+    from astroquery.hips2fits import hips2fits
+
+    # ============================ #
+    # Setup / build WCS
+    # ============================ #
+    parameters = {
+        "hips": hips_path,
+        "ra": Longitude(center.transform_to("icrs").ra),
+        "dec": Latitude(center.transform_to("icrs").dec),
+        "width": dims[0],
+        "height": dims[1],
+        "fov": Angle(FOV),
+        "format": "fits",
+        "projection": projection,
+        **kwargs,
+    }
+
+    return hips2fits.query(**parameters)
 
 
 # ======================================================================================================================#
@@ -113,13 +158,47 @@ def plot_healpix(healpix_map, fig=None, ax=None, projection=None, **kwargs):
     return fig, ax, img
 
 
-if __name__ == "__main__":
-    from pyXMIP.structures.databases import NED
+def plot_hips(
+    center,
+    FOV,
+    fig=None,
+    projection=None,
+    resolution=1000,
+    hips_path="CDS/P/DSS2/red",
+    hips_kwargs=None,
+    **kwargs
+):
+    # -- Managing WCS axes -- #
+    from astropy.wcs import WCS
 
-    q = NED.get_poisson_atlas()
+    if projection is None:
+        projection = "AIT"
 
-    p = q.get_map("IrS")
-    h = p.data
+    # ========================================== #
+    # Pull Image                                 #
+    # ========================================== #
+    if hips_kwargs is None:
+        hips_kwargs = {}
 
-    plot_healpix(h, cmap="gnuplot")
-    plt.show()
+    image = get_hips_image(
+        center,
+        FOV,
+        (resolution, resolution),
+        hips_path=hips_path,
+        projection=projection,
+        **hips_kwargs
+    )
+
+    # -- Throw the WCS coordinates -- #
+    wcs = WCS(image[0].header)
+
+    # ========================================== #
+    # Setup the figure and axes as needed        #
+    # ========================================== #
+    if fig is None:
+        fig = plt.figure(figsize=kwargs.pop("figsize", (6, 6)))
+
+    ax = fig.add_subplot(111, projection=wcs)
+    ax.imshow(image[0].data, **kwargs)
+
+    return fig, ax, wcs

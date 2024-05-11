@@ -1,21 +1,115 @@
 """
-Schema classes for backend management of various user-facing data classes.
+``pyXMIP`` schema module for managing conversion between data conventions and ``pyXMIP`` standards.
+
+What is a Schema
+----------------
+
+There are a variety of different types of schema in ``pyXMIP``, the most common of which is :py:class:`schema.SourceTableSchema`.
+Schema have a variety of purposes, but they all do effectively the same thing: they allow ``pyXMIP`` to convert your data
+to a form it understands.
+
+Under-the-hood, schema are *fancy dictionaries* with various properties and methods specific to their particular use-case.
+Let's begin by listing some of the most important schema:
+
+- :py:class:`schema.SourceTableSchema` - By far the most important of the schemas.
+
+  - Everytime the user loads a table in ``pyXMIP``, it get an associated :py:class:`schema.SourceTableSchema` instance.
+
+    - Sometimes, this can be deduced from the available column names (i.e. RA and DEC columns); however, in other cases
+      it cannot.
+    - ``pyXMIP`` will attempt to generate a schema with access to all of the correct parameters; however, if this fails it may
+      be necessary to write your own.
+
+  - The corresponding :py:class:`schema.SourceTableSchema` allows ``pyXMIP`` to convert column names to standardized forms, understand
+    different object types, and manage a variety of settings.
+
+- :py:class:`schema.ReductionSchema`
+
+  - The reduction process converts raw match data to a statistically optimized cross-reference catalogs. To do this, the user generally
+    writes a **reduction file** (``yaml``) containing all of the settings for that reduction process. This is read into ``pyXMIP`` and
+    becomes an instance of the :py:class:`schema.ReductionSchema` class.
+
+Notes
+-----
+
+For a complete guide on ``Schema`` classes, check out the reference page: :ref:`schema`.
+
+
+
 """
+import os
 import pathlib as pt
 from copy import copy
 
 import astropy.coordinates as astro_coords
-from astropy.units import Quantity
 
-from pyXMIP.utilities.core import getFromDict, mainlog, setInDict
+from pyXMIP.utilities._registries import _Registry
+from pyXMIP.utilities.core import _bin_directory, getFromDict, mainlog, setInDict
+
+#: directory containing the built-in schema.
+builtin_schema_directory = os.path.join(_bin_directory, "builtin_schema")
+#: directory containing the built-in :py:class:`SourceTableSchema` instances.
+builtin_source_table_schema_directory = os.path.join(
+    builtin_schema_directory, "source_table"
+)
+#: directory containing the built-in :py:class:`ReductionSchema` instances.
+builtin_reduction_schema_directory = os.path.join(builtin_schema_directory, "reduction")
 
 
-class _SCHEMAENTRY:
-    def __init__(self, dict_location, required=False, dtype=None, allow_set=True):
+class SchemaError(Exception):
+    """
+    Collective error type for issues with schema.
+    """
+
+    def __init__(self, message=None):
+        self.message = message
+        super().__init__(self.message)
+
+
+class SchemaParameterError(SchemaError):
+    """
+    Exception raised when a parameter in a schema is invalid.
+    """
+
+    def __init__(self, parameter_name=None, instance=None, reason="NA"):
+        self.message = f"PARAMETER {parameter_name} associated with SCHEMA {instance} is not valid. REASON: {reason}."
+        super().__init__(self.message)
+
+
+class SchemaEntry:
+    """
+    Descriptor class representing entries in a schema.
+    """
+
+    def __init__(
+        self,
+        dict_location,
+        required=False,
+        dtype=None,
+        default=None,
+        allowed_values=None,
+    ):
+        """
+        Initialize the :py:class:`SchemaEntry` instance.
+
+        Parameters
+        ----------
+        dict_location: list of str
+            The location of this parameter in the underlying schema `dict`. This should **not include** the name of the instance. For
+            example, if the parameter dictionary is ``{"Header1":{"example_a":0,"example_b":1}}``, then ```example_a`` should have ``dict_location``
+            set to ``Header1``.
+        required: callable, optional
+            Function of the ``instance`` associated with the parameter which returns a bool representing if a parameter is actually required. By default, ``lambda x: False``.
+        dtype: tuple or type or None
+            The allowed data types for this parameter. By default ``None``, meaning no-restrictions.
+        default: any
+            The default value of this parameter if it is not provided. By default ``None``, meaning that it has no value.
+        """
         self.dict_location = dict_location
         self.required = required
         self.dtype = dtype
-        self.allow_set = allow_set
+        self.default = default
+        self.allowed_values = allowed_values
 
     def __set_name__(self, owner, name):
         self._name = name
@@ -25,12 +119,82 @@ class _SCHEMAENTRY:
         try:
             return getFromDict(instance, self.dict_location)
         except KeyError:
-            return None
+            return self.default
         except TypeError:
-            return None
+            return self.default
 
     def __set__(self, instance, value):
         setInDict(instance, self.dict_location, value)
+
+        self.validate(instance)
+
+    def validate(self, instance):
+        """
+        Validate that the instantiation of this setting in a given schema ``instance`` is valid.
+
+        Parameters
+        ----------
+        instance: any
+            The instance implementing this setting to check.
+
+        Raises
+        ------
+        SchemaParameterError
+            Raised if not valid.
+
+        """
+        value = getattr(instance, self._name)
+
+        if value is not None:
+            # the value is set, assure that it is set to something legitimate.
+            if self.dtype is not None:
+                if not isinstance(value, self.dtype):
+                    raise SchemaParameterError(
+                        parameter_name=self._name,
+                        instance=instance,
+                        reason=f"Type {type(value)} is not among {self.dtype}.",
+                    )
+
+            if self.allowed_values is not None:
+                if value not in self.allowed_values:
+                    raise SchemaParameterError(
+                        parameter_name=self._name,
+                        instance=instance,
+                        reason=f"Value {value} is not in permitted values {self.allowed_values}.",
+                    )
+
+        else:
+            # The value isn't set. Is it required?
+            if self.required(instance):
+                raise SchemaParameterError(
+                    parameter_name=self._name,
+                    instance=instance,
+                    reason="Parameter is required for this instance, but not specified.",
+                )
+
+    @staticmethod
+    def true(instance):
+        """Callable to arbitrarily return ``True`` for required parameters."""
+        return True
+
+    @staticmethod
+    def false(instance):
+        """Callable to arbitrarily return ``False`` for required parameters."""
+        return False
+
+    @staticmethod
+    def has(entry):
+        def _func(instance):
+            return getattr(instance, entry) is not None
+
+        return _func
+
+    @staticmethod
+    def enabled(entry):
+        def _func(instance):
+            return getattr(instance, entry) is True
+
+        return _func
 
 
 class _SpecialColumn:
@@ -61,12 +225,18 @@ def _get_recursive(key, dictionary):
 
 class Schema(dict):
     """
-    The archetypal schema class. This is effectively a wrapper on the :py:class:`dict` type with a few additional
-    utility methods.
+    The generic schema class from which all other ``pyXMIP`` schemas are derived.
 
     .. warning::
 
-        This class is archetypal. Most methods are only functional for sub-classes.
+        This is an abstract class.
+
+    Notes
+    -----
+
+    Schema classes are wrappers of the built-in :py:class:`dict` type with additional structure. Generically,
+    they can be read from file and checked for standardized structures.
+
     """
 
     def __init__(self, mapping):
@@ -84,17 +254,20 @@ class Schema(dict):
             self._check_valid()
         ), "The mapping provided is not valid for the schema type."
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__} instance>"
+
     @classmethod
     def _get_descriptors(cls):
         # fetching descriptors.
-        return [m for m, v in cls.__dict__.items() if isinstance(v, _SCHEMAENTRY)]
+        return [m for m, v in cls.__dict__.items() if isinstance(v, SchemaEntry)]
 
     @classmethod
     def _get_required_descriptors(cls):
         return [
             m
             for m, v in cls.__dict__.items()
-            if isinstance(v, _SCHEMAENTRY) and v.required is True
+            if isinstance(v, SchemaEntry) and v.required is True
         ]
 
     def _check_valid(self):
@@ -203,61 +376,119 @@ class Schema(dict):
 
 class SourceTableSchema(Schema):
     r"""
-    Schema class for representing table naming conventions for :py:class:`table.SourceTable` objects.
+    Schema class for characterizing the structure of :py:class:`structures.table.SourceTable` objects.
 
-    The :py:class:`SourceTableSchema` informs :py:class:`table.SourceTable` of special roles for particular columns in the dataset.
+    The :py:class:`SourceTableSchema` informs :py:class:`structures.table.SourceTable` of special roles for particular columns in the dataset.
     Additionally, the schema controls the native coordinate system, and the source type mapping from the native convention of the
     source table to the SIMBAD convention adopted in pyXMIP.
 
+
     Attributes
     ----------
-    column_map: dict
+
+    column_map:
         Mapping between special columns (keys) and their column names in the resulting tables (values). Only special columns
         will appear in the ``column_map``. It is the backbone of the table standardization approach used in pyXMIP.
-    default_coord_system: str
+    default_coord_system:
         The default coordinate system for this schema. Specificed as a string representation.
-    object_map: dict
+    object_map:
         Mapping between source table object types (keys) and pyXMIP convention [SIMBAD] object types (values).
-    Z: str
+    Z:
         The column name in the table which contains redshift information.
-    TYPE: str
+    TYPE:
         The column name for the object type.
-    NAME: str
+    NAME:
         The column denoting the name of each object in the table.
-    RA: str
+    RA:
         The name of the column containing the RA coordinate.
-    DEC: str
+    DEC:
         The name of the column containing the DEC coordinate.
-    L: str
+    L:
         The name of the column containing galactic longitude.
-    B: str
+    B:
         The name of the column containing galactic latitude.
 
     Notes
     -----
 
-    :py:class:`SouceTableSchema` specific schema files should have the following general format.
+    **Schema Structure**:
+
+    The :py:class:`SourceTableSchema` is composed of 3 components split across 3 headings in its ``yaml`` representation:
+
+    1. ``column_map``: A dictionary mapping special / important table columns to their corresponding name in the table.
+    2. ``object_map``: A dictionary mapping object types (star, etc.) to their SIMBAD / ``pyXMIP`` standard.
+    3. ``settings``: A general purpose set of settings and other miscellaneous configuration options.
+
+    In a ``.yaml`` file, the schema should have the following general layout:
 
     .. code-block:: yaml
 
-        column_map: # The column map tells the schema what different columns in your catalog actually are.
-            RA: "RA"
-            DEC: "DEC"
-            NAME: "Object Name"
-            TYPE: 'Type'
-            Z: "Redshift"
-
+        column_map:
+            special_column: column_in_table
         object_map:
-            # The object_map tells pyXMIP how to convert database object types into specific SIMBAD object types.
-            # This allows the code to adopt a uniform convention for object types.
-
-            native_object_type: SIMBAD_object_type
-
+            type_in_table: standard_type
         settings:
-            # Miscellaneous settings.
-            #
-            default_coord_system: "ICRS" # The default coordinate system to use.
+            setting: value
 
+    **Column Map**:
+
+    The column map may contain any of the following special keys:
+
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | Special Column       | Required? | Description                                                                   | Identifiers                                             |
+    +======================+===========+===============================================================================+=========================================================+
+    | ``TYPE``             | ``False`` | Column containing the  object type of each entry (star, galaxy, etc.)         | TYPE, type, object_type, OBJECT_TYPE, OTYPES            |
+    |                      |           | The column is not strictly necessary; however, any and all type reliant       |                                                         |
+    |                      |           | processes will require that this is specified.                                |                                                         |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``Z``                | ``False`` | Column containing the object redshifts. [Currently unused]                    | Z, z, REDSHIFT, redshift, BEST_Z                        |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``NAME``             | ``True``  | Column containing the object identifier.                                      | NAME, name, OBJECT, object, ID, OBJECT_ID,              |
+    |                      |           |                                                                               | IAUNAME, CATALOG_OBJECT                                 |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``RA``               | ``False`` | Column containing the object coordinates.                                     | RA, ra                                                  |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``DEC``              | ``False`` | Column containing the object coordinates.                                     | DEC, dec                                                |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``B``                | ``False`` | Column containing the object coordinates.                                     | B, b, bii, BII                                          |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+    | ``L``                | ``False`` | Column containing the object coordinates.                                     | l, lii, L, LII                                          |
+    +----------------------+-----------+-------------------------------------------------------------------------------+---------------------------------------------------------+
+
+    .. hint::
+
+        Although there is no requirement for any given coordinate to be present, **at least 1** complete sky coordinate system must be present.
+
+    **Object Map**:
+
+    The ``object_map`` is not strictly required, but is necessary to do any object type conversions. This should be structured as a standard dictionary
+    with the object-types present in the :py:class:`structures.table.SourceTable` as keys and the corresponding SIMBAD standard object types as values.
+
+    Duplicate values are permitted for mapping, as are missing SIMBAD types. **Every** type in the table must be present.
+
+    .. note::
+
+        In some databases, such as SIMBAD, multiple object types may be present.
+
+    **Settings**:
+
+    The following table contains all of the available settings keys and values.
+
+    +--------------------------+-----------+-------------------------------------------------------------------------------+
+    | Setting                  | Required? | Description                                                                   |
+    +==========================+===========+===============================================================================+
+    | ``default_coord_system`` | ``True``  | The default coordinate system to use for the table. This must be the class    |
+    |                          |           | name of an :py:class:`astropy.coordinates.GenericFrame` class. In order to be |
+    |                          |           | permissible, the necessary columns must be present in ``column_map``.         |
+    +--------------------------+-----------+-------------------------------------------------------------------------------+
+    | ``default_angle_units``  | ``False`` | The default units for angular measures. If this is **already specified** in   |
+    |                          |           | your data (say in the ``fits`` header), then this setting will only convert   |
+    |                          |           | those angles to these units. If not, it is assumed these units are the ones   |
+    |                          |           | present in the data. By default, ``'deg'``.                                   |
+    +--------------------------+-----------+-------------------------------------------------------------------------------+
+    | ``object_type_separator``| ``False`` | If the ``TYPE`` column for the table contains multiple types separated by a   |
+    |                          |           | delimiter, specify that delimeter here. By default, it is assumed to be ``|`` |
+    +--------------------------+-----------+-------------------------------------------------------------------------------+
 
     """
     _coordinate_requirements = {
@@ -267,7 +498,16 @@ class SourceTableSchema(Schema):
     _expected_special_columns = {
         "Z": ["Z", "z", "REDSHIFT", "redshift", "BEST_Z"],
         "TYPE": ["TYPE", "type", "object_type", "OBJECT_TYPE", "OTYPES"],
-        "NAME": ["NAME", "name", "OBJECT", "object", "ID", "OBJECT_ID", "IAUNAME"],
+        "NAME": [
+            "NAME",
+            "name",
+            "OBJECT",
+            "object",
+            "ID",
+            "OBJECT_ID",
+            "IAUNAME",
+            "CATALOG_OBJECT",
+        ],
         "RA": ["RA", "ra"],
         "DEC": ["DEC", "dec"],
         "L": ["l", "lii", "L", "LII"],
@@ -275,11 +515,17 @@ class SourceTableSchema(Schema):
     }
 
     # -- Construct the attributes -- #
-    column_map = _SCHEMAENTRY([], required=True, dtype=dict, allow_set=True)
-    default_coord_system = _SCHEMAENTRY(
-        ["settings"], required=True, dtype=str, allow_set=True
+    column_map = SchemaEntry([], required=SchemaEntry.true, dtype=dict)
+    default_coord_system = SchemaEntry(
+        ["settings"], required=SchemaEntry.true, dtype=str
     )
-    object_map = _SCHEMAENTRY([], required=True, dtype=dict, allow_set=True)
+    default_angle_units = SchemaEntry(
+        ["settings"], required=SchemaEntry.false, dtype=str, default="deg"
+    )
+    object_type_separator = SchemaEntry(
+        ["settings"], required=SchemaEntry.false, dtype=str, default="|"
+    )
+    object_map = SchemaEntry([], required=SchemaEntry.true, dtype=dict)
 
     # -- Constructing the schema column map accessors -- #
     Z = _SpecialColumn()
@@ -457,72 +703,208 @@ class SourceTableSchema(Schema):
 
 class ReductionSchema(Schema):
     """
-    Specialized :py:class:`Schema` subclass for parsing reduction schema files.
-
-    Notes
-    -----
-
-    The reduction schema is the ``pyXMIP`` code manifestation of a given reduction schema file.
-
-    RUN_PARAMS
-    ``````````
-
-    ``REFDBS``: list or str
-        The set of databases to reference.
-    ``POISSON``: bool
-        Enable Poisson mapping procedures in the reduction process.
-
-        .. note::
-
-            If ``POISSON`` is ``True``, then ``POISSON_PARAMS`` must be present.
-    ``INSTRUMENTAL``: bool
-        Enable instrumental reduction procedures.
-
-        .. note::
-
-            If ``INSTRUMENTAL`` is ``True``, then ``INSTRUMENT_PARAMS`` must be present.
-    ``OTYPES``: bool
-        Enable object type reduction procedures.
-
-        .. note::
-            If ``OTYPES`` is ``True``, then ``OBJECT_PARAMS`` must be present.
-
-
-    IO_PARAMS
-    `````````
-    ``DBPATH``
-
+    Schema class for representing reduction pipelines for cross-matching databases.
     """
 
-    # -- RUN_PARAMS -- #
-    RUN_PARAMS = _SCHEMAENTRY([], required=True, dtype=dict)
-    REFDBS = _SCHEMAENTRY(["RUN_PARAMS"], required=True, dtype=(list, str))
-    POISSON = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
-    INSTRUMENTAL = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
-    OTYPES = _SCHEMAENTRY(["RUN_PARAMS"], required=False, dtype=bool)
-
-    # -- IO PARAMS -- #
-    IO_PARAMS = _SCHEMAENTRY([], required=True, dtype=dict)
-    DBPATH = _SCHEMAENTRY(["IO_PARAMS"], required=True, dtype=str)
-
-    # -- POISSON PARAMS -- #
-    POISSON_PARAMS = _SCHEMAENTRY([], required="POISSON", dtype=dict)
-
-    # -- INSTRUMENT PARAMS -- #
-    INSTRUMENT_PARAMS = _SCHEMAENTRY([], required="INSTRUMENTAL", dtype=dict)
-    PSF = _SCHEMAENTRY(
-        ["INSTRUMENT_PARAMS"], required="INSTRUMENT_PARAMS", dtype=Quantity
+    # ------------------------------------------------- #
+    # Runtime parameter definitions                     #
+    # ------------------------------------------------- #
+    enable_astrometry = SchemaEntry(
+        ["RUNTIME_PARAMS"], required=SchemaEntry.false, dtype=bool, default=True
     )
-
-    # -- OBJECT PARAMS -- #
-    OBJECT_PARAMS = _SCHEMAENTRY([], required="OTYPES", dtype=dict)
-
-
-if __name__ == "__main__":
-    u = ReductionSchema(
-        {
-            "RUN_PARAMS": {"INSTRUMENTAL": True},
-            "IO_PARAMS": {"DBPATH": ""},
-            "INSTRUMENT_PARAMS": {},
-        }
+    """bool: ``True`` to enable instrumental reduction pipeline."""
+    enable_poisson = SchemaEntry(
+        ["RUNTIME_PARAMS"], required=SchemaEntry.false, dtype=bool, default=True
     )
+    """bool: ``True`` to enable the Poisson reduction pipeline."""
+    # -------------------------------------------------- #
+    # Astrometry parameters                              #
+    # -------------------------------------------------- #
+    astrometry_weight = SchemaEntry(
+        ["ASTROMETRY_PARAMS"],
+        required=SchemaEntry.enabled("enable_astrometry"),
+        dtype=bool,
+        default=1,
+    )
+    """float: The weight of this process relative to others."""
+    astrometry_mode_cat = SchemaEntry(
+        ["ASTROMETRY_PARAMS"],
+        required=SchemaEntry.enabled("enable_astrometry"),
+        dtype=str,
+        default="circular",
+    )
+    """str: The astrometric error mode to use for the catalog.
+
+    Options are ``None``, ``circular`` or ``axial``. If ``circular``, a circular gaussian error is utilized, otherwise an axial (RA/DEC) gaussian is used.
+    """
+    astrometry_mode_db = SchemaEntry(
+        ["ASTROMETRY_PARAMS"],
+        required=SchemaEntry.enabled("enable_astrometry"),
+        dtype=(str, dict),
+        default="circular",
+    )
+    """dict or str: The astrometric error mode to use for the reference databases.
+
+    Options are ``None``,``circular`` or ``axial``. If ``circular``, a circular gaussian error is utilized, otherwise an axial (RA/DEC) gaussian is used. If a ``str`` is provided,
+    the same approach is used for all of the databases. Otherwise, dictionary should have format ``{table_name: mode}`` for each table in the cross-match database.
+    """
+    astrometry_err_cat = SchemaEntry(
+        ["ASTROMETRY_PARAMS"],
+        required=SchemaEntry.enabled("enable_astrometry"),
+        dtype=None,
+        default="circular",
+    )
+    r"""list: The error measure (1 :math:`\sigma`) for catalog sources.
+
+    Must be formatted as a list. Each entry corresponds to **1 dimension** of the error. If :py:attr:`~ReductionSchema.astrometry_mode_cat` is ``'circular'``, then
+    the list must have length 1; if ``'axial'``, then list is length 2 with RA error and DEC error respectively.
+
+    For each error that needs to be specified, either a ``list`` or :py:class:`astropy.units.Quantity` may be supplied.
+
+    - ``list``: 2-components: ``value``, ``unit``.
+
+      - If ``value`` is a ``str``: Corresponds to a column in the ``CATALOG`` table of the cross-match database which contains the relevant error.
+      - If ``value`` is ``numeric``: Assumed to be the actual value of the relevant error in the specified units.
+
+    - :py:class:`astropy.units.Quantity`: Set both ``value`` and ``unit`` to those of the quantity.
+
+    Examples
+    --------
+
+    .. code-block:: yaml
+
+        ASTROMETRY_PARAMS:
+          astrometry_mode_cat: 'circular'
+          astrometry_err_cat:
+            - ['POSERR','arcsec'] # --> Use the POSERR column for the 1-sigma circular precision.
+          astrometry_mode_db: 'axial'
+          astrometry_err_db:
+            SIMBAD_STD_MATCH:
+              - ['RA_ERR','deg'] # --> use column RA_ERR (assumed that units are deg).
+              - ['DEC_ERR','arcmin'] # --> use column DEC_ERR (assumed that units are arcmin).
+
+    """
+    astrometry_err_db = SchemaEntry(
+        ["ASTROMETRY_PARAMS"],
+        required=SchemaEntry.enabled("enable_astrometry"),
+        dtype=(str, dict),
+        default="circular",
+    )
+    r"""dict or list: The error measure (1 :math:`\sigma`) for database sources.
+
+    If the error parameters are the same for all relevant databases, then only one entry is required (``list``). Otherwise, a ``dict`` must be provided
+    containing the table names and the relevant parameters.
+
+
+    Each entry (for each database) must be formatted as a list. Each entry corresponds to **1 dimension** of the error.
+    If :py:attr:`~ReductionSchema.astrometry_mode_cat` is ``'circular'``, then the list must have length 1; if ``'axial'``,
+    then list is length 2 with RA error and DEC error respectively.
+
+    For each error that needs to be specified, either a ``list`` or :py:class:`astropy.units.Quantity` may be supplied.
+
+    - ``list``: 2-components: ``value``, ``unit``.
+
+      - If ``value`` is a ``str``: Corresponds to a column in the ``CATALOG`` table of the cross-match database which contains the relevant error.
+      - If ``value`` is ``numeric``: Assumed to be the actual value of the relevant error in the specified units.
+
+    - :py:class:`astropy.units.Quantity`: Set both ``value`` and ``unit`` to those of the quantity.
+
+    Examples
+    --------
+
+    .. code-block:: yaml
+
+        ASTROMETRY_PARAMS:
+          astrometry_mode_cat: 'circular'
+          astrometry_err_cat:
+            - ['POSERR','arcsec'] # --> Use the POSERR column for the 1-sigma circular precision.
+          astrometry_mode_db:
+            SIMBAD_STD_MATCH: 'axial'
+            NED_STD_MATCH: 'circular'
+          astrometry_err_db:
+            SIMBAD_STD_MATCH:
+              - ['RA_ERR','deg'] # --> use column RA_ERR (assumed that units are deg).
+              - ['DEC_ERR','arcmin'] # --> use column DEC_ERR (assumed that units are arcmin).
+            NED_STD_MATCH:
+              - ['ASTERR','deg'] # --> circular error provided by the NED_STD ASTERR column.
+
+    """
+    # -------------------------------------------------- #
+    # Poisson Parameters                                 #
+    # -------------------------------------------------- #
+    poisson_weight = SchemaEntry(
+        ["POISSON_PARAMS"],
+        required=SchemaEntry.enabled("enable_poisson"),
+        dtype=bool,
+        default=1,
+    )
+    """float: The weight of this process relative to others."""
+
+
+class SchemaRegistry(_Registry):
+    """
+    Registry class for containing collections of :py:class:`Schema` classes.
+    """
+
+    def __init__(self, mapping, schema_class):
+        """
+        Initialize the :py:class:`SchemaRegistry`
+
+        Parameters
+        ----------
+        mapping: dict
+            The dictionary of ``name``,``path`` pairs to use as the registry.
+        schema_class: :py:class:`Schema`
+            The schema class to initialize objects with.
+        """
+        super().__init__(mapping)
+
+        self.schema_class = schema_class
+
+    def __getitem__(self, item):
+        return self.schema_class.from_file(super().__getitem__(item))
+
+    @classmethod
+    def from_directory(cls, directory, schema_class):
+        """
+        Generate a registry of :py:class:`Schema` instances from a directory of files.
+
+        Parameters
+        ----------
+        directory: str
+            The directory to load from.
+
+        Returns
+        -------
+        :py:class:`SchemaRegistry`
+            The corresponding registry.
+        """
+        import pathlib as pt
+
+        directory = pt.Path(directory)
+        assert directory.exists(), f"The directory {directory} doesn't exist."
+        assert directory.is_dir(), f"The path {directory} isn't a directory."
+
+        sub_objects = os.listdir(directory)
+        _dict = {}
+
+        for o in sub_objects:
+            pth = pt.Path(os.path.join(directory, o))
+            if pth.is_file():
+                suffix = pth.suffix
+
+                if suffix in [".toml", ".json", ".yaml"]:
+                    _dict[pth.name.replace(pth.suffix, "")] = str(pth)
+
+        return cls(_dict, schema_class)
+
+
+#: The default :py:class:`SourceTableSchema` registry.
+DEFAULT_SOURCE_SCHEMA_REGISTRY = SchemaRegistry.from_directory(
+    builtin_source_table_schema_directory, SourceTableSchema
+)
+
+#: The default :py:class:`ReductionSchema` registry.
+DEFAULT_REDUCTION_SCHEMA_REGISTRY = SchemaRegistry.from_directory(
+    builtin_reduction_schema_directory, ReductionSchema
+)

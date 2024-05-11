@@ -1,6 +1,27 @@
 API
 ===
 
+API documentation for each of the modules in the ``pyXMIP`` library can be found below. Relevant user guides are linked
+in the API documentation for which they are relevant.
+
+Core Modules
+------------
+
+Below are the central datatype modules of the ``pyXMIP`` module. These modules include the core types that users should
+be familiar with and will interact with most often.
+
+.. autosummary::
+    :toctree: _as_gen
+    :recursive:
+    :template: module.rst
+    :nosignatures:
+
+    structures.databases
+    structures.table
+    structures.map
+    schema
+    cross_reference
+    reduction
 
 Statistics
 ----------
@@ -15,18 +36,6 @@ Statistics
     stats.gaussian_process
     stats.map_regression
 
-Structures
-----------
-
-.. autosummary::
-    :toctree: _as_gen
-    :recursive:
-    :template: module.rst
-    :nosignatures:
-
-    structures.databases
-    structures.table
-    structures.map
 
 Other
 -----
@@ -37,8 +46,6 @@ Other
     :template: module.rst
     :nosignatures:
 
-    schema
-    cross_reference
     utilities.core
     utilities.geo
     utilities.plot

@@ -15,3 +15,45 @@ def created_shared_memory_equivalent(array):
     copy = np.ndarray(array.shape, dtype=array.dtype, buffer=header.buf)
     copy[:] = array[:]
     return header
+
+
+def map_to_threads(mappable, *args, threading_kw=None):
+    """
+    Perform a certain process ``map`` under certain threading behaviors.
+    Parameters
+    ----------
+    map
+    args
+
+    Returns
+    -------
+
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    # ---------------------------------------- #
+    # Setup the threading environment          #
+    # ---------------------------------------- #
+    # Create the kwargs if they don't exist.
+    if threading_kw is None:
+        threading_kw = {}
+
+    _max_workers = threading_kw.pop("max_workers", 1)
+    if _max_workers == 1:
+        _threading = False
+    else:
+        _threading = True
+
+    # ---------------------------------------- #
+    # Run the threads                          #
+    # ---------------------------------------- #
+    if _threading:
+        with ThreadPoolExecutor(
+            max_workers=_max_workers,
+            thread_name_prefix=threading_kw.pop("thread_name_prefix", ""),
+        ) as executor:
+            results = executor.map(mappable, *args)
+    else:
+        results = map(mappable, *args)
+
+    return results

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import sqlalchemy as sql
 from astropy.coordinates import SkyCoord
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from pyXMIP.schema import ReductionSchema

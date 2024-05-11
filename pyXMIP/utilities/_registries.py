@@ -21,3 +21,7 @@ class _Registry(dict):
 
     def as_list(self):
         return list(self.values())
+
+    def add(self, key, value):
+        assert key not in self, f"Key {key} already in registry."
+        self[key] = value

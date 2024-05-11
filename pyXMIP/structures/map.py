@@ -18,7 +18,7 @@ from _collections_abc import Collection
 from astropy import coordinates as astro_coords
 from astropy import units
 from astropy.io import fits
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from pyXMIP.utilities.core import enforce_units, mainlog
@@ -343,6 +343,17 @@ class StatAtlas(MapAtlas):
 
     def __init__(self, filepath):
         super().__init__(filepath)
+
+    def __len__(self):
+        return len(self.COUNTS)
+
+    @property
+    def COUNTS(self):
+        from astropy.table import Table
+
+        with warnings.catch_warnings(), fits.open(self.path) as hudl:
+            warnings.simplefilter("ignore")
+            return Table(hudl["COUNTS"].data)
 
     def get_points(self):
         """

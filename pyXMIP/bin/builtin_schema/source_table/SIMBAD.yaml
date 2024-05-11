@@ -7,8 +7,8 @@
 #-----------------------------------------#
 
 column_map: # The column map tells the schema what different columns in your catalog actually are.
-    RA: "RA"
-    DEC: "DEC"
+    RA: "RA_d_A"
+    DEC: "DEC_d_D"
     NAME: "MAIN_ID"
     TYPE: 'OTYPES'
 

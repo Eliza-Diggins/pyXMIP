@@ -55,3 +55,14 @@
    {%- endfor %}
    {% endif %}
    {% endblock %}
+
+   {% block attributes %}
+   {% if attributes %}
+   .. rubric:: Attributes
+
+   .. autosummary::
+   {% for item in attributes %}
+      ~{{ name }}.{{ item }}
+   {%- endfor %}
+   {% endif %}
+   {% endblock %}

@@ -15,10 +15,7 @@ system:
       format: '%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s' # Logger's string format for output
       level: DEBUG    # Only logging passed to this level or higher are displayed.
       stream: STDERR   # Can be STDERR or STDOUT.
-    developer:
-      # ! The developer logger passes detailed logging messages to file
-      enabled: false
-      output_directory:      # You have to set this before the development logger will function.
+      verbosity: 0
   add_ons:
     rich: false
 

@@ -6,6 +6,7 @@ import operator
 import os
 import pathlib as pt
 import sys
+from contextlib import contextmanager
 from functools import reduce
 
 import astropy.units as u
@@ -55,13 +56,88 @@ except yaml.YAMLError as er:
     )
 
 
-# -- Configuring the loggers -- #
+# ======================================================================================================================#
+# Logging                                                                                                               #
+# ======================================================================================================================#
+class PyxmLogger(logging.Logger):
+    """custom logging class with customizable verbosity.
+
+    Verbosity levels:
+
+    0 - development logging basically everything.
+    1 - high verbosity: lots of info.
+    2 - normal output.
+    3 - only critical info.
+
+    """
+
+    def __init__(self, name, level=logging.NOTSET, verbosity=0):
+        super().__init__(name, level)
+        self.verbosity = verbosity
+        self._fixed_verb = dict(
+            debug=None, info=None, warning=None, error=None, critical=None
+        )
+
+    def debug(self, msg, *args, verb=0, **kwargs):
+        if self._fixed_verb["debug"] is not None:
+            verb = self._fixed_verb["debug"]
+
+        if verb >= self.verbosity:
+            super().debug(msg, *args, **kwargs)
+
+    def warning(self, msg, *args, verb=0, **kwargs):
+        if self._fixed_verb["warning"] is not None:
+            verb = self._fixed_verb["warning"]
+
+        if verb >= self.verbosity:
+            super().warning(msg, *args, **kwargs)
+
+    def info(self, msg, *args, verb=0, **kwargs):
+        if self._fixed_verb["info"] is not None:
+            verb = self._fixed_verb["info"]
+
+        if verb >= self.verbosity:
+            super().info(msg, *args, **kwargs)
+
+    def error(self, msg, *args, verb=0, **kwargs):
+        if self._fixed_verb["error"] is not None:
+            verb = self._fixed_verb["error"]
+
+        if verb >= self.verbosity:
+            super().error(msg, *args, **kwargs)
+
+    def critical(self, msg, *args, verb=0, **kwargs):
+        if self._fixed_verb["critical"] is not None:
+            verb = self._fixed_verb["critical"]
+
+        if verb >= self.verbosity:
+            super().critical(msg, *args, **kwargs)
+
+    @contextmanager
+    def fixed_verb(self, **kwargs):
+        old_fix_verb = {**self._fixed_verb}
+        for k, v in self._fixed_verb.items():
+            self._fixed_verb[k] = kwargs.get(k, v)
+
+        yield None
+
+        self._fixed_verb = old_fix_verb
+
+    def reset_fixed_verb(self):
+        self._fixed_verb = dict(
+            debug=None, warning=None, info=None, error=None, critical=None
+        )
+
+
+# -- Setup the logger -- #
 stream = (
     sys.stdout
     if xsparams["system"]["logging"]["main"]["stream"] in ["STDOUT", "stdout"]
     else sys.stderr
 )
-mainLogger = logging.getLogger("pyXMIP")
+mainLogger = PyxmLogger(
+    "pyXMIP", verbosity=xsparams["system"]["logging"]["main"]["verbosity"]
+)
 
 xs_sh = logging.StreamHandler(stream=stream)
 
@@ -75,43 +151,25 @@ mainLogger.propagate = False
 
 mainlog = mainLogger
 
-# -- Setting up the developer debugger -- #
-devLogger = logging.getLogger("development_logger")
-
-if xsparams["system"]["logging"]["developer"][
-    "enabled"
-]:  # --> We do want to use the development logger.
-    # -- checking if the user has specified a directory -- #
-    if xsparams["system"]["logging"]["developer"]["output_directory"] is not None:
-        from datetime import datetime
-
-        dv_fh = logging.FileHandler(
-            os.path.join(
-                xsparams["system"]["logging"]["developer"]["output_directory"],
-                f"{datetime.now().strftime('%m-%d-%y_%H-%M-%S')}.log",
-            )
-        )
-
-        # adding the formatter
-        dv_formatter = logging.Formatter(
-            xsparams["system"]["logging"]["main"]["format"]
-        )
-
-        dv_fh.setFormatter(dv_formatter)
-        devLogger.addHandler(dv_fh)
-        devLogger.setLevel("DEBUG")
-        devLogger.propagate = False
-
-    else:
-        mainlog.warning(
-            "User enabled development logger but did not specify output directory. Dev logger will not be used."
-        )
-else:
-    devLogger.propagate = False
-    devLogger.disabled = True
-
 
 def enforce_units(value, preferred_units):
+    """
+    Return a version of ``value`` with units of the type preferred or return
+    an error if that isn't possible.
+
+    Parameters
+    ----------
+    value: any
+        The value to enforce units on. Can be array or scalar with numerical type with / without units.
+    preferred_units: :py:class:`astropy.units.Unit` or str
+        The unit to enforce.
+
+    Returns
+    -------
+    :py:class:`astropy.units.Quantity`
+        The output quantity with the preferred units.
+
+    """
     if isinstance(value, u.Quantity):
         return value.to(preferred_units)
     else:
