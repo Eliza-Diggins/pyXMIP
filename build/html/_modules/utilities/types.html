@@ -1,0 +1,1217 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>utilities.types &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/utilities/types';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">utilities.types</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for utilities.types</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module containing core data structures and validation procedures for interacting with user data.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">``pyXMIP`` uses the ``pydantic`` library to validate user data. To do so, all of the data structures used in</span>
+<span class="sd">the package require some boilerplate code to provide for validation. To do this without losing the readability of the</span>
+<span class="sd">main package, this module contains all of that boilerplate code.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="k">as</span> <span class="nn">astro_coords</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">Unit</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AfterValidator</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="n">GetJsonSchemaHandler</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pydantic.json_schema</span> <span class="kn">import</span> <span class="n">JsonSchemaValue</span>
+<span class="kn">from</span> <span class="nn">pydantic_core</span> <span class="kn">import</span> <span class="n">PydanticUndefinedType</span><span class="p">,</span> <span class="n">core_schema</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.types</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BOOLEAN</span><span class="p">,</span>
+    <span class="n">DATETIME</span><span class="p">,</span>
+    <span class="n">FLOAT</span><span class="p">,</span>
+    <span class="n">INTEGER</span><span class="p">,</span>
+    <span class="n">NULLTYPE</span><span class="p">,</span>
+    <span class="n">TEXT</span><span class="p">,</span>
+    <span class="n">Interval</span><span class="p">,</span>
+    <span class="n">TypeEngine</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.logging</span> <span class="kn">import</span> <span class="n">mainlog</span>
+
+<span class="c1"># -- Importing SELF -- #</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>  <span class="c1"># noqa</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span> <span class="k">as</span> <span class="n">Self</span>  <span class="c1"># noqa</span>
+
+
+<div class="viewcode-block" id="convert_np_type_to_sql">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.convert_np_type_to_sql.html#utilities.types.convert_np_type_to_sql">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_np_type_to_sql</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeEngine</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a standard ``numpy`` data type into its corresponding ``sqlalchemy`` dtype.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dtype: :py:class:`numpy.dtype`</span>
+<span class="sd">        The data type (numpy) to convert.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    TypeEngine</span>
+<span class="sd">        The class representing that data type in sqlalchemy.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_kind</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">kind</span>
+
+    <span class="k">if</span> <span class="n">_kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FLOAT</span>
+    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">INTEGER</span>
+    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">Interval</span>
+    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;M&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">DATETIME</span>
+    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">TEXT</span>
+    <span class="k">elif</span> <span class="n">_kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">BOOLEAN</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">NULLTYPE</span></div>
+
+
+
+<span class="c1"># ============================================================= #</span>
+<span class="c1"># Custom Annotations</span>
+<span class="c1"># ============================================================= #</span>
+<span class="k">class</span> <span class="nc">_UnitTypePydanticAnnotation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a PyDantic annotation to process unit-typed objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">_source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">_handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We return a pydantic_core.CoreSchema that behaves in the following ways:</span>
+
+<span class="sd">        * strings will be parsed as `Unit` instances with the int as the x attribute</span>
+<span class="sd">        * `Unit` instances will be parsed as `Unit` instances without any changes</span>
+<span class="sd">        * Nothing else will pass validation</span>
+<span class="sd">        * Serialization will always return just the string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">validate_from_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Unit</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">from_str_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">(),</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span><span class="n">validate_from_str</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_str_schema</span><span class="p">,</span>
+            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="c1"># check if it&#39;s an instance first before doing any further work</span>
+                    <span class="n">core_schema</span><span class="o">.</span><span class="n">is_instance_schema</span><span class="p">(</span><span class="n">Unit</span><span class="p">),</span>
+                    <span class="n">from_str_schema</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">instance</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonSchemaValue</span><span class="p">:</span>
+        <span class="c1"># Use the same schema that would be used for `str`</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">_QuantityTypePydanticAnnotation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a PyDantic annotation to process quantity-typed objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">_source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">_handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We return a pydantic_core.CoreSchema that behaves in the following ways:</span>
+
+<span class="sd">        * strings will be parsed as `Unit` instances with the int as the x attribute</span>
+<span class="sd">        * `Unit` instances will be parsed as `Unit` instances without any changes</span>
+<span class="sd">        * Nothing else will pass validation</span>
+<span class="sd">        * Serialization will always return just the string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">validate_from_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">from_str_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">(),</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span><span class="n">validate_from_str</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_str_schema</span><span class="p">,</span>
+            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="c1"># check if it&#39;s an instance first before doing any further work</span>
+                    <span class="n">core_schema</span><span class="o">.</span><span class="n">is_instance_schema</span><span class="p">(</span><span class="n">Quantity</span><span class="p">),</span>
+                    <span class="n">from_str_schema</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">instance</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonSchemaValue</span><span class="p">:</span>
+        <span class="c1"># Use the same schema that would be used for `str`</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">_FrameTypePydanticAnnotation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a PyDantic annotation to process coordinate frame objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">_source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">_handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">validate_from_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">astro_coords</span><span class="o">.</span><span class="n">GenericFrame</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">astro_coords</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">astro_coords</span><span class="o">.</span><span class="n">GenericFrame</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Astropy coordinates </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> attribute is not a frame.&quot;</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">from_str_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">(),</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span><span class="n">validate_from_str</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_str_schema</span><span class="p">,</span>
+            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="c1"># check if it&#39;s an instance first before doing any further work</span>
+                    <span class="n">core_schema</span><span class="o">.</span><span class="n">is_instance_schema</span><span class="p">(</span><span class="n">astro_coords</span><span class="o">.</span><span class="n">GenericFrame</span><span class="p">),</span>
+                    <span class="n">from_str_schema</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">instance</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonSchemaValue</span><span class="p">:</span>
+        <span class="c1"># Use the same schema that would be used for `str`</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">_CMDTypePydanticAnnotation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a PyDantic annotation to process :py:class:`CrossMatchDatabase` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">_source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">_handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pyXMIP.cross_reference</span> <span class="kn">import</span> <span class="n">CrossMatchDatabase</span>
+
+        <span class="k">def</span> <span class="nf">validate_from_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CrossMatchDatabase</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">CrossMatchDatabase</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">from_str_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">(),</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span><span class="n">validate_from_str</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_str_schema</span><span class="p">,</span>
+            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="c1"># check if it&#39;s an instance first before doing any further work</span>
+                    <span class="n">core_schema</span><span class="o">.</span><span class="n">is_instance_schema</span><span class="p">(</span><span class="n">CrossMatchDatabase</span><span class="p">),</span>
+                    <span class="n">from_str_schema</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">instance</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonSchemaValue</span><span class="p">:</span>
+        <span class="c1"># Use the same schema that would be used for `str`</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
+
+
+<span class="c1"># ============================================================= #</span>
+<span class="c1"># Custom Validators</span>
+<span class="c1"># ============================================================= #</span>
+<span class="n">PydanticUnit</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Unit</span><span class="p">,</span> <span class="n">_UnitTypePydanticAnnotation</span><span class="p">]</span>
+<span class="c1"># Any: The Pydantic type representing the :py:class:`astropy.units.core.Unit` class.</span>
+
+<span class="n">PydanticQuantity</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">_QuantityTypePydanticAnnotation</span><span class="p">]</span>
+<span class="c1"># Any: The Pydantic type representing the :py:class:`astropy.units.core.Quantity` class.</span>
+
+<span class="n">PydanticFrame</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">astro_coords</span><span class="o">.</span><span class="n">GenericFrame</span><span class="p">,</span> <span class="n">_FrameTypePydanticAnnotation</span><span class="p">]</span>
+<span class="c1"># Any: The Pydantic type representing the :py:class:`astropy.units.core.Quantity` class.</span>
+
+
+<div class="viewcode-block" id="construct_template">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.construct_template.html#utilities.types.construct_template">[docs]</a>
+<span class="k">def</span> <span class="nf">construct_template</span><span class="p">(</span><span class="n">datamodel</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a template version of a known data model. This is largely useless for external users,</span>
+<span class="sd">    but is used in the backend to produce model schema which can then be filled in with information from objects like tables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    datamodel: BaseModel</span>
+<span class="sd">        The ``pydantic`` model to produce a template version of.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The output template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">structure</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">datamodel</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>  <span class="c1"># Grab all of the model fields.</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">datamodel</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">default</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PydanticUndefinedType</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">structure</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_underlying_type</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">annotation</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">_underlying_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+                <span class="n">structure</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">construct_template</span><span class="p">(</span><span class="n">_underlying_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">structure</span></div>
+
+
+
+<span class="c1"># ============================================================= #</span>
+<span class="c1"># Custom Structures</span>
+<span class="c1"># ============================================================= #</span>
+<span class="c1">#   Custom structures are Pydantic recognized data structures for validation</span>
+<span class="c1">#   and eventual usage in schema objects.</span>
+
+
+<div class="viewcode-block" id="Registry">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.Registry.html#utilities.types.Registry">[docs]</a>
+<span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bare-bones registry class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Registry.__init__">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.Registry.__init__.html#utilities.types.Registry.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the generalized registry class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mapping: dict</span>
+<span class="sd">            The dictionary underlying this registry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Registry.as_list">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.Registry.as_list.html#utilities.types.Registry.as_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Registry.add">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.Registry.add.html#utilities.types.Registry.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> already in registry.&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TableColumn">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.TableColumn.html#utilities.types.TableColumn">[docs]</a>
+<span class="k">class</span> <span class="nc">TableColumn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic data class representing a single column in a table.</span>
+
+<span class="sd">    The :py:class:`TableColumn` class is utilized by :py:class:`ColumnMap` to construct the column structure for</span>
+<span class="sd">    :py:class:`schema.SourceTableSchema`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># -- Managing configuration -- #</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The column name corresponding to this column.&quot;&quot;&quot;</span>
+    <span class="n">unit</span><span class="p">:</span> <span class="n">PydanticUnit</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The unit to attribute to this column.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SourceTableSchemaSettings">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.SourceTableSchemaSettings.html#utilities.types.SourceTableSchemaSettings">[docs]</a>
+<span class="k">class</span> <span class="nc">SourceTableSchemaSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic data class representing the settings for a :py:class:`schema.SourceTableSchema`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># -- Managing configuration -- #</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># ============================= #</span>
+    <span class="c1"># Settings                      #</span>
+    <span class="c1"># ============================= #</span>
+    <span class="n">default_coord_system</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ICRS&quot;</span><span class="p">,</span> <span class="s2">&quot;Galactic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ICRS&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The default coordinate system to use.</span>
+
+<span class="sd">    Use this to select the native coordinate system for the schema. Whichever coordinate system is selected, there must</span>
+<span class="sd">    be sufficient identifiable columns to actually obtain those coordinates.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">object_type_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The separator character / string between different object types.</span>
+
+<span class="sd">        In many databases, returned object types may have multiple types separated by a delimiter. This delimiter should</span>
+<span class="sd">        be specified here if it is needed.</span>
+
+<span class="sd">        .. important::</span>
+
+<span class="sd">            In all native ``pyXMIP`` data objects, a &quot;|&quot; is used for the delimiter. Even if the object type is a single</span>
+<span class="sd">            value, all object types in ``pyXMIP`` tables are formatted ``&quot;|entry_1|entry_2|...|&quot;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ColumnMap">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnMap.html#utilities.types.ColumnMap">[docs]</a>
+<span class="k">class</span> <span class="nc">ColumnMap</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic data class representing a mapping from columns in a table to standard pyxmip columns.</span>
+
+<span class="sd">    The :py:class:`ColumnMap` class is used to construct the column structure for :py:class:`schema.SourceTableSchema`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ========================================================================== #</span>
+    <span class="c1"># Validators                                                                 #</span>
+    <span class="c1"># ========================================================================== #</span>
+    <span class="c1"># -- Managing configuration -- #</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ColumnMap.validate_table_column_unit">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnMap.validate_table_column_unit.html#utilities.types.ColumnMap.validate_table_column_unit">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_table_column_unit</span><span class="p">(</span>
+        <span class="n">expected_unit</span><span class="p">:</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">equivalencies</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PyDactic validator method to enforce unit norms on :py:class:`TableColumn` instances in the :py:class:`ColumnMap`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expected_unit: Unit</span>
+<span class="sd">            The expected unit. The unit specified in the data must be convertible to this unit.</span>
+<span class="sd">        equivalencies</span>
+<span class="sd">            The equivalencies to allow when checking for type consistency. By default, ``None``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValidationError</span>
+<span class="sd">            [UNIT CONSISTENCY FAULT] Failed to convert ``value`` to units ``expected_unit``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_check_unit_validation</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">TableColumn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TableColumn</span><span class="p">:</span>
+            <span class="c1"># -- Check if NONE -- #</span>
+            <span class="c1"># If the unit isn&#39;t provided, we can just assign the expected unit.</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">expected_unit</span>
+
+            <span class="c1"># -- Check unit type -- #</span>
+            <span class="c1"># The user might have specified a string, convert to unit.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">equivalencies</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[UNIT CONSISTENCY FAULT] Failed to convert </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to units </span><span class="si">{</span><span class="n">expected_unit</span><span class="si">}</span><span class="s2">. Raised by ColumnMap.validate_table_column_unit.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">_check_unit_validation</span></div>
+
+
+<div class="viewcode-block" id="ColumnMap.validate_table_column_no_unit">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnMap.validate_table_column_no_unit.html#utilities.types.ColumnMap.validate_table_column_no_unit">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_table_column_no_unit</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">TableColumn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TableColumn</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PyDactic validator method to enforce unit norms on :py:class:`TableColumn` instances in the :py:class:`ColumnMap`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value</span>
+<span class="sd">            The :py:class:`TableColumn` being validated.</span>
+
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValidationError</span>
+<span class="sd">            [UNIT CONSISTENCY FAULT] Failed to convert ``value`` to units ``expected_unit``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;[UNIT CONSISTENCY FAULT] This TableColumn should not have units but is </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">. Raised by ColumnMap.validate_table_column_no_unit.&quot;</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+    <span class="c1"># Coordinate Columns #</span>
+    <span class="n">RA</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object RA coordinate.&quot;&quot;&quot;</span>
+    <span class="n">DEC</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object DEC coordinate.&quot;&quot;&quot;</span>
+    <span class="n">RA_ERR</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object RA coordinate error.&quot;&quot;&quot;</span>
+    <span class="n">DEC_ERR</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object DEC coordinate error.&quot;&quot;&quot;</span>
+    <span class="n">GAL_L</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s galactic longitude.&quot;&quot;&quot;</span>
+    <span class="n">GAL_B</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s galactic latitude.&quot;&quot;&quot;</span>
+    <span class="n">GAL_L_ERR</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s galactic longitude error.&quot;&quot;&quot;</span>
+    <span class="n">GAL_B_ERR</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s galactic latitude error.&quot;&quot;&quot;</span>
+    <span class="n">SEP</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_unit</span><span class="p">(</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">)))</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Name columns #</span>
+    <span class="n">NAME</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_no_unit</span><span class="p">)]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s main identifier.&quot;&quot;&quot;</span>
+    <span class="c1"># Extra Columns #</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_no_unit</span><span class="p">)</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object&#39;s redshift.&quot;&quot;&quot;</span>
+    <span class="n">TYPE</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">TableColumn</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">validate_table_column_no_unit</span><span class="p">)</span>
+    <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The column containing the object type of the catalog object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ColumnMap.search_inverse">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnMap.search_inverse.html#utilities.types.ColumnMap.search_inverse">[docs]</a>
+    <span class="k">def</span> <span class="nf">search_inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()}[</span><span class="n">key</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ColumnStdErrorSpecifier">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnStdErrorSpecifier.html#utilities.types.ColumnStdErrorSpecifier">[docs]</a>
+<span class="k">class</span> <span class="nc">ColumnStdErrorSpecifier</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic data class specifying the error on a given column of a table.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This class is table-agnostic, it won&#39;t know anything about the data it&#39;s describing until runtime. Thus,</span>
+<span class="sd">        failure to create the class accurately may lead to late appearing validation errors because i.e. your table doesn&#39;t</span>
+<span class="sd">        have the specified column.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    The :py:class:`ColumnErrorSpecifier` should be understood as an &quot;archetypal&quot; structure for any reduction process where</span>
+<span class="sd">    the precision in a particular field of the matching database is used. Users must specify a ``base_column``, corresponding to</span>
+<span class="sd">    the column (i.e. RA) for which this specifier is determining the error (i.e. RA_PREC). Error can either by dynamic, as determined by</span>
+<span class="sd">    providing an ``error_column``, or by providing an ``error_value``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">base_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`TableColumn`: The name of the column who&#39;s error is being specified.</span>
+
+<span class="sd">    This should be the name of a column in the table which is being described by this data object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_column</span><span class="p">:</span> <span class="n">TableColumn</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`TableColumn` optional: The column which specifies the error in :py:attr:`ColumnErrorSpecifier.base_column`</span>
+
+<span class="sd">    At least one of :py:attr:`ColumnErrorSpecifier.error_column` and :py:attr:`ColumnErrorSpecifier.error_value` is required</span>
+<span class="sd">    for validation to pass without errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_value</span><span class="p">:</span> <span class="n">PydanticQuantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`astropy.units.core.Quantity`, optional: The global value of the error in :py:attr:`ColumnErrorSpecifier.base_column`</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        If a table doesn&#39;t have different errors for different entries but instead has a flat error profile, this is the</span>
+<span class="sd">        option you should use.</span>
+
+<span class="sd">    At least one of :py:attr:`ColumnErrorSpecifier.error_column` and :py:attr:`ColumnErrorSpecifier.error_value` is required</span>
+<span class="sd">    for validation to pass without errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_convert_to_std</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable, optional: Optional parameter to provide a function to convert error to standard deviation.</span>
+
+<span class="sd">    This class **assumes** that the provided error is the standard deviation of a normally distributed error. If the available</span>
+<span class="sd">    error column is not the standard deviation, specify this function to take ``x`` (the uncorrected error) as an argument and</span>
+<span class="sd">    return the standard deviation form of the error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ColumnStdErrorSpecifier.validate_on_table">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnStdErrorSpecifier.validate_on_table.html#utilities.types.ColumnStdErrorSpecifier.validate_on_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">validate_on_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate this column error specifier against a table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: :py:class:`structures.table.SourceTable`</span>
+<span class="sd">            The table to check this data structure against.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        This validator performs 3 checks:</span>
+
+<span class="sd">        1. Assert that ``self.base_column`` is actually a column in the table.</span>
+<span class="sd">        2. If ``self.error_column`` is specified, then it must also be in the table.</span>
+<span class="sd">        3. At least one of ``self.error_column`` and ``self.error_value`` must be specified.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error_column</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The base column </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_column</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not present in the validating table.&quot;</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_column</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_value</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;At least one of error_column or error_value must be specified.&quot;</span></div>
+
+
+<div class="viewcode-block" id="ColumnStdErrorSpecifier.validator">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ColumnStdErrorSpecifier.validator.html#utilities.types.ColumnStdErrorSpecifier.validator">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate this column error specifier.</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        This validator performs 1 check:</span>
+
+<span class="sd">        1. At least one of ``self.error_column`` and ``self.error_value`` must be specified.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check that at least one of the needed columns is specified.</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_column</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_value</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;At least one of error_column or error_value must be specified.&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ICRSCoordinateStdErrorSpecifier">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ICRSCoordinateStdErrorSpecifier.html#utilities.types.ICRSCoordinateStdErrorSpecifier">[docs]</a>
+<span class="k">class</span> <span class="nc">ICRSCoordinateStdErrorSpecifier</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic data class specifying the astrometric errors in a table.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        Like many of the structures in :py:mod:`utilities.types`, this class is composed of various subtypes. When documentation</span>
+<span class="sd">        says that something must have the &quot;format&quot; of another class, that implies that it may **either** be an instance of the</span>
+<span class="sd">        actual class, or the ``dict`` provided must be interpretable as that class.</span>
+
+<span class="sd">    To initialize a :py:class:`CoordinateErrorSpecifier`, you need to provide the following:</span>
+
+<span class="sd">    - :py:attr:`CoordinateErrorSpecifier.longitude_column`: The column in the table representing the longitude (i.e. RA).</span>
+<span class="sd">    - :py:attr:`CoordinateErrorSpecifier.latitude_column`: The column in the table representing the latitude (i.e. DEC).</span>
+
+<span class="sd">    Both of these should have the native format of :py:class:`TableColumn`.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        The two coordinate columns must be from the same coordinate system as ``pyXMIP`` treats them as generic lat/lon instead</span>
+<span class="sd">        of trying to interpret</span>
+
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Error specifiers #</span>
+    <span class="n">lon_error</span><span class="p">:</span> <span class="n">TableColumn</span> <span class="o">|</span> <span class="n">PydanticQuantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`TableColumn` or :py:class:`astropy.units.core.Quantity`: The error specification in the longitude.&quot;&quot;&quot;</span>
+    <span class="n">lat_error</span><span class="p">:</span> <span class="n">TableColumn</span> <span class="o">|</span> <span class="n">PydanticQuantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`TableColumn` or :py:class:`astropy.units.core.Quantity`: The error specification in the latitude.&quot;&quot;&quot;</span>
+    <span class="n">position_error</span><span class="p">:</span> <span class="n">TableColumn</span> <span class="o">|</span> <span class="n">PydanticQuantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`TableColumn` or :py:class:`astropy.units.core.Quantity`: The circular error specification.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;circular&quot;</span>
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="n">cerr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">cerr</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon_error</span><span class="p">]]):</span>
+            <span class="k">return</span> <span class="s2">&quot;axial&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ICRSCoordinateStdErrorSpecifier.validator">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ICRSCoordinateStdErrorSpecifier.validator.html#utilities.types.ICRSCoordinateStdErrorSpecifier.validator">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the :py:class:`CoordinateErrorSpecifier`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        The only check performed by this validator is that either the lat/lon error is specified or the circular is specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_error</span><span class="p">]]</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_error</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">cerr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">cerr</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon_error</span><span class="p">]</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;CoordinateErrorSpecifier </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> is not circular but doesn&#39;t have 2 axes for position error.&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cerr</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon_error</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">cerr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">mainlog</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;CoordinateErrorSpecifier </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> is in MODE=circular, but axial errors are specified: </span><span class="si">{</span><span class="n">cerr</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ICRSCoordinateStdErrorSpecifier.check_empty">
+<a class="viewcode-back" href="../../_as_gen/utilities.types.ICRSCoordinateStdErrorSpecifier.check_empty.html#utilities.types.ICRSCoordinateStdErrorSpecifier.check_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon_error</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_error</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;At least one error specifier is needed.&quot;</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
