@@ -1,7 +1,3 @@
-#!/usr/bin/python3
-"""
-Main pyXMIP command-line interface message passing script.
-"""
 import os
 
 import yaml
