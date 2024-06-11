@@ -19,7 +19,7 @@ classifiers = [
 ]
 keywords = ["astronomy", "cross-matching", "cross-identification", "survey", "statistics"]
 dependencies = [
-    "sklearn",
+    "scikit-learn",
     "pandas",
     'numpy',
     'astropy',
