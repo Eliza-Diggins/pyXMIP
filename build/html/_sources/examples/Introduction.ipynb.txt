@@ -1,0 +1,816 @@
+{
+ "cells": [
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "d821f67f-8ec2-487b-b686-86e5a0490975",
+   "metadata": {
+    "collapsed": false,
+    "jupyter": {
+     "outputs_hidden": false
+    }
+   },
+   "source": [
+    "# Cross Referencing Overview\n",
+    "\n",
+    "![a](https://img.shields.io/badge/Subject:-Overview-blue)\n",
+    "![b](https://img.shields.io/badge/Difficulty:-Easy-green)\n",
+    "![c](https://img.shields.io/badge/Author:-Eliza_Diggins-green)\n",
+    "\n",
+    "---\n",
+    "\n",
+    "This example is intended to give a \"bird's eye\" overview of ``pyXMIP``, what it can do, how to perform the basic analyses, etc!\n",
+    "\n",
+    "Generally speaking, ``pyXMIP`` is designed with the following steps in mind:\n",
+    "\n",
+    "1. **Load / explore a source catalog**\n",
+    "   - This is where you provide the data that needs to be cross-identified. There are a variety of things ``pyXMIP`` can do, but almost all of them require you to provide a source catalog as a first step.\n",
+    "2. **Cross-match**\n",
+    "   - The first step in cross-identification (determining a known source as a match to a given detection) is a process which we refer to as \"cross-matching\". In the cross-matching step, ``pyXMIP`` explores a set of external data sources and finds a list (or lists) of *potential* candidates for the cross-identification of each source in your catalog.\n",
+    "3. **Reduction**\n",
+    "   - In the 3rd step, we go from the cross-matching phase (many possible matches to each source) to the cross-identification phase (one match to a given source). In this part of the process, the user gets to decide how ``pyXMIP`` should evaluate the \"best\" match to a given source.\n",
+    "4. **Science Outcomes**\n",
+    "   - The software has done its work, this part is up to you! We provide some tools for performing match quality cutoffs, plotting various aspects of the cross-matching catalog, etc.\n",
+    "\n",
+    "In this guide, we're going to go through all of these steps for a small example case to showcase the basic ideas!\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## Contents\n",
+    "\n",
+    "- [Loading Data](#Loading-Data)\n",
+    "  - [Schemas](#Schemas)\n",
+    "- [Cross Matching](#Cross-Matching)\n",
+    "  - [Performing the Cross-Match](#Cross-Matching-Against-Databases)\n",
+    "  - [Cross Match Databases](#Cross-Match-Databases)\n",
+    "- [Reduction](#Reduction)\n",
+    "\n",
+    "---\n",
+    "\n",
+    "\n",
+    "\n",
+    "## Loading Data\n",
+    "\n",
+    "The first step is to generate a ``SourceTable`` containing your catalog of novel sources. \n",
+    "\n",
+    "> A ``SourceTable`` is just a fancy version of the typical ``astropy`` ``Table`` class. You can treat it more-or-less like a ``pandas`` or ``astropy``\n",
+    "> table. In addition to basic functionality, these classes also have some specific functions to aid the user (as you'll see below).\n",
+    "\n",
+    "\n",
+    "\n",
+    "In this example, we're going to use the **eROSITA X-ray Survey (eRASS1)**!\n",
+    "Let's go ahead and get started by downloading the hard band X-ray catalog [here](https://erosita.mpe.mpg.de/dr1/AllSkySurveyData_dr1/Catalogues_dr1/MerloniA_DR1/eRASS1_Hard.tar.gz).\n",
+    "Once it's been extracted, there should be a file ``eRASS1_Hard.v1.0.fits``.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "b62cecc4-f828-423d-b31e-ca4e97d1a441",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2024-06-09T17:26:51.761416Z",
+     "start_time": "2024-06-09T17:26:44.489661Z"
+    }
+   },
+   "source": [
+    "import pyXMIP as pyxmip\n",
+    "\n",
+    "# Load the catalog table just like a normal astropy table.\n",
+    "catalog = pyxmip.SourceTable.read(\"data/eRASS1_Hard.v1.0.fits\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7596f391-4da1-4107-b3ca-a4cbc3a03791",
+   "metadata": {},
+   "source": [
+    "Just like any other table, you can look at the catalog data by indexing:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "ac976f39-422e-4b88-befa-1c53087e64ac",
+   "metadata": {},
+   "source": [
+    "catalog[:2]"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3dd07997-fe15-4aa9-bdb4-11c3f0ec54bc",
+   "metadata": {},
+   "source": [
+    "### Schemas\n",
+    "\n",
+    "What makes ``SourceTable`` instances different from the traditional ``astropy.Table`` class is that every ``SourceTable`` comes with a ``SourceTableSchema`` instance.\n",
+    "\n",
+    "> ``Schema`` classes appear a lot in ``pyXMIP``. Effectively, ``Schema`` classes are how ``pyXMIP`` figures out what different parts of user-provided\n",
+    "> data mean. For ``SourceTable`` instances, this is largely about translating the column names into standardized names that ``pyXMIP`` understands.\n",
+    "\n",
+    "In many cases, the ``Schema`` may be automatically generated simply by accessing them:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "d2f68cee-b726-4239-95a4-06ddd3a17a27",
+   "metadata": {},
+   "source": [
+    "catschema = catalog.schema"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3f07bec7-c71e-4768-bffe-f021a05b5fe1",
+   "metadata": {},
+   "source": [
+    "> What's with all the ``DEBUG`` statements?\n",
+    ">\n",
+    "> Effectively, ``pyXMIP`` is going through the columns of our catalog and looking for recognizable names. Here, it found ``RA`` and ``DEC`` as well as\n",
+    "> ``LII`` and ``BII`` (galactic coordinates). It also found a source name column (``IAUNAME``). Many of the other columns it looked for (like the\n",
+    "> redshift) weren't found. Finally, it also determined that there were 2 possible coordinate systems and selected a default (ICRS).\n",
+    "\n",
+    "Because ``SourceCatalog`` instances have ``Schema``, we can use general attributes to access data regardless of the column name:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "770cd378-e2ed-4bbc-842b-b01a1ca6992a",
+   "metadata": {},
+   "source": [
+    "import numpy as np\n",
+    "from astropy.units import Quantity\n",
+    "\n",
+    "print(f\"There are {len(catalog)} sources in the catalog.\")\n",
+    "_low_gal_lat = catalog[np.abs(Quantity(catalog.GAL_B).to_value(\"deg\")) < 1]\n",
+    "print(f\"There are {len(_low_gal_lat)} sources within the galactic plane.\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f520f9a5-7cd5-4501-988a-597cc4b18712",
+   "metadata": {},
+   "source": [
+    "In some cases, the automatically generated schema is a bit insufficient. For example, in this case, there are RA / DEC error column that weren't picked up by the naive search. We can add these in manually!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "d8e4e0fa-d87e-4ac8-970b-b5b690d01d99",
+   "metadata": {},
+   "source": [
+    "catalog.schema.column_map.RA_ERR = {\"name\": \"RA_UPERR\", \"unit\": \"arcsec\"}\n",
+    "catalog.schema.column_map.DEC_ERR = {\"name\": \"DEC_UPERR\", \"unit\": \"arcsec\"}\n",
+    "\n",
+    "# Fetch the errors\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "plt.hist(catalog.RA_ERR, ec=\"k\", fc=\"darkgreen\", bins=np.geomspace(1e-3, 40))\n",
+    "plt.xscale(\"log\")\n",
+    "plt.yscale(\"log\")\n",
+    "plt.ylabel(\"Number of eRASS1 Sources\")\n",
+    "plt.xlabel(r\"$\\sup \\sigma_{\\mathrm{RA}}$, $[\\mathrm{arcsec}]$\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2dc147bd-125a-479f-94d4-44960e6a1c87",
+   "metadata": {},
+   "source": [
+    "We can also use the ``Schema`` to help plot the sources in the catalog!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "3cf4b87f-0794-48b4-b6ba-9d0dd12d3dae",
+   "metadata": {},
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "# -- create the figure -- #\n",
+    "figure = plt.figure(figsize=(10, 7))\n",
+    "ax = figure.add_subplot(111, projection=\"aitoff\")\n",
+    "\n",
+    "# -- pull the latitute longitude, and rate -- #\n",
+    "lat, lon = catalog.lat.to_value(\"rad\"), catalog.lon.to_value(\"rad\")\n",
+    "rate = catalog[\"ML_RATE_0\"]\n",
+    "\n",
+    "# -- plot -- #\n",
+    "ax.scatter(lon - np.pi, lat, 1, c=np.log10(rate), cmap=\"gnuplot_r\")\n",
+    "\n",
+    "ax.set_ylabel(\"DEC\")\n",
+    "ax.set_xlabel(\"RA\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1c8fd9b5-7b38-4f7d-a369-d0d20003246f",
+   "metadata": {},
+   "source": [
+    "We can also visualize in galactic coordinates:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "c5f8ab39-770a-40fe-92fa-23286972031f",
+   "metadata": {},
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "# -- create the figure -- #\n",
+    "figure = plt.figure(figsize=(10, 7))\n",
+    "ax = figure.add_subplot(111, projection=\"aitoff\")\n",
+    "\n",
+    "# -- pull the latitute longitude, and rate -- #\n",
+    "coordinates = catalog.get_coordinates().transform_to(\"galactic\")\n",
+    "\n",
+    "lat, lon = coordinates.frame.spherical.lat.rad, coordinates.frame.spherical.lon.rad\n",
+    "\n",
+    "rate = catalog[\"ML_RATE_0\"]\n",
+    "\n",
+    "# -- plot -- #\n",
+    "ax.scatter(lon - np.pi, lat, 1, c=np.log10(rate), cmap=\"gnuplot_r\")\n",
+    "\n",
+    "ax.set_ylabel(r\"$b$\")\n",
+    "ax.set_xlabel(r\"$l$\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6f01c831-e8e4-439d-8114-a7d187f828bf",
+   "metadata": {},
+   "source": [
+    "> You might be wondering why there are so many sources localized to the blob on the lower right?\n",
+    ">\n",
+    "> This is actually because the observing path of the SRG/eROSITA all-sky survey (eRASS1) leads to overlapping exposure in that region of the sky, thus increasing the source detections.\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## Cross Matching\n",
+    "\n",
+    "We've suceeded in loading the source catalog, the next step is to **identify potential matches**!\n",
+    "\n",
+    "``pyXMIP`` is developed with the explicit intention of providing the researcher with the versatility to meet their needs while still providing useful tools. To this end, there are a variety of options for determining candidate matches to the catalog sources. Generically, these fall into two categories:\n",
+    "\n",
+    "- **Local Database Searches**: The user provides additional catalogs (typically more ``SourceTables`` or ``.fits`` files) that are then cross-matched against.\n",
+    "  - This is generally a pretty fast process and easily scalable to very large samples.\n",
+    "  - The only real restriction is that sources need to have positions on the sky.\n",
+    "- **Remote Database Searches**: ``pyXMIP`` searches through online databases for potential candidates.\n",
+    "  - Depending on the database selected, these can be slower; however, they are also searching very large repositories of data.\n",
+    "  - ``pyXMIP`` unifies the various APIs for different remote databases to provide a uniform user experience.\n",
+    "  - Additional remote (and local) databases can be easily written as needed by the user.\n",
+    "\n",
+    "All of these functionalities are contained in the ``pyXMIP.structures.databases`` module!\n",
+    "\n",
+    "\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "91158818-e5c8-4c1c-a1b8-76faf4b2a894",
+   "metadata": {},
+   "source": [
+    "In order to cross-match our catalog, we have to first find location matches in external databases. All of the available databases are listed in a ``DBRegistry`` (just a list of available databases). Let's see what databases are available to use right now:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "32b37e76-7ebc-41c6-93eb-9493129abfad",
+   "metadata": {},
+   "source": [
+    "from pyXMIP.structures.databases import DEFAULT_DATABASE_REGISTRY\n",
+    "\n",
+    "for k, v in DEFAULT_DATABASE_REGISTRY.items():\n",
+    "    print(f\"Database {k} corresponds to class {v.__class__.__name__} instance {v.name}\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b06e3f5f-65cf-42b7-8db6-f2e923b718ab",
+   "metadata": {},
+   "source": [
+    "> **Technical Details**:\n",
+    ">\n",
+    "> Every database is an *instance* of a particular database *class*. The *class* represents the generic database (i.e. SIMBAD or NED), while\n",
+    "> the particular *instance* represents a given set of search / query parameters and conventions (i.e. what columns to return, what format of\n",
+    ">  coordinates to use, etc.)\n",
+    ">\n",
+    "> All of the built-in databases (NED, SIMBAD, etc.) have a ``STD`` instance which simply provides the database with default search settings.\n",
+    "\n",
+    "**All** database instances have a ``query_radius`` method, which searches the database for sources within a given region."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "a32cfd64-1c7d-4229-8ed4-1edac6871227",
+   "metadata": {},
+   "source": [
+    "from pyXMIP.structures.databases import NED\n",
+    "from astropy.coordinates import SkyCoord\n",
+    "from astropy import units\n",
+    "\n",
+    "# Create a default NED instance (default search settings)\n",
+    "ned_instance = NED()\n",
+    "\n",
+    "# Search for sources around a position.\n",
+    "# --------- Example ---------- #\n",
+    "# Object: Crab Nebula\n",
+    "# RA: 83.633212, DEC: 22.014460\n",
+    "\n",
+    "position = SkyCoord(\n",
+    "    ra=83.633212, dec=22.014460, unit=\"deg\"\n",
+    ")  # The position to search around\n",
+    "search_radius = 2 * units.arcmin  # The search radius\n",
+    "\n",
+    "# Perform the query\n",
+    "result = ned_instance.query_radius(position, search_radius)\n",
+    "\n",
+    "# Display first 10 results\n",
+    "result[:10]"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4bfdbf47-051a-4bd9-ab5a-272db71a7d0a",
+   "metadata": {},
+   "source": [
+    "Just like our ``catalog`` instance, this is another ``SourceTable``! In fact, this one already has a ``SourceTableSchema`` attached to it!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "d1dfbb4d-6fa9-4064-aec8-fb488846f544",
+   "metadata": {},
+   "source": [
+    "print(result.schema)"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8c4af6c8-98c5-4d3c-b6a7-9c76a3aab7d9",
+   "metadata": {},
+   "source": [
+    "> **Technical Details**:\n",
+    ">\n",
+    "> Database classes come with a ``query_schema``, which tells ``pyXMIP`` what schema to attach to the results of a given query. This can be super helpful\n",
+    "> if, for example, you don't want to have to tell ``pyXMIP`` what the different columns mean everytime you query NED or SIMBAD.\n",
+    ">\n",
+    "> If you need to query *your own database*, you might need to provide a ``query_schema`` to tell ``pyXMIP`` what it's looking at!\n",
+    "\n",
+    "You may have noticed that the Crab Nebula wasn't in our list of sources! Databases like NED have a lot of different sources in them from a lot of different missions. This means you often get a lot of \"catch-all\" objects. We'll run into this issue again when we talk about **reduction** (going from cross-matching to cross-identification), but we can already make some headway by sorting for specific types of objects!\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "d65beb9d-5adc-4bd0-9888-604124d60d0f",
+   "metadata": {},
+   "source": [
+    "# Filter results so that TYPE is SNR (supernova remnant)\n",
+    "filtered_results = result[result.TYPE == \"SNR\"]\n",
+    "\n",
+    "filtered_results"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "89379817-3432-46c4-8623-065f5e4e7d85",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "### Cross Matching Against Databases\n",
+    "\n",
+    "Now that you've been introduced to the ``Database`` classes, it's time to put them to work!\n",
+    "\n",
+    "The goal of **cross-matching** is to identify a *large* number of plausible matches to a particular source quickly. From there, ``pyXMIP`` will help you \"narrow the field\" and determine what the best match is (the so-called **reduction** step).\n",
+    "\n",
+    "The ``pyXMIP.cross_reference`` module provides the ``cross_match_table`` function particularly for this purpose:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "cfb2705a-50ec-487c-ac0b-05a58abafbd1",
+   "metadata": {},
+   "source": [
+    "from pyXMIP.cross_reference import cross_match_table\n",
+    "\n",
+    "# Perform the cross-matching process on the first 100 entries of the catalog.\n",
+    "cross_match_table(\n",
+    "    catalog[:100],\n",
+    "    \"data/cross_matched.db\",\n",
+    "    overwrite=True,\n",
+    "    parallel_kwargs=dict(max_workers=6),\n",
+    ")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fa6fa4eb-f3e5-4af7-a284-baed3a15dd6a",
+   "metadata": {},
+   "source": [
+    "> **Wow! That's a lot of output!**\n",
+    ">\n",
+    "> Here's what happened:\n",
+    "> 1. We figured out which databases to cross-match against (in this case, just the default databases).\n",
+    "> 2. We looked for an existing cross-matching output and deleted pre-existing data.\n",
+    "> 3. For each database, we search for each catalog source within a specified radius (configurable). All of the results are then compiled and written to disk.\n",
+    "> 4. The outputs are combined into a single ``SQL`` database with each table representing a different search database.\n",
+    "> 5. A bunch of \"post-processing\" operations were done to clean up the output and get it ready for use!\n",
+    "\n",
+    "\n",
+    "The end result of this process is a SQL-database (referred to as a ``CrossMatchDatabase``) at ``data/cross_matched.db``."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6188061f-b994-4519-8d05-59340f77bb7c",
+   "metadata": {},
+   "source": [
+    "### Cross Match Databases\n",
+    "\n",
+    "The ``CrossMatchDatabase`` class is the ``pyXMIP``-side representation of the underlying ``SQL`` output from the cross-matching process. It provides a variety of functionality for performing additional analyses on the outputs of your cross-match and (most importantly) provides an interface for the **reduction** step of the cross-identification process.\n",
+    "\n",
+    "To load a ``CrossMatchDatabase`` from disk, you need only provide the path to the file:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "0ddaf516-251a-4bd5-adae-8f81db5e2317",
+   "metadata": {},
+   "source": [
+    "# load the cross match database from disk\n",
+    "from pyXMIP.cross_reference import CrossMatchDatabase\n",
+    "\n",
+    "cmd = CrossMatchDatabase(\"data/cross_matched.db\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "44ca1f49-cc4c-42c6-906f-d387a41b04c2",
+   "metadata": {},
+   "source": [
+    "The ``CrossMatchDatabase`` (reflecting the underlying ``SQL``) is composed of \"tables\":"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "1e358e56-4afa-487f-9e8e-26727eb06d3d",
+   "metadata": {},
+   "source": [
+    "print(f\"The CrossMatchDatabase {cmd} has tables {cmd.tables}\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "032af350-f33a-4a5e-bbf6-5ebf991c8ba2",
+   "metadata": {},
+   "source": [
+    "> **CMD Tables**:\n",
+    ">\n",
+    "> For every ``Database`` class you cross-matched against, you'll see a ``<NAME>_MATCH`` table in your CMD. This contains all of the\n",
+    ">  source candidates from those databases for each of the catalog sources. Additionally, there will always be a ``CATALOG`` table and a ``META`` table.\n",
+    ">\n",
+    "> The ``CATALOG`` table is just a *copy* of your original catalog. This means that your CMD is entirely self-contained and could (in principle)\n",
+    "> be used to create a copy of itself.\n",
+    ">\n",
+    "> The ``META`` table is used for internal book-keeping. Everytime a process or analysis gets run on the CMD, it's added to ``META``. This then\n",
+    "> allows the CMD to avoid rerunning processes and optimizes various procedures.\n",
+    "\n",
+    "Just like a normal ``SQL`` database, we can run queries on the ``CrossMatchDatabase``:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "16498026-af08-4d55-9220-8d5cf87db217",
+   "metadata": {},
+   "source": [
+    "# -- Example -- #\n",
+    "# Count the number of proposed matches found in NED for each of the catalog objects.\n",
+    "count_table = cmd.query(\n",
+    "    \"SELECT CATOBJ,COUNT('OBJECT NAME') as N FROM NED_STD_MATCH GROUP BY CATOBJ\"\n",
+    ")\n",
+    "\n",
+    "count_table[:10]  # show the first 10 matches."
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "370caae5-fef1-4591-928a-d70bb88e607a",
+   "metadata": {},
+   "source": [
+    "> Again, note that most sources have 10+ potential matches. This is why **reduction** is so important for identifying best-candidates.\n",
+    "\n",
+    "For some added exploration, let's create a histogram of the number of matches for each source."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "3abbd9e4-0f5d-4a60-b5c8-96413d22c407",
+   "metadata": {},
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "plt.hist(count_table[\"N\"], bins=np.geomspace(1, 1000, 20), ec=\"k\", fc=\"forestgreen\")\n",
+    "\n",
+    "plt.xscale(\"log\")\n",
+    "plt.xlabel(\"Number of matches\")\n",
+    "plt.ylabel(\"Number of sources\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "11818a46-f9f1-442a-9554-5dcf89a71161",
+   "metadata": {},
+   "source": [
+    "Apparently one of our sources has **several hundred** matches! Let's take a closer look."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "806b1706-8290-4453-a04f-f336ac0a8b29",
+   "metadata": {},
+   "source": [
+    "# Look up the special source and number of counts.\n",
+    "special_source = count_table.loc[count_table[\"N\"] == np.amax(count_table[\"N\"]), :]\n",
+    "print(special_source)\n",
+    "\n",
+    "# Let's get more detail from EROSITA\n",
+    "catalog_entry = cmd.query(\n",
+    "    \"SELECT * FROM CATALOG WHERE CATOBJ == '1eRASS J071730.5+374539'\"\n",
+    ")\n",
+    "\n",
+    "catalog_entry[[\"LII\", \"BII\", \"RA\", \"DEC\", \"EXT_LIKE\"]]\n",
+    "\n",
+    "match_types = cmd.query(\n",
+    "    \"SELECT Type, COUNT('OBJECT NAME') FROM NED_STD_MATCH WHERE CATOBJ == '1eRASS J071730.5+374539' GROUP BY Type\"\n",
+    ")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "id": "5e41e076-5a0e-4c22-aa47-47e3a3b9b10d",
+   "metadata": {},
+   "source": [
+    "match_types"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "999e96ae-762b-4234-b30a-7c5ccdbfd41a",
+   "metadata": {},
+   "source": [
+    "Based on this, we see that there are a number of galaxy clusters (3 - possible referencing the same object) several hundred galaxies and an assortment of other interesting object types.\n",
+    "\n",
+    "The question now remains: *How do we go from a list of candidate matches to the optimal match?*\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "11f36e81-e12a-494c-82b1-fabd3cb487e5",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Reduction\n",
+    "\n",
+    "It's the **reduction** stage where ``pyXMIP`` really shines! Because (as the scientist), you know more about what you need to do than ``pyXMIP`` ever can, the identification of \"best-matches\" for each of the catalog objects is a highly configurable procedure.\n",
+    "\n",
+    "Starting from the ``CrossMatchDatabase`` (which has many matches to each catalog source), the **reduction** process takes the following general path:\n",
+    "\n",
+    "1. **The user determines what criteria should be used to qualify what makes a particular match \"good\"**\n",
+    "\n",
+    "   Some of these criteria are pretty standard (i.e. source types are reasonable given the bandpass, the astrometric error is reasonable, etc). Other criteria may be more specific or the catalog being used comes with additional information that can be used to rule out a potential match. Whatever the case may be, each of these criteria constitutes a ``ReductionProcess``.\n",
+    "\n",
+    "   In a technical sense, a ``ReductionProcess`` is a function which acts on a particular table in your ``CrossMatchDatabase`` and spits out a values from $0$ to $1$ for each possible match such that $0$ indicates that the source is highly probably (by that metric) to be a match and $1$ indicates very low likelihood.\n",
+    "\n",
+    "2. **The user constructs the relevant reduction process**\n",
+    "\n",
+    "   For very common processes, there is likely already a built-in reduction process available. If not, you may need to write your own. Guidance for doing so is provided in our documentation. This can (sometimes) be a tricky task depending on the complexity of the task and (for large databases), attention should be paid to making the process not only correct, but also efficient.\n",
+    "\n",
+    "3. **The reductions are run on the ``CrossMatchDatabase``**\n",
+    "\n",
+    "   Once you've created the ``ReductionProcess``, it's easy to run the process on your CMD. We'll show how to do this below.\n",
+    "\n",
+    "4. **Construct a score for each candidate**\n",
+    "\n",
+    "   For each table $T_i$ in your CMD, there will have been a set of $N_i$ reduction processes performed. Each candidate (indexed by $j$) will have a score (from 0 to 1) for the process $T_i$, labeled $\\psi_{ij}$.\n",
+    "\n",
+    "   Because different criteria may be of *different importance* to the user, each process $T_i$ gets a *weight* $\\alpha_i$. The overall score for source $j$ is then\n",
+    "\n",
+    "   $$ \\xi_j = \\frac{1}{Z}\\sum_{i} \\alpha_i \\psi_{ij}, $$\n",
+    "\n",
+    "   where\n",
+    "\n",
+    "   $$ Z = \\sum_i \\alpha_i. $$\n",
+    "\n",
+    "5. **Combine scores from different tables**\n",
+    "\n",
+    "   Each reduction process is run on a table individually (you may use the same process on multiple tables, but you don't *have* to). Thus, you might end up with different scores from different databases. As such, sources from different tables are *combined*.\n",
+    "\n",
+    "   > *What about duplicates?*\n",
+    "   >\n",
+    "   > If a potential source appears in two separate tables, then the user may specify a \"duplicate-mode\" for the scoring (max, min, average, or fixed).\n",
+    "   > If the mode is \"fixed\", then a particular table always takes precedence over the others in specifying the true score.\n",
+    "   >\n",
+    "   > Once the duplicates have been managed, there will be a single score for each candidate source.\n",
+    "\n",
+    "   The rest is easy! Each source candidate has a score $\\xi_j \\in [0,1]$ and the best match is simply the **minimum** score!\n",
+    "\n",
+    "### Astrometry Reduction\n",
+    "\n",
+    "---\n",
+    "\n",
+    "As an example of a reduction process, we're going to go through the steps of using an astrometric reduction. \n",
+    "\n",
+    "> [**Technical Details**]\n",
+    ">\n",
+    "> The ``AstrometricReductionProcess`` (like all ``ReductionProcess`` classes) takes the table and ``CrossMatchDatabase`` it's operating on as\n",
+    "> arguments. Additionally, the user must specify either (or both) of ``CATALOG_ERR`` or ``DATABASE_ERR``.\n",
+    ">\n",
+    "> ``CATALOG_ERR`` specifies the astrometric precision of the catalog sources.\n",
+    "> ``DATABASE_ERR`` specifies the astrometric precision of the database sources.\n",
+    ">\n",
+    "> Additional resources may be found elsewhere in the documentation with an exhaustive explanation of the details of this procedure."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "25d94aa9-7723-47c9-bb85-31d2159709a7",
+   "metadata": {},
+   "source": [
+    "from pyXMIP.structures.reduction import AstrometricReductionProcess\n",
+    "import pyXMIP as pyxmip\n",
+    "from pyXMIP.cross_reference import CrossMatchDatabase\n",
+    "\n",
+    "# Load the catalog table just like a normal astropy table.\n",
+    "catalog = pyxmip.SourceTable.read(\"data/eRASS1_Hard.v1.0.fits\")\n",
+    "cmd = CrossMatchDatabase(\"data/cross_matched.db\")\n",
+    "ARP = AstrometricReductionProcess(\n",
+    "    table=\"NED_STD_MATCH\", cross_match_database=cmd, CATALOG_ERR={}, fill_unknown=True\n",
+    ")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "53891af4-e0eb-435e-97de-4cf8239f540b",
+   "metadata": {},
+   "source": [
+    "Our ``AstrometricReductionProcess`` is now ready to run. It used the ``schema`` for the catalog to identify the error columns and it is now set up to procede. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "64f8054f-f563-4584-8b8b-c0dc61480be5",
+   "metadata": {},
+   "source": [
+    "ARP()"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c8593ec-016d-407a-8527-617d78990068",
+   "metadata": {},
+   "source": [
+    "Just like that, our ``AstrometricReductionProcess`` has been completed. You'll notice it has since appeared in the ``META`` table:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "5fd80f0c-d3c0-4b88-b4bb-aee35a4930ec",
+   "metadata": {},
+   "source": [
+    "cmd.meta"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9672a3dc-54f5-43a7-9563-4e2d4ff1e715",
+   "metadata": {},
+   "source": [
+    "Let's go ahead and take a look at the results of the reduction."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "b63fc3ed-c71c-42b0-91a5-16e715fae1fc",
+   "metadata": {},
+   "source": [
+    "reduction_results = cmd.query(\n",
+    "    \"SELECT CATOBJ, CATRA, CATDEC, SEPARATION ,CATNMATCH, RA, DEC, ASTROMETRIC_REDUCTION_SCORE FROM NED_STD_MATCH\"\n",
+    ")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "23cbf8ac-3b79-47c4-aead-01dea8714332",
+   "metadata": {},
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "plt.hist(\n",
+    "    reduction_results[\"ASTROMETRIC_REDUCTION_SCORE\"],\n",
+    "    bins=np.geomspace(1e-10, 1e-1, 20),\n",
+    "    ec=\"k\",\n",
+    "    fc=\"darkgreen\",\n",
+    "    alpha=0.35,\n",
+    "    density=True,\n",
+    ")\n",
+    "plt.hist(\n",
+    "    [\n",
+    "        np.amax(\n",
+    "            reduction_results.loc[\n",
+    "                reduction_results[\"CATOBJ\"] == j, \"ASTROMETRIC_REDUCTION_SCORE\"\n",
+    "            ]\n",
+    "        )\n",
+    "        for j in reduction_results[\"CATOBJ\"]\n",
+    "    ],\n",
+    "    bins=np.geomspace(1e-10, 1e-1, 20),\n",
+    "    ec=\"k\",\n",
+    "    density=True,\n",
+    "    fc=\"red\",\n",
+    "    alpha=0.35,\n",
+    ")\n",
+    "plt.xscale(\"log\")"
+   ],
+   "outputs": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "214a52f5-5226-4b89-a3bf-0e6c2ae69e03",
+   "metadata": {},
+   "source": [],
+   "outputs": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -64,7 +64,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pyXMIP Quickstart Guide" href="getting_started.html" />
-    <link rel="prev" title="utilities.plot.set_style" href="_as_gen/utilities.plot.set_style.html" />
+    <link rel="prev" title="utilities.geo.convert_skycoord" href="_as_gen/utilities.geo.convert_skycoord.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -372,42 +372,56 @@ document.write(`
                   
   <section id="reference">
 <h1>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h1>
-<section id="getting-started">
+<hr><section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
-<section id="installation">
-<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><span class="xref std std-ref">installation</span></p></li>
-</ul>
-</section>
+<p>These guides are suitable for a general user audience and should typically be read by every user. They include information
+on installing and using the library for, at a minimum, simple use cases. These guides are also useful for familiarizing yourself
+with the core classes and types encountered in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>.</p>
 <section id="basic-usage">
 <h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<p>Our “Hello World” documentation; worth a read for any user who wants to use the package.</p>
 <ul class="simple">
-<li><p><span class="xref std std-ref">overview</span></p></li>
+<li><p><a class="reference internal" href="quickstart/overview.html#overview"><span class="std std-ref">Overview</span></a></p></li>
+<li><p><a class="reference internal" href="quickstart/install.html#install"><span class="std std-ref">Installing pyXMIP</span></a></p></li>
 <li><p><a class="reference internal" href="user_guides/source_data.html#source-data"><span class="std std-ref">Loading Source Data</span></a></p></li>
+<li><p><a class="reference internal" href="user_guides/databases.html#databases"><span class="std std-ref">Databases</span></a></p></li>
 <li><p><a class="reference internal" href="user_guides/cross_matching.html#cross-referencing"><span class="std std-ref">Cross Referencing</span></a></p></li>
 </ul>
 </section>
-<section id="creating-plots">
-<h3>Creating Plots<a class="headerlink" href="#creating-plots" title="Link to this heading">#</a></h3>
+<section id="visualizing-results">
+<h3>Visualizing Results<a class="headerlink" href="#visualizing-results" title="Link to this heading">#</a></h3>
+<p>Guides for the different visualization options available as part of the library.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="user_guides/plots.html#plotting"><span class="std std-ref">Creating Plots</span></a></p></li>
 </ul>
 </section>
 </section>
-<section id="statistics">
-<h2>Statistics<a class="headerlink" href="#statistics" title="Link to this heading">#</a></h2>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h2>
+<p>These documents recount in greater detail many of the more complex aspects of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> usage. Users who have more complex
+usage needs or are required to build custom classes / software should familiarize themselves with the topics presented here.</p>
+<hr><section id="statistics">
+<h3>Statistics<a class="headerlink" href="#statistics" title="Link to this heading">#</a></h3>
+<p>In depth discussions of the various statistical methodologies used across the library.</p>
 <ul class="simple">
 <li><p><span class="xref std std-ref">poisson_mapping</span></p></li>
 <li><p><a class="reference internal" href="user_guides/psf.html#psf-modeling"><span class="std std-ref">PSF Modeling</span></a></p></li>
 </ul>
 </section>
+<section id="expanding-available-datatypes">
+<h3>Expanding Available Datatypes<a class="headerlink" href="#expanding-available-datatypes" title="Link to this heading">#</a></h3>
+<p>Discussions about stretching the available types and structures to their maximum by taking advantage of backend concepts.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="user_guides/schema.html#schema"><span class="std std-ref">pyXMIP Schema Classes</span></a></p></li>
+</ul>
+</section>
+</section>
 <section id="backend">
 <h2>Backend<a class="headerlink" href="#backend" title="Link to this heading">#</a></h2>
-<ul class="simple">
+<p>Documentation for the nuts and bolts aspects of the code including logging, configuration, and more.</p>
+<hr><ul class="simple">
 <li><p><a class="reference internal" href="quickstart/configuration.html#configuration"><span class="std std-ref">Configuring pyXMIP</span></a></p></li>
 <li><p><a class="reference internal" href="user_guides/logging.html#logging"><span class="std std-ref">Logging</span></a></p></li>
-<li><p><a class="reference internal" href="user_guides/schema.html#schema"><span class="std std-ref">pyXMIP Schema Classes</span></a></p></li>
 </ul>
 </section>
 </section>
@@ -423,12 +437,12 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="_as_gen/utilities.plot.set_style.html"
+       href="_as_gen/utilities.geo.convert_skycoord.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">utilities.plot.set_style</p>
+        <p class="prev-next-title">utilities.geo.convert_skycoord</p>
       </div>
     </a>
     <a class="right-next"
@@ -456,12 +470,15 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting Started</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-plots">Creating Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-results">Visualizing Results</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistics">Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#statistics">Statistics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expanding-available-datatypes">Expanding Available Datatypes</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backend">Backend</a></li>
 </ul>
   </nav></div>

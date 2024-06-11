@@ -1,6 +1,10 @@
-.. _overview:
 .. image:: ../images/logos_icons/logo_main.png
     :scale: 50%
+
+.. _overview:
+=====================
+Overview
+=====================
 
 
 ``pyXMIP`` is an all-purpose astronomical software package for cross-referencing, source identification, and catalog production. You

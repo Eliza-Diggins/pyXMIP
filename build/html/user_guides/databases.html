@@ -369,26 +369,406 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="databases">
-<h1>Databases<a class="headerlink" href="#databases" title="Link to this heading">#</a></h1>
+<span id="id1"></span><h1>Databases<a class="headerlink" href="#databases" title="Link to this heading">#</a></h1>
 <p>pyXMIP’s core functionality is the cross-mapping / cross-referencing of source data against known databases of astronomical objects.
-The <code class="xref py py-class docutils literal notranslate"><span class="pre">pyXMIP.structures.databases.SourceDatabase</span></code> class is the corner-stone of this functionality. On this page, we’ll describe
+The <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase</span></code> class is the corner-stone of this functionality. On this page, we’ll describe
 how these objects work and how you can utilize them to meet your scientific needs.</p>
-<section id="basic-information">
-<h2>Basic Information<a class="headerlink" href="#basic-information" title="Link to this heading">#</a></h2>
-<p>Every database object (<code class="xref py py-class docutils literal notranslate"><span class="pre">pyXMIP.structures.databases.RemoteDatabase</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">pyXMIP.structures.databases.LocalDatabase</span></code>) is effectively
-a simplified structure for interacting with <code class="xref py py-mod docutils literal notranslate"><span class="pre">astroquery</span></code>, and from there with the query URLs for each database. Databases have 1 key method; the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">pyXMIP.structures.databases.SourceDatabase.query_radius()</span></code>, which allows the user to search for any matches in that database around the specified
-position and within a given radius. Running a query returns an astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> instance.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP.structures.databases</span> <span class="kn">import</span> <span class="n">NED</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create the necessary positions</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">position</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">83.63</span><span class="p">,</span><span class="n">dec</span><span class="o">=</span><span class="mf">22.0144</span><span class="p">,</span><span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">search_radius</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="n">units</span><span class="o">.</span><span class="n">arcmin</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Conduct the query.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">output_table</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">position</span><span class="p">,</span><span class="n">search_radius</span><span class="p">)</span>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">SourceDatabase</span></code> class and it’s subclasses are designed (in a general sense), to allow for easy
+interaction between the user and underlying data sources in the process of performing cross-matching operations. As such, the goal of these
+classes is to</p>
+<ol class="arabic simple">
+<li><p>Simplify the process of querying databases for objects; particularly in the case of remote databases.</p></li>
+<li><p>Provide an interface for generating critical data for reduction and statistical inference during the cross-matching process.</p></li>
+<li><p>Provide intuitive methods for cross-matching catalogs against these databases.</p></li>
+</ol>
+<p>To do that, a variety of different databases are implemented as described in this document.</p>
+<section id="databases-at-a-glance">
+<h2>Databases At A Glance<a class="headerlink" href="#databases-at-a-glance" title="Link to this heading">#</a></h2>
+<p>As was stated above, databases are all about interacting with and standardizing catalog data (in various forms). To do this, databases are represented
+by <strong>class-instances</strong>. For example, a user can access the IPAC-Caltech NED database simply by creating an instance of the corresponding remote database class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP</span> <span class="kn">import</span> <span class="n">NED</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ned_instance</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ned_instance</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="go">NED_STD</span>
 </pre></div>
 </div>
+<p>These instances of database classes have a couple of universally shared properties:</p>
+<ul class="simple">
+<li><p>Each instance has a <code class="xref py py-meth docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.query_radius()</span></code> method which allows the user to select all of the
+sources within a given radius of a particular coordinate.</p></li>
+<li><p>Each instance has a source-matching method (specific to the type of database) which matches sources from <em>another</em> catalog against
+the given database.</p></li>
+<li><p>Each instance has a couple of important parameters:</p>
+<ul>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.name</span></code>: The name of the instance.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.query_schema</span></code>: The <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> corresponding to the tables returned when querying the database.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.query_config</span></code>: Configuration settings for the query’s behavior.</p></li>
+</ul>
+</li>
+</ul>
+<section id="querying-databases">
+<h3>Querying Databases<a class="headerlink" href="#querying-databases" title="Link to this heading">#</a></h3>
+<p>The simplest operation that can be performed by a database is <strong>querying</strong>.</p>
+<div class="admonition-definition admonition">
+<p class="admonition-title">definition</p>
+<p>In the context of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, <strong>querying</strong> a database the operation which takes the sky position and angular radius of a
+search area as input and returns all of the objects within the search area in the database.</p>
+</div>
+<p>To query a database, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.query_radius()</span></code> method is used:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP</span> <span class="kn">import</span> <span class="n">NED</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+
+<span class="go"># Load the NED database class (IPAC/NED extragalactic database)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ned_instance</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+
+<span class="go"># Create query position and radius</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span><span class="n">frame</span><span class="o">=</span><span class="s1">&#39;galactic&#39;</span><span class="p">)</span> <span class="c1"># The galactic center.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">units</span><span class="o">.</span><span class="n">arcmin</span> <span class="c1"># the search radius.</span>
+
+<span class="go"># Query</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_output</span> <span class="o">=</span> <span class="n">ned_instance</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">gc</span><span class="p">,</span><span class="n">radius</span><span class="p">)</span>
+<span class="go">pyXMIP : [INFO     ] 2024-05-05 13:54:59,485 Querying &lt;SkyCoord (Galactic): (l, b) in deg</span>
+<span class="go">    (0., 0.)&gt; in NED_STD...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">query_output</span><span class="p">[</span><span class="s1">&#39;Object Name&#39;</span><span class="p">]:</span>
+<span class="go">        print(f&quot;Object {object} is in the query region!&quot;)</span>
+<span class="go">Object 2MASS J17453717-2856090 is in the query region!</span>
+<span class="go">Object [TSK2008] 0223 is in the query region!</span>
+</pre></div>
+</div>
+</section>
+<section id="poisson-atlases">
+<h3>Poisson Atlases<a class="headerlink" href="#poisson-atlases" title="Link to this heading">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Poisson Atlases are an involved topic in and of themselves; for a more detailed description of the processes involved in these
+structures, see <span class="xref std std-ref">poisson_mapping</span>.</p>
+</div>
+<p>One of the useful tools provided by <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> when cross-referencing / cross-matching catalogs is the ability to model the likelihood of
+a spurious match given the type of astronomical object. To achieve this, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> utilizes database-linked structures called <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.map.PoissonAtlas</span></code> to
+model the density of object types on the sky.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>An example of this would be the likelihood that there is a star within distance 0.21 arcmin from our source. If this
+probability is high, then it’s not surprising of we find a matching star when cross-referencing.</p>
+</div>
+<p>While providing comprehensive information about Poisson atlases is outside of the scope of this document, it is worth being aware that
+<strong>all databases</strong> can have an attached Poisson atlas, which is used to perform these computations. This is stored in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.poisson_atlas</span></code>
+attribute:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">psn_map</span> <span class="o">=</span> <span class="n">ned_instance</span><span class="o">.</span><span class="n">poisson_atlas</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+<span class="go">pyXMIP/bin/psn_maps/NED.poisson.fits</span>
+</pre></div>
+</div>
+<p>As you can see, there is a built-in Poisson atlas for NED. You can also add points directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">COUNTS</span><span class="p">))</span>
+<span class="go">1790</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ned_instance</span><span class="o">.</span><span class="n">add_sources_to_poisson</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="o">*</span><span class="n">units</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="go">100%|█████████████████████████████████████████| 10/10 [00:08&lt;00:00,  1.11it/s]</span>
+<span class="go">pyXMIP : [INFO     ] 2024-05-05 14:31:07,043 Adding data to the Poisson map at /home/ediggins/pyXs/pyXMIP/bin/psn_maps/NED.poisson.fits.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psn_map</span><span class="o">.</span><span class="n">COUNTS</span><span class="p">))</span>
+<span class="go">1800</span>
+</pre></div>
+</div>
+</section>
+<section id="cross-matching">
+<h3>Cross Matching<a class="headerlink" href="#cross-matching" title="Link to this heading">#</a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Cross matching is a very important functionality; so much so that there is an entirely separate page for it: <a class="reference internal" href="cross_matching.html#cross-referencing"><span class="std std-ref">Cross Referencing</span></a>.</p>
+</div>
+</section>
+</section>
+<section id="types-of-databases">
+<h2>Types of Databases<a class="headerlink" href="#types-of-databases" title="Link to this heading">#</a></h2>
+<p>To begin, it should be understood that there are <strong>2 types</strong> of databases in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>: the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code> and the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase</span></code> classes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike local databases, which are generated directly from the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code>, most
+remote databases are actually subclasses of the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase</span></code> class.</p>
+</div>
+<p>To a certain extent, the differences between these classes are obvious from the name: local databases allow the user to convert a catalog of sources into a searchable
+database, remote databases allow access to resources like NED, SIMBAD, and Vizier. Because the necessary structures to interact with each of these two types of data
+are vastly different, the two classes operate very distinctly.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The differences between these two classes is important to understand when performing analyses with <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. Despite our best
+efforts to create a very uniform experience between the two, the vastly different necessary operations has led to some potential gotchas
+if the user doesn’t understand the difference.</p>
+</div>
+<section id="local-databases">
+<h3>Local Databases<a class="headerlink" href="#local-databases" title="Link to this heading">#</a></h3>
+<p>A local database is a database with is loaded directly from a dataset on the user’s local computer. Generally, these are smaller and contained in some
+standard table format (<code class="docutils literal notranslate"><span class="pre">.fits</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, etc.) In this document, we’re going to use the eROSITA Hard Band data as an example.
+You can find it <a class="reference external" href="https://erosita.mpe.mpg.de/dr1/AllSkySurveyData_dr1/Catalogues_dr1/MerloniA_DR1/eRASS1_Hard.tar.gz">here</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code> is really just additional structure on top of the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> class.</p>
+</div>
+<p>In order to load data as a local database, you can simply use the following lines of code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tb</span> <span class="o">=</span> <span class="n">SourceTable</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">LocalDatabase</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span><span class="s2">&quot;example_database&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,721  [SourceTableSchema] Constructing SourceTableSchema from fits table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Failed to identify automatic match for special column Z.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Failed to identify automatic match for special column TYPE.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Identified special key NAME with column IAUNAME of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Identified special key RA with column RA of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Identified special key DEC with column DEC of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,722  [SourceTableSchema] Identified special key L with column LII of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,723  [SourceTableSchema] Identified special key B with column BII of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-05-05 17:17:00,723  [SourceTableSchema] Located 2 possible coordinate frames. Selected ICRS as default.</span>
+<span class="go">&lt;LocalDatabase example_database&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> statements that appear here are <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> constructing a <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> for the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> instance
+that’s being used.</p>
+</div>
+<p>There are some <strong>very important</strong> things to know about local databases:</p>
+<ul class="simple">
+<li><p>Local databases typically don’t have default attribute values. Thus,</p>
+<ul>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> must be set when the instance is initialized.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">query_schema</span></code> is <strong>automatically</strong> set to the schema of the initializing table.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">correct_query_output</span></code> is the same standard function as <code class="xref py py-attr docutils literal notranslate"><span class="pre">correct_query_output</span></code>.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">query_config</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. The query is trivial and thus doesn’t have a special configuration to worry about.</p></li>
+</ul>
+</li>
+<li><p>Local databases don’t need to utilize remote queries, which means that <strong>parallelism is not implemented</strong>.</p>
+<ul>
+<li><p>Note that many methods still take a <code class="docutils literal notranslate"><span class="pre">parallel_kwargs</span></code> keyword, but they are only present for generality of the code.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="remote-databases">
+<h3>Remote Databases<a class="headerlink" href="#remote-databases" title="Link to this heading">#</a></h3>
+<p>Complementary to the <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatabase</span></code> class, it is also possible to configure remote databases like NED, SIMBAD, and Vizier.
+These classes tend to be marginally more complex due to the API interactions involved.</p>
+<p>Just like <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatabase</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteDatabase</span></code> can be queried using <code class="xref py py-meth docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase.query_radius()</span></code>, and
+they share many of the same parameters.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Many of the most popular databases are built-in as subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteDatabase</span></code>. If a desired database is not already
+written as a class, then the user many need to write a new database class.</p>
+</div>
+<p>Remote databases utilize all of the various defaults:</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code>: If the database is being used in default configuration, it will be <code class="docutils literal notranslate"><span class="pre">&lt;DB_NAME&gt;_STD</span></code>, otherwise, it will be required like it is for local databases.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">query_schema</span></code> is set at the class level as a default. It almost never needs to be overridden.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">correct_query_output</span></code> is a purpose built method to standardize format.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">query_config</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> is a very useful tool for configuring the details of a given databases outputs.</p></li>
+</ul>
+<p>Just like local databases, remote databases are <strong>instances of a given database class</strong>; for example, you can access the NED database via the built-in class
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.NED</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><strong>What’s the difference between the class and the instance?</strong></p>
+<p>For <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code>, the underlying class isn’t very useful;
+you have to provide a table (during instantiation) and interact with the instance, not the class. For <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase</span></code>, the picture
+isn’t quite as simple; the underlying class represents a <strong>default configuration</strong> of the database while instances can represent various modifications of the underlying settings.</p>
+<p>Nonetheless, <strong>you always need to work with instances, not classes</strong>!</p>
+</div>
+<p>Let’s look at the example shown at the top of this page:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP</span> <span class="kn">import</span> <span class="n">NED</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+
+<span class="go"># Load the NED database class (IPAC/NED extragalactic database)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ned_instance</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+
+<span class="go"># Create query position and radius</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span><span class="n">frame</span><span class="o">=</span><span class="s1">&#39;galactic&#39;</span><span class="p">)</span> <span class="c1"># The galactic center.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">units</span><span class="o">.</span><span class="n">arcmin</span> <span class="c1"># the search radius.</span>
+
+<span class="go"># Query</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_output</span> <span class="o">=</span> <span class="n">ned_instance</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">gc</span><span class="p">,</span><span class="n">radius</span><span class="p">)</span>
+<span class="go">pyXMIP : [INFO     ] 2024-05-05 13:54:59,485 Querying &lt;SkyCoord (Galactic): (l, b) in deg</span>
+<span class="go">    (0., 0.)&gt; in NED_STD...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">query_output</span><span class="p">[</span><span class="s1">&#39;Object Name&#39;</span><span class="p">]:</span>
+<span class="go">        print(f&quot;Object {object} is in the query region!&quot;)</span>
+<span class="go">Object 2MASS J17453717-2856090 is in the query region!</span>
+<span class="go">Object [TSK2008] 0223 is in the query region!</span>
+</pre></div>
+</div>
+<p>Here, we see that the <code class="docutils literal notranslate"><span class="pre">ned_instance</span></code> object is a <strong>blank instance</strong> of the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.NED</span></code> database class. This is
+the <strong>default</strong> instantiation of NED; but many things might be worth changing!</p>
+<p>Unlike local databases, all of the built-in remote databases have <strong>built-in Poisson Atlases</strong>! These can be accessed directly by
+calling the <code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase.poisson_atlas</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poisson_atlas</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">poisson_atlas</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">get_map</span><span class="p">(</span><span class="s2">&quot;IrS&quot;</span><span class="p">)</span> <span class="c1"># Fetch the IR sources PSN map.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gnuplot&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="images/plots/databases_1.png" src="images/plots/databases_1.png" />
+</section>
+<section id="differences-to-know">
+<h3>Differences to Know<a class="headerlink" href="#differences-to-know" title="Link to this heading">#</a></h3>
+<p>Now that we’ve gone through the two critical types of databases, it’s worth summarizing the similarities
+and differences between the two.</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Difference</p></th>
+<th class="head"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code></p></th>
+<th class="head"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Poisson Maps</p></td>
+<td><p>Generated by individual instances, not built-in</p></td>
+<td><p>Classes have built-in Poisson Atlases.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Schema</p></td>
+<td><p>Deduced from the source table used to build the
+database.</p></td>
+<td><p>Schema is either built-in or provided by hand.</p></td>
+</tr>
+<tr class="row-even"><td><p>Correction</p></td>
+<td><p>Specified by custom prescription if necessary.</p></td>
+<td><p>Generally built-in, can be custom built if needed</p></td>
+</tr>
+<tr class="row-odd"><td><p>Query Config</p></td>
+<td><p>Not needed</p></td>
+<td><p>Optional, needed to make alterations to query.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="creating-custom-databases">
+<h2>Creating Custom Databases<a class="headerlink" href="#creating-custom-databases" title="Link to this heading">#</a></h2>
+<p>In many cases, a combination of <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code> and the built-in databases are sufficient
+for most cross matching needs; however, it may be the case that a new <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.RemoteDatabase</span></code> needs to
+be implemented for your use case or a specialized subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code> is needed.</p>
+<p>In general, writing such custom classes is a non-trivial activity; however, we have put together the resources below to help
+users achieve this goal with minimal stress.</p>
+<section id="id2">
+<h3>Local Databases<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>Because <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabases</span></code> are rather simple classes, we do not provide a
+template for generating subclasses. In all cases, the <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method needs to have the following form</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">db_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># Default behavior from standard LocalDatabase</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">db_name</span><span class="p">,</span> <span class="n">query_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Additional custom code can go here.</span>
+</pre></div>
+</div>
+<p>There are only 3 methods in <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source_match</span></code> and <code class="docutils literal notranslate"><span class="pre">source_match_memory</span></code> are the core methods for cross-matching and, if edited, should
+follow the same conventions as the base class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_query_radius</span></code> must also be present and, if altered, must maintain its call signature.</p></li>
+</ul>
+<p>Beyond these 3 methods, you have total freedom over custom class implementations. You can simply
+subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.LocalDatabase</span></code> and add new methods as need be.</p>
+</section>
+<section id="id3">
+<h3>Remote Databases<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>Remote databases are far more complex to implement than their local counterparts. For remote databases, we encourage you to
+work off of the following class template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">_RemoteTemplate</span><span class="p">(</span><span class="n">RemoteDatabase</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Template of a custom RemoteDatabase class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">default_poisson_atlas_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">poisson_map_directory</span><span class="p">,</span> <span class="s2">&quot;&lt;class_name&gt;.poisson.fits&quot;</span><span class="p">)</span>
+<span class="n">default_query_config</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#--&gt; THIS SHOULD NEVER CHANGE. ADD _DatabaseConfigSetting&#39;s instead.</span>
+<span class="n">default_query_schema</span> <span class="o">=</span> <span class="n">DEFAULT_SOURCE_SCHEMA_REGISTRY</span><span class="p">[</span><span class="s2">&quot;&lt;class_name&gt;&quot;</span><span class="p">]</span>
+
+<span class="c1"># -- Settings -- #</span>
+<span class="n">query_config_setting_1</span> <span class="o">=</span> <span class="n">_databaseConfigSetting</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+<span class="n">query_config_setting_2</span> <span class="o">=</span> <span class="n">_databaseConfigSetting</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&lt;class_name&gt;_STD&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">()</span> <span class="c1"># This can be renamed.</span>
+
+<span class="k">def</span> <span class="nf">config_ned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="c1"># This is where you should take all of the _databaseConfigSetting&#39;s you&#39;ve got implemented</span>
+    <span class="c1"># and use them to actually modify the behavior of your querying system.</span>
+
+    <span class="c1"># When you&#39;re using an Astro-query based system, you can usually just change the class parameters in that package.</span>
+
+<span class="k">def</span> <span class="nf">default_correct_query_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+
+    <span class="c1"># Make alterations as necessary to standardize format #</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">default_correct_query_output</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+
+<span class="k">def</span> <span class="nf">_query_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Query the remote database at the specified position and pull all sources within a given radius.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    position: :py:class:`astropy.coordinates.SkyCoord`</span>
+<span class="sd">        The position at which to query.</span>
+<span class="sd">    radius: :py:class:`astropy.units.Quantity`</span>
+<span class="sd">        The angular area about which to query.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :py:class:`astropy.table.Table`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># -- Attempt the query -- #</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">SourceTable</span><span class="p">(</span><span class="n">your_custom_query_code</span><span class="p">(</span><span class="n">position</span><span class="p">,</span><span class="n">radius</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DatabaseError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to complete query [</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s2">] to NED due to timeout.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># -- return data if valid -- #</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_schema</span>
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
+<p>Additional methods can be added as you see fit. We also encourage you to read the Developer Information section of this
+page.</p>
+<p>—</p>
+</section>
+</section>
+<section id="developer-information">
+<h2>Developer Information<a class="headerlink" href="#developer-information" title="Link to this heading">#</a></h2>
+<p>For developers working on this project, there is some additional, in-depth information
+worth keeping in mind when writing code.</p>
+<section id="query-schema">
+<h3>Query Schema<a class="headerlink" href="#query-schema" title="Link to this heading">#</a></h3>
+<p>For remote databases, there should <strong>always</strong> be a custom <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> associated with the output
+from the default configuration of that database. If users want to alter defaults in such a way as to break that functionality,
+they will need to provide their own version of the schema. Built-in schema should be included in the <a href="#id4"><span class="problematic" id="id5">``</span></a>/bin/builtin_schema` directory
+and follow the standard naming convention used there.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>While you can get away without adding all of the possible detail to a given schema, we highly encourage
+creating comprehensive / complete schema.</p>
+</div>
+</section>
+<section id="query-configurations">
+<h3>Query Configurations<a class="headerlink" href="#query-configurations" title="Link to this heading">#</a></h3>
+<p>In the template shown above, we include the <code class="docutils literal notranslate"><span class="pre">self.config()</span></code> method. In cases where you are writing a custom class, this should
+be used to modify the underlying query backend to account for the configuration settings. Each configuration setting is a
+descriptor instance (<code class="docutils literal notranslate"><span class="pre">_databaseConfigSetting</span></code>) which looks up its value in the <code class="docutils literal notranslate"><span class="pre">self.query_config</span></code> dictionary.</p>
+</section>
+<section id="output-standardization">
+<h3>Output Standardization<a class="headerlink" href="#output-standardization" title="Link to this heading">#</a></h3>
+<p>One of the typical issues faced when developing database classes is that the output table is not generally in a state
+which meets our formatting requirements for use with other databases.</p>
+</section>
 </section>
 </section>
 
@@ -417,7 +797,29 @@ position and within a given radius. Running a query returns an astropy <a class=
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-information">Basic Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#databases-at-a-glance">Databases At A Glance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-databases">Querying Databases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#poisson-atlases">Poisson Atlases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-matching">Cross Matching</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-of-databases">Types of Databases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local-databases">Local Databases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote-databases">Remote Databases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#differences-to-know">Differences to Know</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-databases">Creating Custom Databases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Local Databases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Remote Databases</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-information">Developer Information</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#query-schema">Query Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#query-configurations">Query Configurations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-standardization">Output Standardization</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

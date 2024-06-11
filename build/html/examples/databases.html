@@ -1,0 +1,668 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Using Databases in PyXMIP &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/databases';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Using...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="Using-Databases-in-PyXMIP">
+<h1>Using Databases in PyXMIP<a class="headerlink" href="#Using-Databases-in-PyXMIP" title="Link to this heading">#</a></h1>
+<p><img alt="a" src="https://img.shields.io/badge/Subject:-Databases-blue" /> <img alt="b" src="https://img.shields.io/badge/Difficulty:-Easy-green" /> <img alt="c" src="https://img.shields.io/badge/Author:-Eliza_Diggins-green" /></p>
+<hr class="docutils" />
+<p>In this example guide, we’re going to walk through the use / interaction with <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>’s database classes.</p>
+<section id="Contents">
+<h2>Contents<a class="headerlink" href="#Contents" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section id="Accessing-Databases">
+<h1>Accessing Databases<a class="headerlink" href="#Accessing-Databases" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p>In <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, databases are represented by classes in the <code class="docutils literal notranslate"><span class="pre">pyxmip.structures.databases</span></code> module. There are various types of database, ranging from local databases (local catalogs) to remote databases like NED and SIMBAD. The purpose of the <code class="docutils literal notranslate"><span class="pre">databases</span></code> module is to provide an easy, intuitive link between the user and the database-specific querying and managing tasks than are necessary to successfully interact with the relevant data.</p>
+<section id="Local-Databases">
+<h2>Local Databases<a class="headerlink" href="#Local-Databases" title="Link to this heading">#</a></h2>
+<p>Local databases are instances where a user might choose to load a catalog of their own to cross-reference against. To demonstrate, we’ll use the eROSITA Hard band catalog for the ERASS 1 survey as our database. The firsting thing to do is to load the data into <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. If you’re trying to follow along, you can find the eRASS 1 data <a class="reference external" href="https://erosita.mpe.mpg.de/dr1/AllSkySurveyData_dr1/Catalogues_dr1/MerloniA_DR1/eRASS1_Hard.tar.gz">here</a>. Once it’s been unzipped, you should have a file
+<code class="docutils literal notranslate"><span class="pre">eRASS1_Hard.v1.0.fits</span></code>. Let’s go ahead and load the file into a database!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyXMIP</span> <span class="k">as</span> <span class="nn">pyxm</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.logging</span> <span class="kn">import</span> <span class="n">mainlog</span>
+
+<span class="n">mainlog</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># -- read the table into memory as a SourceTable -- #</span>
+<span class="n">catalog</span> <span class="o">=</span> <span class="n">pyxm</span><span class="o">.</span><span class="n">SourceTable</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;data/eRASS1_Hard.v1.0.fits&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The catalog has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can now load the table as a database using the <code class="docutils literal notranslate"><span class="pre">pyxm.LocalDatabase</span></code> class:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">database</span> <span class="o">=</span> <span class="n">pyxm</span><span class="o">.</span><span class="n">LocalDatabase</span><span class="p">(</span><span class="n">catalog</span><span class="p">,</span> <span class="s2">&quot;example_database&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Basic-Properties-of-Local-Databases">
+<h3>Basic Properties of Local Databases<a class="headerlink" href="#Basic-Properties-of-Local-Databases" title="Link to this heading">#</a></h3>
+<p>Congrats, you’ve just loaded a table as a <code class="docutils literal notranslate"><span class="pre">LocalDatabase</span></code>! Let’s start exploring the database.</p>
+<p>The second parameter we passed above is the <code class="docutils literal notranslate"><span class="pre">name</span></code> of the <code class="docutils literal notranslate"><span class="pre">LocalDatabase</span></code> instance. We can access it using <code class="docutils literal notranslate"><span class="pre">database.name</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>These local databases operate much like normal <code class="docutils literal notranslate"><span class="pre">SourceTable</span></code> objects; you can access the raw data using <code class="docutils literal notranslate"><span class="pre">database.table</span></code>. What makes these objects useful is that you can immediately perform all of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>’s core functionality for cross-matching.</p>
+<p>The first thing to demonstrate is <strong>querying</strong> the database. This allows us to pull all instances within a given radius. Let’s try pulling all of the matches within 1 degree of the galactic center:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+
+<span class="n">query_data</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span>
+    <span class="n">SkyCoord</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;galactic&quot;</span><span class="p">),</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">query_data</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="Remote-Databases">
+<h2>Remote Databases<a class="headerlink" href="#Remote-Databases" title="Link to this heading">#</a></h2>
+<hr class="docutils" />
+<p>As you might expect, the transition from the <code class="docutils literal notranslate"><span class="pre">LocalDatabase</span></code> class to the <code class="docutils literal notranslate"><span class="pre">RemoteDatabase</span></code> class includes a moderate increase in complexity. Just like local databases, remote databases are used for querying, cross matching, and creating Poisson atlases (all of these topics are covered in other guides). The only major differences are:</p>
+<ul class="simple">
+<li><p>Query remote databases requires sending / receiving HTTP information from the database. This can take a lot longer.</p></li>
+<li><p>Different online databases might have quite a number of settings / configurations for getting / receiving their data.</p></li>
+<li><p>Remote databases are generally much much larger and therefore cannot be reasonably converted to local databases.</p></li>
+</ul>
+<p>For these reasons, there are a few differences in the implementation of remote databases versus the local database.</p>
+<ul class="simple">
+<li><p>Many of the common remote databases are <strong>built-in</strong> to the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> infrastructure.</p>
+<ul>
+<li><p>Unlike local databases, where you can load the database from a table; if you need to create your own remote database, you will need to write a <code class="docutils literal notranslate"><span class="pre">RemoteDatabase</span></code> class. Doing so is beyond the scope of this brief example; however, details can be found elsewhere in the documentation.</p></li>
+</ul>
+</li>
+<li><p>Each remote database has a <code class="docutils literal notranslate"><span class="pre">.query_config</span></code> attribute (which can be set as a kwarg when initializing the database).</p>
+<ul>
+<li><p>This is a <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing various settings to configure for your particular need. The exact details may vary from database to database.</p></li>
+<li><p><strong>Example:</strong> In the NED database, by default, the cross-matching table will only return the match name, RA, DEC, and object type. This can be changed by setting the <code class="docutils literal notranslate"><span class="pre">kept_columns</span></code> value in the <code class="docutils literal notranslate"><span class="pre">query_config</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Nonetheless, remote databases operate in much the same way that <code class="docutils literal notranslate"><span class="pre">LocalDatabases</span></code> do.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyXMIP.structures.databases</span> <span class="kn">import</span> <span class="n">NED</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+
+<span class="n">database</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+<span class="n">query_data</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span>
+    <span class="n">SkyCoord</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;galactic&quot;</span><span class="p">),</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">query_data</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Notice that these remote databases are <strong>much larger</strong> and therefore may take a long time to respond for a given search radius.</p>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">LocalDatabases</span></code>, which read a schema directly from the source table or are provided a schema by the user, remote databases <strong>must</strong> be provided with a schema.</p>
+<ul class="simple">
+<li><p>For the various built-in databases (NED, SIMBAD, etc.) there are “standard” schema stored in the <code class="docutils literal notranslate"><span class="pre">database_class.default_query_schema</span></code> attribute.</p>
+<ul>
+<li><p>Generally, these don’t need to be overridden, but if you need to, a custom schema can be supplied to the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method when instantiating the instance.</p></li>
+</ul>
+</li>
+</ul>
+<p>As an example;</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize a &quot;standard&quot; NED instance.</span>
+<span class="n">ned_database_standard</span> <span class="o">=</span> <span class="n">NED</span><span class="p">()</span>
+
+<span class="c1"># Make and edit a copy of the default schema.</span>
+<span class="n">default_ned_schema</span> <span class="o">=</span> <span class="n">NED</span><span class="o">.</span><span class="n">default_query_schema</span>
+<span class="n">default_ned_schema</span><span class="o">.</span><span class="n">column_map</span><span class="p">[</span><span class="s2">&quot;TYPE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;something new&quot;</span>
+
+<span class="c1"># Initialize a custom NED instance.</span>
+<span class="n">ned_database_custom</span> <span class="o">=</span> <span class="n">NED</span><span class="p">(</span><span class="s2">&quot;NED_custom&quot;</span><span class="p">,</span> <span class="n">query_schema</span><span class="o">=</span><span class="n">default_ned_schema</span><span class="p">)</span>
+
+<span class="c1"># Compare the schema</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ned_database_standard</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">ned_database_custom</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">ned_database_standard</span><span class="o">.</span><span class="n">query_schema</span><span class="o">.</span><span class="n">column_map</span><span class="p">,</span>
+    <span class="n">ned_database_custom</span><span class="o">.</span><span class="n">query_schema</span><span class="o">.</span><span class="n">column_map</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>As you can see, the schema are now different. In general, it’s not super useful to edit the query schema, but other settings (particularly <code class="docutils literal notranslate"><span class="pre">query_config</span></code>) operate the same way and may need to be overridden in various applications.</p>
+</section>
+</section>
+<section id="Beyond-Simple-Queries">
+<h1>Beyond Simple Queries<a class="headerlink" href="#Beyond-Simple-Queries" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p>Now that you’ve been aquainted with the two basic types of databases and how to perform queries from them, it’s now worth looking at some of the more advanced methods which exist for these classes.</p>
+<section id="What-is-a-database?">
+<h2>What is a database?<a class="headerlink" href="#What-is-a-database?" title="Link to this heading">#</a></h2>
+<hr class="docutils" />
+<p>Databases are contained in the <code class="docutils literal notranslate"><span class="pre">pyxmip.structures.databases</span></code> module and form a backbone for interacting with both local and external sources of catalog information. Under the hood, these are simply wrappers for the case-specific querying behavior of individual types and instances of databases.</p>
+<p>All databases, regardless of type are descended from the abstract class the <code class="docutils literal notranslate"><span class="pre">databases.SourceDatabase</span></code> class.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Using Databases in PyXMIP</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Contents">Contents</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Accessing-Databases">Accessing Databases</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Local-Databases">Local Databases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Basic-Properties-of-Local-Databases">Basic Properties of Local Databases</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Remote-Databases">Remote Databases</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Beyond-Simple-Queries">Beyond Simple Queries</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#What-is-a-database?">What is a database?</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/examples/databases.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

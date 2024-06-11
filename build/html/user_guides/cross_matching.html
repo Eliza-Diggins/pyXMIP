@@ -370,7 +370,17 @@ document.write(`
                   
   <section id="cross-referencing">
 <span id="id1"></span><h1>Cross Referencing<a class="headerlink" href="#cross-referencing" title="Link to this heading">#</a></h1>
-<section id="cross-matching">
+<p>The primary use of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is cross identification of catalog sources from known databases. On its surface, this is a relatively
+simple process: query databases, identify matches, return matched catalog. In practice, there are several complications that arise:</p>
+<ul class="simple">
+<li><p>Is a given match a sensible match given the available information about my instrumentation?</p></li>
+<li><p>How likely is a given match given its distance from my detection?</p></li>
+<li><p>Could this match have occurred by chance?</p></li>
+<li><p>What is the “best” match?</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> provides a framework for managing all of these different parts of the problem. In this guide, we’ll discuss all of the
+operational abilities of the package and describe how to fit them to your use-case.</p>
+<hr><section id="cross-matching">
 <h2>Cross Matching<a class="headerlink" href="#cross-matching" title="Link to this heading">#</a></h2>
 <p>The first step in the cross identification process is <strong>cross-matching</strong>. During this stage, our goal is to find all
 of the plausible object matches to the sources in your catalog. After the cross-matching process is completed, we then
@@ -378,7 +388,7 @@ undertake the <strong>reduction</strong> process to determine which of the ident
 <p>Cross matching in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is super simple and can be done either via the command line or via python directly!</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> will load your catalog into an <code class="docutils literal notranslate"><span class="pre">astropy</span></code> table. Thus, most common formats are are acceptable including
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> will load your catalog into a <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code>. Thus, most common formats are are acceptable including
 <code class="docutils literal notranslate"><span class="pre">.fits</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, etc.</p>
 <p>If you experience difficulties with loading, your first stop should be assuring that the filetype you’ve stored your catalog in is
 actually valid.</p>
@@ -388,8 +398,24 @@ actually valid.</p>
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 </input><label class="sd-tab-label" for="sd-tab-item-0">
 CLI</label><div class="sd-tab-content docutils">
-<p>To use the command line interface (CLI), we can simply use the 1-line command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span><span class="s2">&quot;path/to/example.fits&quot;</span><span class="w"> </span><span class="s2">&quot;output_path.db&quot;</span>
+<p>For convenience, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> provides a command (automatically added to path on install) for generating cross-matching
+databases: <code class="docutils literal notranslate"><span class="pre">pyxmip</span> <span class="pre">xmatch</span> <span class="pre">run</span></code>. The help information is as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span>-h
+usage:<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-db<span class="w"> </span>DATABASES<span class="w"> </span><span class="o">[</span>DATABASES<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>-f<span class="o">]</span><span class="w"> </span>input_path<span class="w"> </span>output_path
+
+positional<span class="w"> </span>arguments:
+<span class="w">  </span>input_path<span class="w">            </span>The<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>catalog<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>cross-reference
+<span class="w">  </span>output_path<span class="w">           </span>The<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>output<span class="w"> </span>the<span class="w"> </span>data<span class="w"> </span>to<span class="w"> </span><span class="o">(</span>SQL<span class="w"> </span>database<span class="o">)</span>.
+
+options:
+<span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-db<span class="w"> </span>DATABASES<span class="w"> </span><span class="o">[</span>DATABASES<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--databases<span class="w"> </span>DATABASES<span class="w"> </span><span class="o">[</span>DATABASES<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Databases<span class="w"> </span>to<span class="w"> </span>include
+<span class="w">  </span>-f,<span class="w"> </span>--force<span class="w">           </span>Allow<span class="w"> </span>overwriting<span class="w"> </span>of<span class="w"> </span>existing<span class="w"> </span>data.
+</pre></div>
+</div>
+<p>As such, to compile a given catalog into a cross matching database, you need only run a command like the following.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span>docs/source/examples/data/eRASS1_Hard.v1.0.fits<span class="w"> </span>docs/source/examples/data/cross_matched.db<span class="w"> </span>-f
 </pre></div>
 </div>
 <p>There are also two optional flags: <code class="docutils literal notranslate"><span class="pre">-db</span></code> and <code class="docutils literal notranslate"><span class="pre">-f</span></code>. <code class="docutils literal notranslate"><span class="pre">-f</span></code> will allow you to overwrite existing <code class="docutils literal notranslate"><span class="pre">.db</span></code> output
@@ -397,7 +423,36 @@ files with the same path. <code class="docutils literal notranslate"><span class
 cross matching and instead use your own.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>For this to work, the specified databases must be included in <code class="docutils literal notranslate"><span class="pre">DEFAULT_DATABASE_REGISTRY</span></code>.</p>
+<p>For this to work, the specified databases must be included in <code class="xref py py-data docutils literal notranslate"><span class="pre">structures.databases.DEFAULT_DATABASE_REGISTRY</span></code>. If they are not in the
+<code class="xref py py-data docutils literal notranslate"><span class="pre">structures.databases.DEFAULT_DATABASE_REGISTRY</span></code>, you should use a proper script to add your custom database to a new registry and then
+cross match on that registry. See <code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match()</span></code> for details on using alternative registries.</p>
+</div>
+<p>A successful run will look something like the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>xmatch<span class="w"> </span>run<span class="w"> </span>docs/source/examples/data/eRASS1_Hard.v1.0.fits<span class="w"> </span>docs/source/examples/data/cross_matched.db<span class="w"> </span>-f
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>INFO<span class="w">     </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,111<span class="w"> </span>X-Matching<span class="w"> </span>docs/source/examples/data/eRASS1_Hard.v1.0.fits<span class="w"> </span>into<span class="w"> </span>docs/source/examples/data/cross_matched.db.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>INFO<span class="w">     </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,265<span class="w"> </span>Cross<span class="w"> </span>matching<span class="w"> </span>with<span class="w"> </span><span class="m">2</span><span class="w"> </span>databases:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;NED&#39;</span>,<span class="w"> </span><span class="s1">&#39;SIMBAD&#39;</span><span class="o">]</span>.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>WARNING<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,322<span class="w"> </span>Table<span class="w"> </span>NED_MATCH<span class="w"> </span>exists<span class="w"> </span><span class="k">in</span><span class="w"> </span>docs/source/examples/data/cross_matched.db.<span class="w"> </span><span class="nv">Overwrite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>True<span class="w"> </span>-&gt;<span class="w"> </span>deleting.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>WARNING<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,699<span class="w"> </span>Table<span class="w"> </span>SIMBAD_MATCH<span class="w"> </span>exists<span class="w"> </span><span class="k">in</span><span class="w"> </span>docs/source/examples/data/cross_matched.db.<span class="w"> </span><span class="nv">Overwrite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>True<span class="w"> </span>-&gt;<span class="w"> </span>deleting.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>INFO<span class="w">     </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,750<span class="w"> </span>Source<span class="w"> </span>matching<span class="w"> </span><span class="m">5466</span><span class="w"> </span>against<span class="w"> </span>NED.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,751<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Constructing<span class="w"> </span>SourceTableSchema<span class="w"> </span>from<span class="w"> </span>fits<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,752<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>identify<span class="w"> </span>automatic<span class="w"> </span>match<span class="w"> </span><span class="k">for</span><span class="w"> </span>special<span class="w"> </span>column<span class="w"> </span>Z.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,752<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>identify<span class="w"> </span>automatic<span class="w"> </span>match<span class="w"> </span><span class="k">for</span><span class="w"> </span>special<span class="w"> </span>column<span class="w"> </span>TYPE.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,752<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Identified<span class="w"> </span>special<span class="w"> </span>key<span class="w"> </span>NAME<span class="w"> </span>with<span class="w"> </span>column<span class="w"> </span>IAUNAME<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,752<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Identified<span class="w"> </span>special<span class="w"> </span>key<span class="w"> </span>RA<span class="w"> </span>with<span class="w"> </span>column<span class="w"> </span>RA<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,752<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Identified<span class="w"> </span>special<span class="w"> </span>key<span class="w"> </span>DEC<span class="w"> </span>with<span class="w"> </span>column<span class="w"> </span>DEC<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,753<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Identified<span class="w"> </span>special<span class="w"> </span>key<span class="w"> </span>L<span class="w"> </span>with<span class="w"> </span>column<span class="w"> </span>LII<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,753<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Identified<span class="w"> </span>special<span class="w"> </span>key<span class="w"> </span>B<span class="w"> </span>with<span class="w"> </span>column<span class="w"> </span>BII<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>table.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,753<span class="w">  </span><span class="o">[</span>SourceTableSchema<span class="o">]</span><span class="w"> </span>Located<span class="w"> </span><span class="m">2</span><span class="w"> </span>possible<span class="w"> </span>coordinate<span class="w"> </span>frames.<span class="w"> </span>Selected<span class="w"> </span>ICRS<span class="w"> </span>as<span class="w"> </span>default.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:34:12,763<span class="w"> </span>Querying<span class="w"> </span>with<span class="w"> </span>threading.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>INFO<span class="w">     </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:37:38,003<span class="w"> </span>Source<span class="w"> </span>matching<span class="w"> </span><span class="m">5466</span><span class="w"> </span>against<span class="w"> </span>SIMBAD.
+pyXMIP<span class="w"> </span>:<span class="w"> </span><span class="o">[</span>DEBUG<span class="w">    </span><span class="o">]</span><span class="w"> </span><span class="m">2024</span>-04-28<span class="w"> </span><span class="m">13</span>:37:38,006<span class="w"> </span>Querying<span class="w"> </span>with<span class="w"> </span>threading.
+Matching<span class="w"> </span>from<span class="w"> </span><span class="m">2</span><span class="w"> </span>databases:<span class="w"> </span><span class="m">100</span>%<span class="p">|</span>█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████<span class="p">|</span><span class="w"> </span><span class="m">2</span>/2<span class="w"> </span><span class="o">[</span><span class="m">05</span>:15&lt;<span class="m">00</span>:00,<span class="w"> </span><span class="m">157</span>.57s/it<span class="o">]</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Generally databases can be queried ~ 50 times / second. Thus, you should expect runtime to scale linearly with the size of your catalog.
+A 5000 entry database takes on the order of minutes, 1,000,000 entries equates to around 2 hours.</p>
 </div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
@@ -409,12 +464,371 @@ Python</label><div class="sd-tab-content docutils">
 <span class="n">cross_match</span><span class="p">(</span><span class="s2">&quot;input_path&quot;</span><span class="p">,</span><span class="s2">&quot;output_path&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Full details can be found at <a class="reference internal" href="../_as_gen/cross_reference.cross_match.html#cross_reference.cross_match" title="cross_reference.cross_match"><code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match()</span></code></a>.</p>
+<p>Full details can be found at <code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match()</span></code>.</p>
 </div>
 </div>
-<section id="exploring-cross-referencing-outputs">
-<h3>Exploring Cross Referencing Outputs<a class="headerlink" href="#exploring-cross-referencing-outputs" title="Link to this heading">#</a></h3>
-<p>Once you’ve obtained a cross-referencing output, a lot of information can be obtained from the resulting database.</p>
+<section id="what-exactly-is-cross-matching">
+<h3>What Exactly is Cross Matching?<a class="headerlink" href="#what-exactly-is-cross-matching" title="Link to this heading">#</a></h3>
+<p>When you cross match a catalog in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, you’re converting a <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> (the catalog) into
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> (a sql database) which contains sources matching the objects in your catalog.</p>
+<p>Inside of the sql database, you’ll find a bunch of tables (called match tables), named something like <code class="docutils literal notranslate"><span class="pre">&lt;database_name&gt;_MATCH</span></code>.
+These tables are just conjoined outputs from querying the specified database (using <code class="xref py py-meth docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.source_match()</span></code>) for
+each of the objects in your catalog. Generically, the cross-matching process goes like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">cross_matching_databases</span><span class="p">:</span>
+    <span class="c1"># We iterate through all of our provided databases.</span>
+
+    <span class="c1"># create the blank cross-matching table.</span>
+    <span class="n">create_blank_cross_matching_table</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">catalog</span><span class="p">:</span>
+        <span class="c1"># search the database for matches to the catalog object.</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">search_database</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+        <span class="c1"># add some extra info.</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">add_extra_info</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="c1"># write to the sql database.</span>
+        <span class="n">cross_matching_table</span> <span class="o">+=</span> <span class="n">table</span>
+</pre></div>
+</div>
+<p>Obviously, its not quite that simple to actually implement, but these are the important steps to remember.</p>
+</section>
+</section>
+<section id="match-tables">
+<h2>Match Tables<a class="headerlink" href="#match-tables" title="Link to this heading">#</a></h2>
+<p>For each database included in the cross-matching process, there will be a <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_MATCH</span></code> table in the output <code class="docutils literal notranslate"><span class="pre">.sql</span></code> file.
+Generically, these tables can look a lot different for different databases and different query outputs.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Under the hood, we query the database and join the output table to information about the object we’re matching against. Thus
+you may see any number of columns from the database’s query output table.</p>
+</div>
+<p>While tables can look different from one another, there are a few <strong>standard columns</strong> that you’ll see in all cross-matching databases:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column Name</p></th>
+<th class="head"><p>Query Schema Equivalent</p></th>
+<th class="head"><p>Required?</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NAME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">schema.NAME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The name of the match candidate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">schema.RA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The RA of the match candidate (in degrees). Regardless
+of the available coordinate columns, RA / DEC are
+always included as the base coordinate system for
+further manipulations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DEC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">schema.DEC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The DEC of the match candidate (in degrees). See <code class="docutils literal notranslate"><span class="pre">RA</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TYPE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">schema.TYPE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>The object type for the candidate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">schema.Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>The redshift of the candidate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CATOBJ</span></code></p></td>
+<td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The catalog object that was matched to this candidate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CATRA</span></code></p></td>
+<td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The catalog object’s RA (degrees).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CATDEC</span></code></p></td>
+<td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>The catalog declination (degrees).</p></td>
+</tr>
+</tbody>
+</table>
+<p>The additional columns that you might find are additional (potentially useful) columns provided by your <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase</span></code> instances
+used for the matching process.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Everytime the underlying <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase</span></code> instance is queried, it returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code>.
+That table is then put through the “cleaning process” defined by <code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.correct_query_output</span></code>. The cleaning
+process is designed to do the <strong>bare-minimum</strong> to make the query writable to a <code class="docutils literal notranslate"><span class="pre">sql</span></code> format. After the cleaning has occured, the table is written
+to your <code class="docutils literal notranslate"><span class="pre">sql</span></code> database and we proceed to the next query.</p>
+<p>If your output table (<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code>) is not formatted in a way which can be written to file (problematic columns,
+bad object types, etc.) then you will need to alter <code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.correct_query_output</span></code> to get the table ready
+to write to disk.</p>
+<p>For built-in <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase</span></code>, we have already written these <code class="xref py py-attr docutils literal notranslate"><span class="pre">structures.databases.SourceDatabase.correct_query_output</span></code>;
+thus, this should only be an issue if you are writing custom databases.</p>
+</div>
+<section id="exploring-cross-matching-outputs">
+<h3>Exploring Cross Matching Outputs<a class="headerlink" href="#exploring-cross-matching-outputs" title="Link to this heading">#</a></h3>
+<p>Once you’ve obtained a cross-referencing output, a lot of information can be obtained from the resulting database. Let’s look at the following example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyXMIP</span> <span class="k">as</span> <span class="nn">pyxm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog_table</span> <span class="o">=</span> <span class="n">pyxm</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyxm</span><span class="o">.</span><span class="n">cross_match_table</span><span class="p">(</span><span class="n">q</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span><span class="s2">&quot;test.db&quot;</span><span class="p">,</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we now access the <code class="docutils literal notranslate"><span class="pre">test.db</span></code> SQL file, we find the following:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>sqlite3<span class="w"> </span>test.db
+SQLite<span class="w"> </span>version<span class="w"> </span><span class="m">3</span>.31.1<span class="w"> </span><span class="m">2020</span>-01-27<span class="w"> </span><span class="m">19</span>:55:54
+Enter<span class="w"> </span><span class="s2">&quot;.help&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>usage<span class="w"> </span>hints.
+
+sqlite&gt;<span class="w"> </span>.schema
+CREATE<span class="w"> </span>TABLE<span class="w"> </span>IF<span class="w"> </span>NOT<span class="w"> </span>EXISTS<span class="w"> </span><span class="s2">&quot;CATALOG&quot;</span><span class="w"> </span><span class="o">(</span>
+<span class="w">        </span><span class="s2">&quot;CATALOG_OBJECT&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;DETUID&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;SKYTILE&quot;</span><span class="w"> </span>INTEGER,
+<span class="w">        </span><span class="s2">&quot;ID_SRC&quot;</span><span class="w"> </span>INTEGER,
+<span class="w">        </span><span class="s2">&quot;UID&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span>...
+<span class="w">        </span><span class="s2">&quot;FLAG_SP_LGA&quot;</span><span class="w"> </span>SMALLINT,
+<span class="w">        </span><span class="s2">&quot;FLAG_SP_GC_CONS&quot;</span><span class="w"> </span>SMALLINT,
+<span class="w">        </span><span class="s2">&quot;FLAG_NO_RADEC_ERR&quot;</span><span class="w"> </span>SMALLINT,
+<span class="w">        </span><span class="s2">&quot;FLAG_NO_EXT_ERR&quot;</span><span class="w"> </span>SMALLINT,
+<span class="w">        </span><span class="s2">&quot;FLAG_NO_CTS_ERR&quot;</span><span class="w"> </span>SMALLINT,
+<span class="w">        </span><span class="s2">&quot;FLAG_OPT&quot;</span><span class="w"> </span>SMALLINT
+<span class="o">)</span><span class="p">;</span>
+CREATE<span class="w"> </span>TABLE<span class="w"> </span>IF<span class="w"> </span>NOT<span class="w"> </span>EXISTS<span class="w"> </span><span class="s2">&quot;META&quot;</span><span class="w"> </span><span class="o">(</span>
+<span class="w">        </span><span class="s2">&quot;PROCESS&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;TABLE&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;DATE_RUN&quot;</span><span class="w"> </span>TEXT
+<span class="o">)</span><span class="p">;</span>
+CREATE<span class="w"> </span>TABLE<span class="w"> </span>IF<span class="w"> </span>NOT<span class="w"> </span>EXISTS<span class="w"> </span><span class="s2">&quot;NED_STD_MATCH&quot;</span><span class="w"> </span><span class="o">(</span>
+<span class="w">        </span><span class="s2">&quot;No.&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;NAME&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;RA&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;DEC&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;TYPE&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;Velocity&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;Redshift&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;Redshift Flag&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;Magnitude and Filter&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;Separation&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;References&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Notes&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Photometry Points&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Positions&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Redshift Points&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Diameter Points&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;Associations&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;CATOBJ&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;CATRA&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;CATDEC&quot;</span><span class="w"> </span>FLOAT
+<span class="o">)</span><span class="p">;</span>
+CREATE<span class="w"> </span>TABLE<span class="w"> </span>IF<span class="w"> </span>NOT<span class="w"> </span>EXISTS<span class="w"> </span><span class="s2">&quot;SIMBAD_STD_MATCH&quot;</span><span class="w"> </span><span class="o">(</span>
+<span class="w">        </span><span class="s2">&quot;NAME&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;RA&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;DEC&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;RA_PREC&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;DEC_PREC&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;COO_ERR_MAJA&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;COO_ERR_MINA&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;COO_ERR_ANGLE&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;COO_QUAL&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;COO_WAVELENGTH&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;COO_BIBCODE&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;TYPE&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;RA_d_A&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;DEC_d_D&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;SCRIPT_NUMBER_ID&quot;</span><span class="w"> </span>BIGINT,
+<span class="w">        </span><span class="s2">&quot;CATOBJ&quot;</span><span class="w"> </span>TEXT,
+<span class="w">        </span><span class="s2">&quot;CATRA&quot;</span><span class="w"> </span>FLOAT,
+<span class="w">        </span><span class="s2">&quot;CATDEC&quot;</span><span class="w"> </span>FLOAT
+<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>As you can see, we now have the <code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> and the <code class="docutils literal notranslate"><span class="pre">META</span></code> table, and the standard columns are all placed in the tables.</p>
+<hr></section>
+</section>
+<section id="cross-match-database">
+<h2>Cross Match Database<a class="headerlink" href="#cross-match-database" title="Link to this heading">#</a></h2>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> class is one of the key classes in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. It provides a number
+of powerful methods and attributes for successfully interacting with / reducing cross-matching data directly from external databases.</p>
+<p>In this document, we will describe the use of these class instances and demonstrate how to make the most out of their
+backend.</p>
+<section id="what-is-a-crossmatchdatabase">
+<h3>What is a <code class="docutils literal notranslate"><span class="pre">CrossMatchDatabase</span></code>?<a class="headerlink" href="#what-is-a-crossmatchdatabase" title="Link to this heading">#</a></h3>
+<p>Once a catalog has been referenced against a set of specified databases, the result is a <code class="docutils literal notranslate"><span class="pre">SQL</span></code> database containing all of the
+cross matching data for each of the databases in the set and for each of the sources in the catalog. These <code class="docutils literal notranslate"><span class="pre">SQL</span></code> databases
+can be difficult to effectively interact with, particularly for those without great experience using <code class="docutils literal notranslate"><span class="pre">SQL</span></code>. Fortunately, in
+<code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, the <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> plays the critical role of accessing, organizing, updating, and
+analyzing these <code class="docutils literal notranslate"><span class="pre">SQL</span></code> databases all from within the python environment.</p>
+<section id="making-crossmatchingdatabase-instances">
+<h4>Making <code class="docutils literal notranslate"><span class="pre">CrossMatchingDatabase</span></code> Instances<a class="headerlink" href="#making-crossmatchingdatabase-instances" title="Link to this heading">#</a></h4>
+<p>As was mentioned above, <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> instances are effectively <code class="docutils literal notranslate"><span class="pre">SQL</span></code> representations in <code class="docutils literal notranslate"><span class="pre">python</span></code>. They are made
+when the user cross-matches against databases. In many cases, such as when using functions like <code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">cross_reference.cross_match_table()</span></code>
+the returned object is already a <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> instance. In other cases, a cross-matching database can be loaded directly from it’s filepath:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyXMIP</span> <span class="k">as</span> <span class="nn">pyxmip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span> <span class="o">=</span> <span class="n">pyxmip</span><span class="o">.</span><span class="n">CrossMatchDatabase</span><span class="p">(</span><span class="s2">&quot;docs/source/examples/data/cross_matched.db&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+<span class="go">&lt;CrossMatchDatabase @ docs/examples/data/cross_matched.db&gt;</span>
+</pre></div>
+</div>
+<p>In this case, we’ve just opened a cross-matching database created by cross-matching eROSITA eRASS1 data against NED and SIMBAD.</p>
+<hr></section>
+</section>
+<section id="database-alterations">
+<h3>Database Alterations<a class="headerlink" href="#database-alterations" title="Link to this heading">#</a></h3>
+<p>When cross-matching is performed, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> will return a <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> which has been corrected
+slightly to standardize things like column names, object types, etc. Each of these processes, along with a variety of other protocols are
+examples of “database alterations.” There are a number of contexts in which these can be useful for your analysis, and so we will present them here.</p>
+<section id="the-meta-table">
+<h4>The <code class="docutils literal notranslate"><span class="pre">META</span></code> table<a class="headerlink" href="#the-meta-table" title="Link to this heading">#</a></h4>
+<p>Let’s begin by calling the <code class="docutils literal notranslate"><span class="pre">cmd.tables</span></code> attribute and see what comes up:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">tables</span>
+<span class="go">[&#39;CATALOG&#39;, &#39;META&#39;, &#39;NED_MATCH&#39;, &#39;SIMBAD_MATCH&#39;]</span>
+</pre></div>
+</div>
+<p>As one might guess, these are the tables inside of the underlying <code class="docutils literal notranslate"><span class="pre">SQL</span></code> database.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NED_MATCH</span></code> and <code class="docutils literal notranslate"><span class="pre">SIMBAD_MATCH</span></code> are the <strong>raw match tables</strong> for each of the databases.</p>
+<ul>
+<li><p>These contain all of the match candidates for each of the catalog sources.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> is precisely what it sounds like: the original catalog being used for the cross-matching.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">META</span></code> is special: it contains a log of all of the things that have been done to this cross-matching database.</p></li>
+</ul>
+<p>Taking a look at the <code class="docutils literal notranslate"><span class="pre">META</span></code> table, we can see all of the various “processes” which have been run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">meta</span>
+<span class="go">            PROCESS         TABLE                  DATE_RUN</span>
+<span class="go">0  CATALOG_INCLUDED           all  Sun Apr 28 18:50:23 2024</span>
+<span class="go">1    OBJECT_CORRECT     NED_MATCH  Sun Apr 28 18:50:27 2024</span>
+<span class="go">2    OBJECT_CORRECT  SIMBAD_MATCH  Sun Apr 28 18:50:27 2024</span>
+<span class="go">3    COLUMN_CORRECT     NED_MATCH  Sun Apr 28 18:50:27 2024</span>
+<span class="go">4    COLUMN_CORRECT  SIMBAD_MATCH  Sun Apr 28 18:50:27 2024</span>
+</pre></div>
+</div>
+<p>Each line represents a different action that was taken on a specific table.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CATALOG_INCLUDED</span></code> indicates that the original catalog has been written to the sql database.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OBJECT_CORRECT</span></code> indicates that the <code class="docutils literal notranslate"><span class="pre">TYPE</span></code> column of each table has been converted to the SIMBAD type conventions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COLUMN_CORRECT</span></code> indicates that the columns have been renamed to meet our standard schema.</p></li>
+</ul>
+<p>Under the hood, each of these is just a method of the <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> database. There are a number
+of these processes, which can be read about in detail below.</p>
+<p class="rubric">Available CMD Processes</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>META TAG</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CATALOG_INCLUDED</span></code></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.add_catalog()</span></code></p></td>
+<td><p>Add a catalog (any readable source table) to the database. In most cases, this is
+done automatically during the cross-matching process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CORRECT_OBJECT_TYPES</span></code></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.correct_object_types()</span></code></p></td>
+<td><p>Correct the object types so that they match the <code class="docutils literal notranslate"><span class="pre">SIMBAD</span></code> object types.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CORRECT_COLUMN_NAMES</span></code></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.correct_column_names()</span></code></p></td>
+<td><p>Correct the names of columns to fit the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> standard.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CORRECT_COORDINATE_COLUMNS</span></code></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.correct_coordinates()</span></code></p></td>
+<td><p>Correct the available coordinate columns.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Later in this article, we discuss reduction processes, which are simply a special subset of these processes acting in
+<code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> instances.</p>
+</div>
+<hr></section>
+</section>
+<section id="interacting-with-raw-data">
+<h3>Interacting with Raw Data<a class="headerlink" href="#interacting-with-raw-data" title="Link to this heading">#</a></h3>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For a comprehensive list on all methods and attributes associated with cross match databases, check out the API documentation (<code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code>).</p>
+</div>
+<p>Now that we’ve demonstrated how to obtain / open <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> instances, we can start exploring what
+they’re capable of. It’s important to remember that there are 3 key features of <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> classes:</p>
+<ol class="arabic simple">
+<li><p>Ability to interact directly with the cross matching data.</p></li>
+<li><p>Ability to organize, sort, and standardize the available data.</p></li>
+<li><p>Ability to perform statistical reduction processes on the data available.</p></li>
+</ol>
+<p>In this section, we will introduce the methods that allow <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> to accomplish these tasks.</p>
+<section id="pull-matches-from-tables">
+<h4>Pull Matches from Tables<a class="headerlink" href="#pull-matches-from-tables" title="Link to this heading">#</a></h4>
+<p>Let’s start with the most basic information you can pull from <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code>. Because these classes wrap
+underlying SQL data, we are often interested in what match tables are in the file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">match_tables</span><span class="p">)</span>
+<span class="go">[&#39;NED_MATCH&#39;, &#39;SIMBAD_MATCH&#39;]</span>
+</pre></div>
+</div>
+<p>You can use <code class="xref py py-attr docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.match_tables</span></code> to obtain only <code class="docutils literal notranslate"><span class="pre">MATCH</span></code> data instead of any other tables.</p>
+<p>Let’s try to access the <code class="docutils literal notranslate"><span class="pre">MATCH</span></code> data. To pull a table, you can simply index into the database like it’s a dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ned_match_table</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="s1">&#39;NED_MATCH&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ned_match_table</span>
+<span class="go">                 CATALOG_OBJECT  CATALOG_RA  ...                Object Name   Type</span>
+<span class="go">0       1eRASS J013729.2-195637   24.371790  ...  WISEA J013725.22-195648.6  |IrS|</span>
+<span class="go">1       1eRASS J013729.2-195637   24.371790  ...  WISEA J013726.30-195650.1  |IrS|</span>
+<span class="go">2       1eRASS J013729.2-195637   24.371790  ...  WISEA J013726.61-195716.5  |IrS|</span>
+<span class="go">3       1eRASS J013729.2-195637   24.371790  ...  WISEA J013726.73-195620.2    |G|</span>
+<span class="go">4       1eRASS J013729.2-195637   24.371790  ...  WISEA J013726.91-195636.1  |IrS|</span>
+<span class="go">                         ...         ...  ...                        ...    ...</span>
+<span class="go">183741  1eRASS J062052.1-284050   95.217384  ...  WISEA J062052.79-284119.1  |IrS|</span>
+<span class="go">183742  1eRASS J062052.1-284050   95.217384  ...  WISEA J062053.30-284146.9  |IrS|</span>
+<span class="go">183743  1eRASS J062052.1-284050   95.217384  ...  WISEA J062053.43-284054.5  |IrS|</span>
+<span class="go">183744  1eRASS J062052.1-284050   95.217384  ...  WISEA J062053.89-284012.8  |IrS|</span>
+<span class="go">183745  1eRASS J062052.1-284050   95.217384  ...  WISEA J062055.65-284021.4  |IrS|</span>
+<span class="go">[183746 rows x 7 columns]</span>
+</pre></div>
+</div>
+<p>There are any number of things that can now be done with this data.</p>
+</section>
+<section id="plot-a-match">
+<h4>Plot A Match<a class="headerlink" href="#plot-a-match" title="Link to this heading">#</a></h4>
+<p>One useful utility provided by the <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> class is the ability to visualize the specific
+matches for a given object. This is done with the <code class="xref py py-meth docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase.plot_matches()</span></code> method. As an example, let’s look at
+matches in SIMBAD to the Bullet Cluster.</p>
+<p>Let’s start by looking to see if there are any matching detections to the JWST deep field cluster SMACS J0723.3-7327:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM SIMBAD_MATCH WHERE NAME == &#39;SMACS J0723.3-7327&#39;&quot;</span><span class="p">)</span>
+<span class="go">            CATALOG_OBJECT  ...                                               TYPE</span>
+<span class="go">0  1eRASS J072316.9-732718  ...  |gLe|gLe|ClG|ClG|ClG|ClG|ClG|ClG|C?G|C?G|C?G|X|X|</span>
+<span class="go">[1 rows x 7 columns]</span>
+</pre></div>
+</div>
+<p>We see that the object is matched only to the eRASS1 catalog object 1eRASS J072316.9-732718.</p>
+<p>In this case, we’ve used DESI and HST images as the background. We can do similar things from within <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> without any external software!</p>
+<p>Let’s go ahead and plot the matches like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">plot_matches</span><span class="p">(</span><span class="s2">&quot;1eRASS J072316.9-732718&quot;</span><span class="p">,</span> <span class="s2">&quot;NED_MATCH&quot;</span><span class="p">,</span>
+<span class="go">               norm=SymLogNorm(linthresh=1e-1),</span>
+<span class="go">               cmap=plt.cm.gnuplot,</span>
+<span class="go">               scatter_kwargs=dict(c=&#39;w&#39;,marker=&#39;o&#39;,s=5),</span>
+<span class="go">               fov=&#39;2 arcmin&#39;,</span>
+<span class="go">               resolution=1000,</span>
+<span class="go">               hips_kwargs=dict(hips_path=&#39;CDS/P/JWST/F444W&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="images/plots/cross_match_database_2.png" src="images/plots/cross_match_database_2.png" />
+<p>We can compare this output with the corresponding JWST composite image as well:</p>
+<img alt="https://blogs-images.forbes.com/startswithabang/files/2017/01/abell_lens-1.jpg" src="https://blogs-images.forbes.com/startswithabang/files/2017/01/abell_lens-1.jpg" />
+<p>The white points in our image are the cross-matched reference points detected for this cluster!</p>
+<hr></section>
 </section>
 </section>
 <section id="match-reduction">
@@ -441,196 +855,18 @@ confidence in the success of the given sub-processes’ model given the availabl
 </section>
 <section id="sub-process-overview">
 <h3>Sub-Process Overview<a class="headerlink" href="#sub-process-overview" title="Link to this heading">#</a></h3>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-2">
-Instrumental Matching</label><div class="sd-tab-content docutils">
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Instrumental matching is implemented using the <code class="docutils literal notranslate"><span class="pre">RUN_PARAMS</span></code> option <code class="docutils literal notranslate"><span class="pre">INSTRUMENTAL=true</span></code> and then adding the <code class="docutils literal notranslate"><span class="pre">INSTRUMENT_PARAMS</span></code>
-heading to the schema file for your reduction run.</p>
-</div>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>This is currently an in-development feature of the pyXMIP package. Ongoing development is underway to improve the quality and physical sophistication
-of the PSF modeling used here.</p>
-</div>
-<p>Instrument specific physics can help to inform how reasonable a given source is as a match to the given catalog object. Effectively, this comes down
-to determining whether or not a given source falls within the PSF of the telescope that was used to create the user’s catalog. As such, we model
-the cost function of a given match <span class="math notranslate nohighlight">\(x\)</span> to a catalog object <span class="math notranslate nohighlight">\(y\)</span> as a 0 covariance Gaussian with a user-specified <span class="math notranslate nohighlight">\(\sigma\)</span>. Thus,</p>
-<div class="math notranslate nohighlight">
-\[c_{\mathrm{instrument}}(x|y) = 1 - \sqrt{2\pi \sigma^2} N(\delta_{xy},\sigma),\]</div>
-<p>where <span class="math notranslate nohighlight">\(\delta_{xy}\)</span> is the angular distance between the catalog object and the potential match object.</p>
-</div>
-<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-3">
-Object Type Matching</label><div class="sd-tab-content docutils">
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Object type matching is implemented using the <code class="docutils literal notranslate"><span class="pre">RUN_PARAMS</span></code> option <code class="docutils literal notranslate"><span class="pre">OTYPES=true</span></code> and then adding <code class="docutils literal notranslate"><span class="pre">OBJECT_PARAMS</span></code> to
-the schema file for your reduction run.</p>
-</div>
-<p>The intention of object matching is to constrain the types of objects that can be permitted and those which cannot be. The pyXMIP algorithms
-all use the standardized SIMBAD convention for object names / definitions. If the database being referenced has a well defined schema with
-object type mapping enabled, then these are automatically converted to the correct SIMBAD type. In the reduction schema file, the user may
-then include a mapping of object types to cost values from 0 to 1 depending on the relative feasability of that object type.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>SIMBAD type objects are defined hierarchically. If only a parent classification is found in the schema, then all of the subtypes
-inherit the same cost.</p>
-</div>
-</div>
-<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-4">
-Poisson Modeling</label><div class="sd-tab-content docutils">
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Poisson modeling is implemented using the <code class="docutils literal notranslate"><span class="pre">RUN_PARAMS</span></code> option <code class="docutils literal notranslate"><span class="pre">POISSON=true</span></code> and then adding the <code class="docutils literal notranslate"><span class="pre">POISSON_PARAMS</span></code>
-heading to the schema file for your reduction run.</p>
-</div>
-<p>Depending on the nature of the database against which you are cross-referencing, there may be an abundance of spurious matches from
-a particularly prevalent type of object such as stars or background galaxies. This is partially managed by the Object Type matching protocol; however,
-additional robustness can be enforced using Poisson modeling, which comes with the added benefit of permitting matches to potentially poorly described
-database objects.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>A particularly common example of this is in the NED database, which contains sources classified as <code class="docutils literal notranslate"><span class="pre">IrS</span></code> corresponding to 2MASS, WISE, and SDSS
-observations. These objects may be stars, galaxies, or other objects. As such, it may be too restrictive to simply dismiss the entire class of
-potential matches, but one still wants to avoid spuriously including them.</p>
-</div>
-<p>Poisson mapping utilizes the pre-constructed object poisson-maps for a given database against which the user is cross-referencing. If you are not already
-familiar with the pyXMIP poisson mapping system, see <span class="xref std std-ref">poisson-mapping</span> for a more comprehensive description. In essence, Poisson maps are generated prior
-to the cross-matching process by randomly sampling the database at points on the sky and performing a density estimation algorithm to determine the
-frequency at which a particular type of object in the specific database appears on the sky. The probability of then finding such an object within an angular circle
-of radius <span class="math notranslate nohighlight">\(r\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[P(k&gt;0|r,\lambda) = 1 - \exp\left(-\lambda(\phi,\theta) \pi r^2 \right).\]</div>
-<p>This can be used to determine the probability that a match candidate <span class="math notranslate nohighlight">\(x\)</span> is a spurious match (occuring due to random chance) as</p>
-<div class="math notranslate nohighlight">
-\[P_{\mathrm{spurious}}(x|y) = 1 - \exp\left(-\lambda(\phi_y,\theta_y) \pi \delta_{xy}^2 \right)\]</div>
-<p>This is directly a proxy for the cost function of this procedure.</p>
-</div>
-</div>
-</section>
-<section id="reduction-schema">
-<h3>Reduction Schema<a class="headerlink" href="#reduction-schema" title="Link to this heading">#</a></h3>
-<p>The cornerstone of the reduction process is the schema file, which dictates the runtime behavior of the reduction algorithm. In this section, we will describe the
-layout of these files and how one can go about constructing them.</p>
-<section id="general-formatting">
-<h4>General Formatting<a class="headerlink" href="#general-formatting" title="Link to this heading">#</a></h4>
-<p>Like all schema files in the pyXMIP ecosystem, the reduction schema is a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file with the following required headers:</p>
+<p>Below, you can find information about each of the available reduction processes.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">RUN_PARAMS</span></code>: Core settings for the reduction run. This includes selecting what additional data should be considered,
-which subprocesses should be enabled, etc.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">IO_PARAMS</span></code>: IO related parameters, including file paths and other information.</p></li>
+<li><p><span class="xref std std-ref">instrumental_reduction</span></p></li>
+<li><p><a class="reference internal" href="reduction_processes/object_type_reduction.html#object-type-reduction"><span class="std std-ref">Object Type Reduction</span></a></p></li>
 </ul>
-<p>In addition to these two required sets of parameters, the following may also be specified / enabled</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">POISSON_PARAMS</span></code>: Parameters for the Poisson mapping sub-process.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">OBJECT_PARAMS</span></code>: Parameters for the object type sub-process.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">INSTRUMENT_PARAMS</span></code>: Parameters for the instrument specific sub-process.</p></li>
-</ul>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-5">
-RUN_PARAMS</label><div class="sd-tab-content docutils">
-<table class="longtable table table-center" id="id2" style="width: 100%">
-<caption><span class="caption-text">RUN_PARAM table</span><a class="headerlink" href="#id2" title="Link to this table">#</a></caption>
-<colgroup>
-<col style="width: 17.6%" />
-<col style="width: 17.6%" />
-<col style="width: 58.8%" />
-<col style="width: 5.9%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Parameter Name</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-<th class="head"><p>Required?</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DBPATH</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
-<td><p>The path to the match table database (as generated by the source matching process).</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">POISSON</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the Poisson mapping sub-process. Default is False. If enabled, then the <code class="docutils literal notranslate"><span class="pre">POISSON_PARAMS</span></code> header must be present.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">INSTRUMENTAL</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the Instrumental sub-process. Default is False, If enable, then <code class="docutils literal notranslate"><span class="pre">INSTRUMENT_PARAMS</span></code> must be a header.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OTYPES</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the object type matching sub-process. Default is False. If enabled, then <code class="docutils literal notranslate"><span class="pre">OBJECT_PARAMS</span></code> must be a header.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CATPATH</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
-<td><p>The path to the original catalog table. This is used to add special columns (specified by the user) into the dataset.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-odd"><td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
-</input><label class="sd-tab-label" for="sd-tab-item-6">
-IO_PARAMS</label><div class="sd-tab-content docutils">
-<table class="table" id="id3">
-<caption><span class="caption-text">Table Title</span><a class="headerlink" href="#id3" title="Link to this table">#</a></caption>
-<thead>
-<tr class="row-odd"><th class="head"><p>Parameter Name</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-<th class="head"><p>Required?</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DBPATH</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
-<td><p>The path to the match table database (as generated by the source matching process).</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">POISSON</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the Poisson mapping sub-process. Default is False. If enabled, then the <code class="docutils literal notranslate"><span class="pre">POISSON_PARAMS</span></code> header must be present.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">INSTRUMENTAL</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the Instrumental sub-process. Default is False, If enable, then <code class="docutils literal notranslate"><span class="pre">INSTRUMENT_PARAMS</span></code> must be a header.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OTYPES</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Enable or disable the object type matching sub-process. Default is False. If enabled, then <code class="docutils literal notranslate"><span class="pre">OBJECT_PARAMS</span></code> must be a header.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CATPATH</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
-<td><p>The path to the original catalog table. This is used to add special columns (specified by the user) into the dataset.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-</tr>
-<tr class="row-odd"><td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 </section>
+<section id="further-information">
+<h3>Further Information<a class="headerlink" href="#further-information" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="reduction_processes/reduction_schema.html#reduction-schema"><span class="std std-ref">Reduction Schema Writing</span></a></p></li>
+<li><p><a class="reference internal" href="reduction_processes/custom_reductions.html#custom-reductions"><span class="std std-ref">Writing New Reduction Processes</span></a></p></li>
+</ul>
 </section>
 </section>
 </section>
@@ -661,16 +897,33 @@ IO_PARAMS</label><div class="sd-tab-content docutils">
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-matching">Cross Matching</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-cross-referencing-outputs">Exploring Cross Referencing Outputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-exactly-is-cross-matching">What Exactly is Cross Matching?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#match-tables">Match Tables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-cross-matching-outputs">Exploring Cross Matching Outputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-match-database">Cross Match Database</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-crossmatchdatabase">What is a <code class="docutils literal notranslate"><span class="pre">CrossMatchDatabase</span></code>?</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#making-crossmatchingdatabase-instances">Making <code class="docutils literal notranslate"><span class="pre">CrossMatchingDatabase</span></code> Instances</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#database-alterations">Database Alterations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-meta-table">The <code class="docutils literal notranslate"><span class="pre">META</span></code> table</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interacting-with-raw-data">Interacting with Raw Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-matches-from-tables">Pull Matches from Tables</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-a-match">Plot A Match</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#match-reduction">Match Reduction</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-overview">Mathematical Overview</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sub-process-overview">Sub-Process Overview</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reduction-schema">Reduction Schema</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#general-formatting">General Formatting</a></li>
-</ul>
-</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#further-information">Further Information</a></li>
 </ul>
 </li>
 </ul>

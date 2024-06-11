@@ -1,0 +1,848 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Astrometric Reduction Process &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guides/reduction_processes/astrometric_reduction';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Astrometric...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="astrometric-reduction-process">
+<span id="astrometric-reduction"></span><h1>Astrometric Reduction Process<a class="headerlink" href="#astrometric-reduction-process" title="Link to this heading">#</a></h1>
+<p>The astrometric reduction process is designed to take into account the instrumental parameters of the observing instrument to
+deal with error is astrometry which might lead to inaccurate matches. In effect, this reduction process boils down to determining how
+confident one can be in a proposed match given their separation on the sky.</p>
+<hr><section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>Statistical inference regarding our confidence in the position of sources is a non-trivial problem. In <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, we choose to treat
+it in a <a class="reference external" href="https://en.wikipedia.org/wiki/Bayesian_inference">Bayesian framework</a>. The basic premise of the method is to compare two hypotheses
+for each proposed match:</p>
+<ol class="arabic simple">
+<li><p>(<span class="math notranslate nohighlight">\(H_0\)</span>, the null-hypothesis) These two sources (the catalog source and the match candidate) are not the same source.</p></li>
+<li><p>(<span class="math notranslate nohighlight">\(H_1\)</span>, the test-hypothesis) These two sources are the same source.</p></li>
+</ol>
+<p>For each hypothesis, the probability that the two sources would have the observed separation is calculated, <span class="math notranslate nohighlight">\(P(\delta|H_i)\)</span>,
+where <span class="math notranslate nohighlight">\(\delta\)</span> is the separation between the two sources. Using these, we are able to calculate the <a class="reference external" href="https://en.wikipedia.org/wiki/Bayes_factor">Bayes factor</a>
+and from that we can obtain the posterior distribution for <span class="math notranslate nohighlight">\(H_1\)</span>.</p>
+<p>Because the model used is Bayesian, a <a class="reference external" href="https://en.wikipedia.org/wiki/Prior_probability">prior</a> is required and may be user specified or estimated
+from the available data.</p>
+<section id="mathematics-basis">
+<h3>Mathematics Basis<a class="headerlink" href="#mathematics-basis" title="Link to this heading">#</a></h3>
+<p>A more complete picture of the mathematical ideas used in this process is presented below; however, all users should have a basic grasp of the core
+ideas of this methodology.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Show the Mathematics!<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">To begin, let’s pose a basic question:</p>
+<p class="sd-card-text">Let a catalog object (from our survey) be detected at <span class="math notranslate nohighlight">\(\textbf{x}\)</span> on the sky and let <span class="math notranslate nohighlight">\(\textbf{y}\)</span> be the position of a proposed match
+from a database (as observed by some other instrument).</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p class="sd-card-text">It’s important to remember that neither position is the TRUE position, they are both sampled based on the parameters of the observing instrument.</p>
+</div>
+<p class="sd-card-text">Let’s assume that we know the <strong>astrometric distributions</strong> of the instruments, the probability distribution <span class="math notranslate nohighlight">\(P(\textbf{r}|\textbf{R},M)\)</span>, where
+<span class="math notranslate nohighlight">\(\textbf{r}\)</span> is the <strong>observed</strong> position, <span class="math notranslate nohighlight">\(\textbf{R}\)</span> is the <strong>true</strong> position and <span class="math notranslate nohighlight">\(M\)</span> is the set of parameters determined by the
+nature of the observatory. The natural question to ask is the following:</p>
+<blockquote>
+<div><p class="sd-card-text">Given two observations as described above and knowledge of the relevant astrometry, what is the probability that they
+are actually from the same source given their separation on the sky?</p>
+</div></blockquote>
+<p class="sd-card-text">This is actually a quite difficult question to answer; in this project, we follow Budavari et al. <a class="reference internal" href="#busz08" id="id1"><span>[BuSz08]</span></a> in our approach. Consider the following precise statement of the
+problem</p>
+<blockquote>
+<div><p class="sd-card-text">Let <span class="math notranslate nohighlight">\(\textbf{x}\)</span> and <span class="math notranslate nohighlight">\(\textbf{y}\)</span> be two observed positions on the sky; one corresponding to the catalog object, the other to the
+proposed match to the catalog object. Let <span class="math notranslate nohighlight">\(P(\textbf{x}|\textbf{R},M_{cat})\)</span> and <span class="math notranslate nohighlight">\(P(\textbf{y}|\textbf{R},M_{db})\)</span> be the astrometric distributions
+given a known true position <span class="math notranslate nohighlight">\(\textbf{R}\)</span> and instrumental parameters determined by models <span class="math notranslate nohighlight">\(M_{cat}\)</span> and <span class="math notranslate nohighlight">\(M_{db}\)</span>. What is the probability
+that the sources identified at <span class="math notranslate nohighlight">\(\textbf{x}\)</span> and <span class="math notranslate nohighlight">\(\textbf{y}\)</span> are the same object?</p>
+</div></blockquote>
+<p class="sd-card-text">Two hypotheses are considered:</p>
+<ol class="arabic simple">
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H\)</span>, These two sources are actually associated with the same underlying physical object.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_0\)</span>, These two sources are not associated with the same underlying physical object.</p></li>
+</ol>
+<p class="sd-card-text">To compare the hypotheses, we utilize the Bayes factor:</p>
+<div class="math notranslate nohighlight">
+\[B(H,H_0|D) = \frac{P(H|D)P(H_0)}{P(H_0|D)P(H)} = \frac{P(D|H)}{P(D|H_0)}.\]</div>
+<p class="sd-card-text">The probability of obtaining the observed data given the hypothesis is correct is simply</p>
+<div class="math notranslate nohighlight">
+\[P(D|H) = \int_{S^2} P(\mathbf{R}) P(\mathbf{x}|\mathbf{R},M_{cat})P(\mathbf{y}|\mathbf{R},M_{db}) d\mathbf{R}.\]</div>
+<p class="sd-card-text">Here <span class="math notranslate nohighlight">\(P(R)\)</span> is the probability of the underlying physical source being positioned at a given position.</p>
+<p class="sd-card-text">Similarly, the probability assuming <span class="math notranslate nohighlight">\(H_0\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[P(D|H_0) = \int_{S^2}\int_{S^2} P(\mathbf{U})P(\mathbf{V}) P(\mathbf{x}|\mathbf{U},M_{cat})P(\mathbf{y}|\mathbf{V},M_{db}) d\textbf{U}d\textbf{V}.\]</div>
+<div class="admonition-key-assumptions admonition">
+<p class="admonition-title">Key Assumptions</p>
+<p class="sd-card-text">Assume (as is a reasonable thing to do) that <span class="math notranslate nohighlight">\(P(\textbf{x}|\textbf{R},M) \sim f(|\textbf{x}-\textbf{r}|)\)</span> and is therefore symmetric about
+the displacement between the observation and the true position. In this case, the above integral simplifies becase</p>
+<div class="math notranslate nohighlight">
+\[P(D|H_0) = \int_{S^2}\int_{S^2} P(\mathbf{U})P(\mathbf{V}) P(\mathbf{x}|\mathbf{U},M_{cat})P(\mathbf{y}|\mathbf{V},M_{db}) d\textbf{U}d\textbf{V} = P(D|H_0) = \int_{S^2}\int_{S^2} P(\mathbf{U})P(\mathbf{V}) P(\mathbf{x}|\mathbf{U},M_{cat})P(\mathbf{y}|\mathbf{V},M_{db}) d\textbf{x}d\textbf{y}.
+= P(\mathbf{U})P(\mathbf{V}).\]</div>
+</div>
+<p class="sd-card-text">Therefore, one arrives at the following Bayes factor:</p>
+<div class="math notranslate nohighlight">
+\[\boxed{B(H,H_0|D) = \frac{1}{P(\mathbf{R}|H)P(\mathbf{R}|H_0)} \int_{S^2} P(\mathbf{R}|H) P(\mathbf{x}|\mathbf{R},M_{cat})P(\mathbf{y}|\mathbf{R},M_{db}) d\mathbf{R}. }\]</div>
+<p class="sd-card-text">It is possible to compute this Bayes factor and convert it into a posterior distribution (see <a class="reference internal" href="#mathematics"><span class="std std-ref">Mathematics</span></a> below).</p>
+</div>
+</details></section>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>Like all reduction processes, the astrometric reduction is a <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code> subclass (<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code>).</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>It’s worth taking a look at the API documentation for <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code>,
+there are a great many parameters which might be very helpful for your particular use case.</p>
+</div>
+<section id="setup-and-parameters">
+<h3>Setup and Parameters<a class="headerlink" href="#setup-and-parameters" title="Link to this heading">#</a></h3>
+<p>To get started, it’s important to describe all of the relevant parameters and their behavior. The first consideration is how
+to model the uncertainty in the positions of each source.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>There are a lot of parameters here, but you usually won’t need to specify them all by hand. If you run this process through
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code>, then the corresponding <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.CMDSchema</span></code> will be able to provide
+a lot of the necessary information.</p>
+</div>
+<section id="modeling-astrometric-uncertainty">
+<h4>Modeling Astrometric Uncertainty<a class="headerlink" href="#modeling-astrometric-uncertainty" title="Link to this heading">#</a></h4>
+<p>Every astrometric reduction process has two key parameters:</p>
+<ol class="arabic simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">CATALOG_ERR</span></code>: The position uncertainty in the catalog sources.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">DATABASE_ERR</span></code>: The position uncertainty in the database source.</p></li>
+</ol>
+<p>Both of these parameters are <code class="xref py py-class docutils literal notranslate"><span class="pre">utilities.types.CoordinateErrorSpecifier</span></code> instances.</p>
+<hr></section>
+</section>
+</section>
+<section id="id2">
+<h2>Usage<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>In this section, we present the details concerning how to set up one of these reduction processes.</p>
+<section id="id3">
+<h3>Setup and Parameters<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>The astrometric reduction process is highly customizable, meaning you can make it do whatever you need; however, that comes at the cost
+of having <strong>lots</strong> of potential options! In this section, we’ll go through the key considerations for how to setup the reduction process.</p>
+<section id="astrometry-modes">
+<h4>Astrometry Modes<a class="headerlink" href="#astrometry-modes" title="Link to this heading">#</a></h4>
+<p>In some astronomical databases, the positions of objects may be specified by a single value (something like <code class="docutils literal notranslate"><span class="pre">POSERR</span></code>). In others, you might
+have errors provided in both RA and DEC. For some unfortunate cases, you might only have a general understanding of the instrumental PSF that has to
+be provided to the reduction process by hand.</p>
+<p>Each of these options corresponds to a given <strong>astrometric-mode</strong>.</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> in your <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> has an astrometric mode.</p>
+<ul>
+<li><p>Determined by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">astrometry_mode_cat</span></code> attribute of the reduction class.</p></li>
+</ul>
+</li>
+<li><p>For <strong>each</strong> reference database, there is a different astrometry mode.</p>
+<ul>
+<li><p>Determined by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">astrometry_mode_db</span></code> attribute of the reduction class.</p></li>
+</ul>
+</li>
+</ul>
+<p>There are 3 options for the astrometric mode:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Circular</label><div class="sd-tab-content docutils">
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Enabled by setting the class astrometry mode to <code class="docutils literal notranslate"><span class="pre">'circular'</span></code> or specifying <code class="docutils literal notranslate"><span class="pre">'circular'</span></code> for the astrometry mode
+in your schema file (if using CLI).</p>
+</div>
+<p>In the circular astrometry mode, <strong>only one uncertainty is know</strong> for each object. We therefore model the astrometry as symmetric about
+the source.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Axial</label><div class="sd-tab-content docutils">
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Enabled by setting the class astrometry mode to <code class="docutils literal notranslate"><span class="pre">'axial'</span></code> or specifying <code class="docutils literal notranslate"><span class="pre">'axial'</span></code> for the astrometry mode
+in your schema file (if using CLI).</p>
+</div>
+<p>In the axial astrometry mode, <strong>2 uncertainties are know</strong> (RA and DEC) for each object. We therefore model the astrometry as an ellipse about
+the source.</p>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
+None</label><div class="sd-tab-content docutils">
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Enabled by setting the class astrometry mode to <code class="docutils literal notranslate"><span class="pre">None</span></code> (or <code class="docutils literal notranslate"><span class="pre">'None'</span></code>/<code class="docutils literal notranslate"><span class="pre">'none'</span></code>) or specifying <code class="docutils literal notranslate"><span class="pre">null</span></code> for the astrometry mode
+in your schema file (if using CLI).</p>
+</div>
+<p>This assumes that we do not have any information about the precision of the astrometry. We assume that the positioning of this object is perfect.</p>
+</div>
+</div>
+</section>
+<section id="selecting-a-prior">
+<h4>Selecting a Prior<a class="headerlink" href="#selecting-a-prior" title="Link to this heading">#</a></h4>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This can have a <strong>significant</strong> influence on the outcome of your reduction process if altered. Unless you know what you’re doing,
+we highly suggest that you simply use the naive but unbiased default estimate.</p>
+</div>
+<p>Our approach is Bayesian and therefore allows the user to specify a prior <span class="math notranslate nohighlight">\(P(H)\)</span>. In many cases, the prior can be estimated without
+input from the user, as described in <a class="reference internal" href="#priors"><span class="std std-ref">From Bayes Factor to Posteriori Estimates</span></a> and <a class="reference internal" href="#self-consistent-priors"><span class="std std-ref">Self-Consistent Priors By Iterative Methods</span></a>.</p>
+<p>When preparing an astrometry reduction, there are 3 options for the prior setting (<code class="xref py py-attr docutils literal notranslate"><span class="pre">prior</span></code>).</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: This will use the naive estimate for the prior based on the assumed optimality of the catalog and databases.</p></li>
+</ol>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The default prior isn’t the optimal choice, but it is unbiased. If you get good results without a prior, you can generally
+accept them unless you have further information not accounted for in this or any other reduction process. It’s much easier to
+ruin your results by specifying a flawed prior than it is to ruin them by not specifying any prior.</p>
+</div>
+<ol class="arabic" start="2">
+<li><p><code class="docutils literal notranslate"><span class="pre">Iterative</span></code>: This approach will use the iterative method described in <a class="reference internal" href="#self-consistent-priors"><span class="std std-ref">Self-Consistent Priors By Iterative Methods</span></a> to determine
+priors which are self-consistent with results. This can be a pricey operation, but it will improve the overall quality of the
+prior selection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">callable</span></code>: If the user provides a callable function, that function will be used as the prior. This must be a function with signature
+<code class="docutils literal notranslate"><span class="pre">f(match_table,catalog_row)</span></code>.</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">match_table</span></code> parameter is the match table data (or a chunk of it) on which to evaluate the prior.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">catalog_table</span></code> parameter is the section of <code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> containing only those objects with candidates in the <code class="docutils literal notranslate"><span class="pre">match_table</span></code>.</p></li>
+</ul>
+<p>How exactly one chooses to set up their prior is there own prerogative.</p>
+</li>
+</ol>
+</section>
+</section>
+<section id="initializing">
+<h3>Initializing<a class="headerlink" href="#initializing" title="Link to this heading">#</a></h3>
+<p>In this section, we will explain how to set up your astrometry reduction process. There are two options that are of interest, either
+initializing the <code class="xref py py-class docutils literal notranslate"><span class="pre">reduction.ReductionProcess</span></code> from within the code or using the CLI and a reduction schema instead.</p>
+<div class="sd-tab-set docutils">
+</div>
+</section>
+<section id="running-the-reduction">
+<h3>Running the Reduction<a class="headerlink" href="#running-the-reduction" title="Link to this heading">#</a></h3>
+<hr></section>
+</section>
+<section id="mathematics">
+<span id="id4"></span><h2>Mathematics<a class="headerlink" href="#mathematics" title="Link to this heading">#</a></h2>
+<section id="astrometry">
+<h3>Astrometry<a class="headerlink" href="#astrometry" title="Link to this heading">#</a></h3>
+<p>The most important instrumental factor is astrometry. From a general standpoint, <span class="math notranslate nohighlight">\(N\)</span> separate observations of sources at
+sky positions <span class="math notranslate nohighlight">\(\textbf{x}_i\)</span> may or may not come from the same physical source. The likelihood that they do come from the same
+source depends directly on the resolution / astrometric accuracy of the observatories.</p>
+<p>For a source with physical position <span class="math notranslate nohighlight">\(\mathbf{\mu}\)</span>, let <span class="math notranslate nohighlight">\(P(\textbf{x}_i|\mathbf{\mu},I)\)</span> be the probability that
+instrument I would actually detect the source at position <span class="math notranslate nohighlight">\(\textbf{x}_i\)</span>. Given a set of <span class="math notranslate nohighlight">\(N\)</span> points, the probability that
+they are all from the same source (hypothesis <span class="math notranslate nohighlight">\(H\)</span>) is</p>
+<div class="math notranslate nohighlight">
+\[P(D|H) = \int_{S^2} d\mathbf{\mu}\;\; p(\mathbf{\mu}|H) \prod_{i=0}^N p(\textbf{x}_i|\mathbf{\mu},I,H).\]</div>
+<p>If the observations actually originate from different sources,</p>
+<div class="math notranslate nohighlight">
+\[P(D|K) = \prod_{i=0}^N \int_{S^2} d\mathbf{\mu}_i\;\; p(\mathbf{\mu}_i|K)  p(\textbf{x}_i|\mathbf{\mu}_i,I,H).\]</div>
+<p>Assuming uninformative priors <span class="math notranslate nohighlight">\(p(\mathbf{\mu}_i|K)\)</span> and <span class="math notranslate nohighlight">\(p(\mathbf{\mu}|H)\)</span> and requiring symmetry in the distribution models,
+we find</p>
+<div class="math notranslate nohighlight">
+\[P(D|K) = \prod_{i=0}^N p(\mathbf{\mu}_i|K) = \frac{1}{(4\pi)^N}.\]</div>
+<p>Thus, the Bayes factor is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{B(H,K|D) = (4\pi)^N \int_{S^2} d\mathbf{\mu}\;\; p(\mathbf{\mu}|H) \prod_{i=0}^N p(\textbf{x}_i|\mathbf{\mu},I,H) }.\]</div>
+<p>Without further refinement, this is as far as we can go analytically.</p>
+<section id="normally-distributed-error">
+<h4>Normally Distributed Error<a class="headerlink" href="#normally-distributed-error" title="Link to this heading">#</a></h4>
+<p>Let the instrumental model take the form</p>
+<div class="math notranslate nohighlight">
+\[p(\textbf{x}|\mathbf{\mu},I) = p(\textbf{x}|\mathbf{\mu},\mathbf{\Sigma}) = \frac{1}{2\pi \sqrt{|\mathbf{\Sigma}|}} \exp\left[-\frac{1}{2}(\textbf{x}-\mathbf{\mu})^T\mathbf{\Sigma}^{-1}(\textbf{x}-\mathbf{\mu})\right].\]</div>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\boxed{B(H,K|D) =  \int_{S^2} d\mathbf{\mu}\;\; \prod_{i=0}^N p(\textbf{x}_i|\mathbf{\mu},\mathbf{\Sigma}_i,H) }.\]</div>
+<p>Consider the case where we only have two detections. Then</p>
+<div class="math notranslate nohighlight">
+\[B(H,K|D) =  \int_{S^2} d\mathbf{\mu}\;\; \mathcal{N}(\textbf{x}_1,\mathbf{\mu},\mathbf{\Sigma}_1)\mathcal{N}(\textbf{x}_2,\mathbf{\mu},\mathbf{\Sigma}_2) = \int_{S^2} d\mathbf{\mu}\;\; \mathcal{N}(0,\mathbf{\mu},\mathbf{\Sigma}_1)\mathcal{N}(\textbf{r},\mathbf{\mu},\mathbf{\Sigma}_2),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\textbf{r}\)</span> is the displacement between the two detections.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Mathmatics Hint: Product of Gaussians<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">The integral above,</p>
+<div class="math notranslate nohighlight">
+\[\int_{S^2} d\mathbf{\mu}\;\; \mathcal{N}(0,\mathbf{\mu},\mathbf{\Sigma}_1)\mathcal{N}(\textbf{r},\mathbf{\mu},\mathbf{\Sigma}_2)\]</div>
+<p class="sd-card-text">can be solved analytically. Consider the term in the exponent:</p>
+<div class="math notranslate nohighlight">
+\[\mu^T\Sigma_1^{-1}\mu + (r-\mu)^T\Sigma_2^{-1}(r-\mu) = \mu^T\Sigma_1^{-1}\mu + r^T\sigma_2^{-1}r - 2\mu^T\Sigma_2^{-1}r + \mu^T\Sigma_2^{-1}\mu.\]</div>
+<p class="sd-card-text">Letting <span class="math notranslate nohighlight">\(\Pi^{-1} = \Sigma_1^{-1} + \Sigma_2^{-1}\)</span>, one gets</p>
+<div class="math notranslate nohighlight">
+\[\mu^T\Pi^{-1}\mu - 2\mu^T\Sigma_2^{-1}r + \underbrace{r^T\sigma_2^{-1}r}_{\text{independent of $\mu$}}.\]</div>
+<p class="sd-card-text">Transforming the second term so that</p>
+<div class="math notranslate nohighlight">
+\[-2\mu^T\Sigma^{-1}_2r = -2\mu^T\Pi^{-1}\Pi\Sigma^{-1}_2r = -2\mu^T\Pi^{-1}\nu,\]</div>
+<p class="sd-card-text">where <span class="math notranslate nohighlight">\(\nu = \Pi\Sigma^{-1}_2 r\)</span>.</p>
+<p class="sd-card-text">It now follows that</p>
+<div class="math notranslate nohighlight">
+\[\mu^T\Pi^{-1}\mu - 2\mu^T\Sigma_2^{-1}r + \underbrace{r^T\sigma_2^{-1}r}_{\text{independent of $\mu$}} = \underbrace{\mu^T\Pi^{-1}\mu - 2\mu^T\Pi^{-1}\nu + \nu^T\Pi^{-1}\nu}_{(\mu-\nu)^T\Pi^{-1}(\mu-\nu)} -  \underbrace{\nu^T\Pi^{-1}\nu + r^T\sigma_2^{-1}r}_{\text{independent of $\mu$}}\]</div>
+<p class="sd-card-text">As such, the integral</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{2\pi \sqrt{\left|\prod_i \Sigma_i\right|}} \int_{S^2} d\mathbf{\mu} \exp\left(\frac{-1}{2}\left[(x_1-\mu)^T\Sigma_{1}^{-1}(x_1-\mu) + (x_2-\mu)^T\Sigma_2^{-1}(x_2-\mu) \right]\right)\;\;\]</div>
+<p class="sd-card-text">is simply</p>
+<div class="math notranslate nohighlight">
+\[\boxed{\frac{1}{2\pi}\sqrt{\frac{|\Pi|}{\left|\prod_i \Sigma_i\right|}} \exp\left(-\frac{1}{2}\left[r^T\Sigma_2^{-1}r-\nu^T\Pi^{-1}\nu\right]\right) \;\;}.\]</div>
+<p class="sd-card-text">Furthermore,</p>
+<div class="math notranslate nohighlight">
+\[\nu^T\Pi^{-1}\nu = (\Pi\Sigma_2^{-1}r)^T\Pi^{-1}(\Pi\Sigma_2^{-1}r),\]</div>
+<p class="sd-card-text">which, recalling that <span class="math notranslate nohighlight">\(\Sigma_i\)</span> are symmetric, yields</p>
+<div class="math notranslate nohighlight">
+\[r^T\Sigma_2^{-1}\Pi\Pi^{-1}\Pi\Sigma_2^{-1}r = r^T\Sigma_2^{-1}\Pi\Sigma_2^{-1}r.\]</div>
+<p class="sd-card-text">As such,</p>
+<div class="math notranslate nohighlight">
+\[-\frac{1}{2}\left[r^T\Sigma_2^{-1}r-\nu^T\Pi^{-1}\nu\right] = -\frac{1}{2}\left[r^T\Sigma_2^{-1}\left(\Pi\Pi^{-1} - \Pi\Sigma_2^{-1}\right)r\right] = -\frac{1}{2}\left[r^T\Sigma_2^{-1}\Pi\left(\Pi^{-1} - \Sigma_2^{-1}\right)r\right] =  -\frac{1}{2}\left[r^T\Sigma_2^{-1}\left[\Sigma_2^{-1}+\Sigma_1^{-1}\right]^{-1}\Sigma_1^{-1}r\right].\]</div>
+<p class="sd-card-text">Thus,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{\int_{S^2} d\mathbf{\mu}\;\; \mathcal{N}(0,\mathbf{\mu},\mathbf{\Sigma}_1)\mathcal{N}(\textbf{r},\mathbf{\mu},\mathbf{\Sigma}_2) = \frac{1}{2\pi}\frac{1}{\sqrt{|\Sigma_1||\Sigma_2||\Sigma_1^{-1}+\Sigma_2^{-1}|}} \exp\left[-\frac{1}{2}\left(r^T\Sigma_1^{-1}\left(\Sigma_1^{-1}+\Sigma_2^{-1}\right)^{-1}\Sigma_2^{-1}r\right)\right]}\]</div>
+</div>
+</details><p>One finds that</p>
+<div class="math notranslate nohighlight">
+\[B(H,K|D) = \boxed{\int_{S^2} d\mathbf{\mu}\;\; \mathcal{N}(0,\mathbf{\mu},\mathbf{\Sigma}_1)\mathcal{N}(\textbf{r},\mathbf{\mu},\mathbf{\Sigma}_2) = \frac{1}{2\pi}\frac{1}{\sqrt{|\Sigma_1||\Sigma_2||\Sigma_1^{-1}+\Sigma_2^{-1}|}} \exp\left[-\frac{1}{2}\left(r^T\Sigma_1^{-1}\left(\Sigma_1^{-1}+\Sigma_2^{-1}\right)^{-1}\Sigma_2^{-1}r\right)\right]}\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>We have assumed that we can make a euclidean estimate of the sphere of the sky when performing these calculations. Obviously, we integrated over points in <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span>; however,
+given that points at significantly different positions on the sky cannot be associated with the same object, this estimate is sound.</p>
+</div>
+</section>
+<section id="from-bayes-factor-to-posteriori-estimates">
+<span id="priors"></span><h4>From Bayes Factor to Posteriori Estimates<a class="headerlink" href="#from-bayes-factor-to-posteriori-estimates" title="Link to this heading">#</a></h4>
+<p>Recall that the Bayes factor is defined as</p>
+<div class="math notranslate nohighlight">
+\[B(H,K|D) = \frac{P(H|D)/P(H)}{P(K|D)/P(K)}\]</div>
+<p>Thus, we can write the posterior as</p>
+<div class="math notranslate nohighlight">
+\[P(H|D) = \frac{P(K|D)P(H)B(H,K|D)}{P(K)}.\]</div>
+<p>If <span class="math notranslate nohighlight">\(P(K|D) = 1-P(H|D)\)</span>, and <span class="math notranslate nohighlight">\(P(K)=1-P(H)\)</span> then</p>
+<div class="math notranslate nohighlight">
+\[P(H|D) = \frac{(1-P(H|D))P(H)B(H,K|D)}{1-P(H)} = \left[1+\frac{1-P(H)}{P(H)B}\right]^{-1}.\]</div>
+<p>The choice of prior here is intricate and can be informed by a plethora of different pieces of information. Naively, if the catalog you are matching
+against has <span class="math notranslate nohighlight">\(N\)</span> objects within the search window, then the probability that a given object is the true match is just <span class="math notranslate nohighlight">\(1/N\)</span>. This fails to take into account
+any of the instrumental information provided and represents the most naive possible prior.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Regardless of its apparent naivety, this is the default prior using in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. Users can take further control of the prior in a variety
+of ways based on their use case, including specifying it entirely.</p>
+</div>
+</section>
+<section id="self-consistent-priors-by-iterative-methods">
+<span id="self-consistent-priors"></span><h4>Self-Consistent Priors By Iterative Methods<a class="headerlink" href="#self-consistent-priors-by-iterative-methods" title="Link to this heading">#</a></h4>
+<p>The determination of a prior can be something of a headache. In an ideal sense, where the database being matched against contains <strong>all objects</strong>,
+then the correct prior is, very simply, <span class="math notranslate nohighlight">\(1/N\)</span>; where <span class="math notranslate nohighlight">\(N\)</span> is the number of objects in the search frame. Unfortunately, we know that no database
+contains all objects in the universe. Furthermore, based on instrumentation, it is possible that a given source has <span class="math notranslate nohighlight">\(P(H) = 0\)</span> when matched against a given catalog.</p>
+<p>Consider a search frame around 1 source object. A database (SIMBAD for example) returns <span class="math notranslate nohighlight">\(N\)</span> potential matches within a search frame area <span class="math notranslate nohighlight">\(A\)</span>. Now, the expected number of matches
+from the prior estimate would be</p>
+<div class="math notranslate nohighlight">
+\[\left&lt;N\right&gt; = \sum_{i} P(H),\]</div>
+<p>which should also be self-consistent with the informed estimate</p>
+<div class="math notranslate nohighlight">
+\[\left&lt;N\right&gt; = \sum_i P_i(H|D).\]</div>
+<p>Thus, one can use an iterative process to get a self-consistent (if entirely naive) estimate of the prior:</p>
+<ol class="arabic simple">
+<li><p>Start with the initial guess of 1 match in the search area: <span class="math notranslate nohighlight">\(P(H) = 1/N\)</span>.</p></li>
+<li><p>Calculate <span class="math notranslate nohighlight">\(P_i(H|D)\)</span> for each of the potential matches using the prior you have set.</p></li>
+<li><p>Calculate the effective number of matches: <span class="math notranslate nohighlight">\(\left&lt;N\right&gt; = \sum_i P_i(H|D)\)</span>.</p></li>
+<li><p>Recalculate <span class="math notranslate nohighlight">\(P(H) = \left&lt;N\right&gt;/N = \left(\sum_i P_i(H|D)\right)/N\)</span>.</p></li>
+<li><p>Continue the iteration process until a stability threshold has been accomplished.</p></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="busz08" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BuSz08</a><span class="fn-bracket">]</span></span>
+<p>Budavári, T. and Szalay, A.S., 2008. Probabilistic cross-identification of astronomical sources. The Astrophysical Journal, 679(1), p.301.</p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematics-basis">Mathematics Basis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-parameters">Setup and Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling-astrometric-uncertainty">Modeling Astrometric Uncertainty</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Setup and Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#astrometry-modes">Astrometry Modes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-a-prior">Selecting a Prior</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initializing">Initializing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-reduction">Running the Reduction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematics">Mathematics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astrometry">Astrometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#normally-distributed-error">Normally Distributed Error</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#from-bayes-factor-to-posteriori-estimates">From Bayes Factor to Posteriori Estimates</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#self-consistent-priors-by-iterative-methods">Self-Consistent Priors By Iterative Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/user_guides/reduction_processes/astrometric_reduction.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

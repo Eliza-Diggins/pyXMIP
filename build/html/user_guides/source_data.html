@@ -370,6 +370,130 @@ document.write(`
                   
   <section id="loading-source-data">
 <span id="source-data"></span><h1>Loading Source Data<a class="headerlink" href="#loading-source-data" title="Link to this heading">#</a></h1>
+<p>The first step to successfully using <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> for your scientific purpose is actually loading data into the environment.
+For the most part, this task should be quite simple; however, there are a few things to keep in mind when doing this that
+should be known. In this reference page, we provide a comprehensive description of loading data into the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> environment
+and the possible interactions that can be had therein.</p>
+<section id="loading-a-catalog-from-disk">
+<h2>Loading a Catalog from Disk<a class="headerlink" href="#loading-a-catalog-from-disk" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is designed from cross-referencing / identification of astronomical objects within catalogs. To load a catalog into
+the library, simply use <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code>. In this reference, we’re going to use the eROSITA eRASS 1
+all sky survey data located <a class="reference external" href="https://erosita.mpe.mpg.de/dr1/erodat/">here</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyXMIP</span> <span class="k">as</span> <span class="nn">pyxmip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">pyxmip</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;eRASS1_Hard.v1.0.fits&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
+<span class="go">&lt;SourceTable length=5466&gt;</span>
+<span class="go">        IAUNAME                      DETUID              ... FLAG_OPT</span>
+<span class="go">                                                         ...</span>
+<span class="go">        bytes23                     bytes32              ...  int16</span>
+<span class="go">----------------------- -------------------------------- ... --------</span>
+<span class="go">1eRASS J002937.2-310209 eb01_009120_020_ML00004_002_c010 ...        0</span>
+<span class="go">1eRASS J004207.0-283154 eb01_012120_020_ML00002_002_c010 ...        0</span>
+<span class="go">1eRASS J004922.3-293108 eb01_012120_020_ML00003_002_c010 ...        0</span>
+<span class="go">1eRASS J005448.9-311230 eb01_012120_020_ML00004_002_c010 ...        0</span>
+<span class="go">1eRASS J012910.8-214156 eb01_021111_020_ML00001_002_c010 ...        0</span>
+<span class="go">1eRASS J012338.1-231059 eb01_021114_020_ML00001_002_c010 ...        0</span>
+<span class="go">1eRASS J013729.2-195637 eb01_024111_020_ML00005_003_c010 ...        0</span>
+<span class="go">1eRASS J015219.0-183235 eb01_027108_020_ML00003_002_c010 ...        0</span>
+<span class="go">1eRASS J015721.4-161420 eb01_029105_020_ML00003_002_c010 ...        0</span>
+<span class="go">                    ...                              ... ...      ...</span>
+<span class="go">1eRASS J061245.9-520045 em01_095141_020_ML01024_003_c010 ...        0</span>
+<span class="go">1eRASS J130424.5+132131 em01_197078_020_ML00270_003_c010 ...        0</span>
+<span class="go">1eRASS J130833.7+032916 em01_197087_020_ML00223_003_c010 ...        0</span>
+<span class="go">1eRASS J131142.7-303349 em01_197120_020_ML00303_002_c010 ...        0</span>
+<span class="go">1eRASS J060719.0-715042 em01_095162_020_ML01380_002_c010 ...        0</span>
+<span class="go">1eRASS J061241.0-705749 em01_095162_020_ML02377_002_c010 ...        0</span>
+<span class="go">1eRASS J062748.9-230934 em01_096114_020_ML00478_002_c010 ...        0</span>
+<span class="go">1eRASS J062429.5-351724 em01_096126_020_ML00282_002_c010 ...        0</span>
+<span class="go">1eRASS J131252.8-161006 em01_198105_020_ML00374_002_c010 ...        0</span>
+<span class="go">1eRASS J130904.4-260824 em01_198117_020_ML00487_002_c010 ...        0</span>
+</pre></div>
+</div>
+<p>Loading a catalog results in a class called <code class="xref py py-class docutils literal notranslate"><span class="pre">SourceTable</span></code>. This is a <em>slightly modified</em> version of
+the typical <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.table.Table</span></code></a> class with some special purpose components. We can do all of the classic modifications
+to the table that would be possible in <code class="xref py py-mod docutils literal notranslate"><span class="pre">astropy</span></code>.</p>
+<p>Just like any other table of data, we can plot the sources in this catalog:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra</span><span class="p">,</span><span class="n">dec</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">catalog</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="n">Quantity</span><span class="p">(</span><span class="n">catalog</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;aitoff&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span><span class="n">dec</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">catalog</span><span class="p">[</span><span class="s1">&#39;ML_RATE_0&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="images/plots/source_data_1.png" src="images/plots/source_data_1.png" />
+</section>
+<section id="working-with-catalogs">
+<h2>Working With Catalogs<a class="headerlink" href="#working-with-catalogs" title="Link to this heading">#</a></h2>
+<p>Before moving on to other, more complex, aspects of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, it’s worth describing some additional details of the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> class.</p>
+<section id="table-schema">
+<h3>Table Schema<a class="headerlink" href="#table-schema" title="Link to this heading">#</a></h3>
+<p>The first thing to familiarize yourself with is the schema associated with the table. You can find a comprehensive guide to
+schemas in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> on the <a class="reference internal" href="schema.html#schema"><span class="std std-ref">pyXMIP Schema Classes</span></a> page as well as on the API documentation of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema</span></code> module. For now,
+we’ll introduce only the broader aspects of the schema.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class is associated with every table and effectively tells <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> what all of the
+different column names and associated data actually mean. These schema located the coordinates, object types, redshifts, and other
+key information about the catalog. They also determine the base coordinate system and are necessary for much of the useful operations
+provided by this software.</p>
+<p>In many cases, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> can deduce some parts of the schema based on the table itself. Let’s try this with the eROSITA data.
+To access the schema, we simply use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">schema</span></code> attribute:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">schema</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">schema</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,308  [SourceTableSchema] Constructing SourceTableSchema from fits table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Failed to identify automatic match for special column Z.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Failed to identify automatic match for special column TYPE.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Identified special key NAME with column IAUNAME of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Identified special key RA with column RA of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Identified special key DEC with column DEC of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Identified special key L with column LII of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Identified special key B with column BII of the table.</span>
+<span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,320  [SourceTableSchema] Located 2 possible coordinate frames. Selected ICRS as default.</span>
+</pre></div>
+</div>
+<p>Whoa! That’s a lot of outputs, what do they actually tell us?</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class will first try to identify special columns (things like redshift, coordinates, object name, etc.) from
+the available column names. According to the log, we have failed to find a redshift or object type (eRASS data doesn’t have these), but we did find
+the <code class="docutils literal notranslate"><span class="pre">IAUNAME</span></code> column as the <code class="docutils literal notranslate"><span class="pre">NAME</span></code> of each object, along with <code class="docutils literal notranslate"><span class="pre">RA</span></code>, <code class="docutils literal notranslate"><span class="pre">DEC</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>; each of which is a coordinate column. Finally,
+we note that two viable coordinate systems were identified and that ICRS (RA/DEC) was chosen as the default.</p>
+<p>How does this actually help us? <strong>Now pyXMIP can identify important information automatically</strong>!</p>
+<p>The schema allows the table to locate all of the critical information for us. Let’s see an example of how this works: Let’s extract the
+source names from the table:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+<span class="go">        IAUNAME</span>
+<span class="go">-----------------------</span>
+<span class="go">1eRASS J002937.2-310209</span>
+<span class="go">1eRASS J004207.0-283154</span>
+<span class="go">1eRASS J004922.3-293108</span>
+<span class="go">1eRASS J005448.9-311230</span>
+<span class="go">1eRASS J012910.8-214156</span>
+<span class="go">1eRASS J012338.1-231059</span>
+<span class="go">1eRASS J013729.2-195637</span>
+<span class="go">1eRASS J015219.0-183235</span>
+<span class="go">1eRASS J015721.4-161420</span>
+<span class="go">1eRASS J020037.2-164905</span>
+<span class="go">                    ...</span>
+<span class="go">1eRASS J062733.8-513408</span>
+<span class="go">1eRASS J061245.9-520045</span>
+<span class="go">1eRASS J130424.5+132131</span>
+<span class="go">1eRASS J130833.7+032916</span>
+<span class="go">1eRASS J131142.7-303349</span>
+<span class="go">1eRASS J060719.0-715042</span>
+<span class="go">1eRASS J061241.0-705749</span>
+<span class="go">1eRASS J062748.9-230934</span>
+<span class="go">1eRASS J062429.5-351724</span>
+<span class="go">1eRASS J131252.8-161006</span>
+<span class="go">1eRASS J130904.4-260824</span>
+<span class="go">Length = 5466 rows</span>
+</pre></div>
+</div>
+<p>You can also easily access the coordinates, redshift, object type, etc. through the same attributes that would represent
+those columns in the schema class. It is highly recommended that new users familiarize themselves with the available attributes
+as described in the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> documentation.</p>
+</section>
+</section>
 </section>
 
 
@@ -390,6 +514,20 @@ document.write(`
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-a-catalog-from-disk">Loading a Catalog from Disk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-catalogs">Working With Catalogs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-schema">Table Schema</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div class="tocsection sourcelink">

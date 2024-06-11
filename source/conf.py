@@ -48,6 +48,8 @@ extensions = [
     "hoverxref.extension",
 ]
 
+bibtex_bibfiles = ["refs.bib"]
+bibtex_encoding = "latin"
 graphviz_output_format = "svg"
 inheritance_graph_attrs = dict(rankdir="TB", size='""')
 # Add any paths that contain templates here, relative to this directory.
