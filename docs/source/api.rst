@@ -19,9 +19,9 @@ be familiar with and will interact with most often.
     structures.databases
     structures.table
     structures.map
+    structures.reduction
     schema
     cross_reference
-    reduction
 
 Statistics
 ----------
@@ -49,3 +49,4 @@ Other
     utilities.core
     utilities.geo
     utilities.plot
+    utilities.types

@@ -16,6 +16,7 @@ from itertools import repeat
 
 import numpy as np
 import requests.exceptions
+import sqlalchemy as sql
 from astropy import units
 from astropy.coordinates import Angle, SkyCoord
 from astropy.table import vstack
@@ -28,9 +29,11 @@ from pyXMIP.schema import DEFAULT_SOURCE_SCHEMA_REGISTRY
 from pyXMIP.structures.map import PoissonAtlas
 from pyXMIP.structures.table import SourceTable, correct_column_types
 from pyXMIP.utilities._registries import _Registry
-from pyXMIP.utilities.core import _bin_directory, enforce_units, mainlog
+from pyXMIP.utilities.core import bin_directory, enforce_units
+from pyXMIP.utilities.logging import mainlog
+from pyXMIP.utilities.types import convert_np_type_to_sql
 
-poisson_map_directory = os.path.join(_bin_directory, "psn_maps")
+poisson_map_directory = os.path.join(bin_directory, "psn_maps")
 
 
 class DatabaseError(Exception):
@@ -38,52 +41,9 @@ class DatabaseError(Exception):
     Collective error type for issues with database queries.
     """
 
-    def __init__(self, message=None):
+    def __init__(self, message: str = None):
         self.message = message
         super().__init__(self.message)
-
-
-class DBRegistry(_Registry):
-    """
-    A :py:class:`DBRegistry` instance is a collection of identifiable database classes.
-
-    Notes
-    -----
-
-    The primary purpose of database registries is to allow the user and the backend to keep a "list" of the available
-    databases.
-    """
-
-    def __init__(self, databases):
-        """
-        Initialize a database registry.
-
-        Parameters
-        ----------
-        databases: list of SourceDatabase
-            The list of databases to load into the registry.
-
-        """
-        super().__init__({database.name: database for database in databases})
-
-        # -- check that the classes are actually valid -- #
-        assert all(isinstance(v, SourceDatabase) for v in self.values())
-
-    @property
-    def names(self):
-        return list(self.keys())
-
-    @property
-    def locals(self):
-        return [k for k, v in self.items() if isinstance(v, LocalDatabase)]
-
-    @property
-    def remotes(self):
-        return [k for k, v in self.items() if isinstance(v, RemoteDatabase)]
-
-    @classmethod
-    def _default_registry(cls):
-        return cls([NED(), SIMBAD()])
 
 
 class _DatabaseConfigSetting:
@@ -132,6 +92,7 @@ class SourceDatabase(ABC):
 
     For local databases, this is automatically set to the base catalog. For remotes, it must generally be constructed.
     """
+    _thread_lock = threading.Lock()
 
     def __init__(self, db_name, *args, **kwargs):
         """
@@ -196,13 +157,13 @@ class SourceDatabase(ABC):
     # -- Querying -- #
 
     @abstractmethod
-    def _query_radius(self, position, radius):
+    def _query_radius(self, position: SkyCoord, radius: units.Quantity) -> SourceTable:
         """
         DEVELOPERS: This is the query radius that should be altered in sub-classes.
         """
         pass
 
-    def query_radius(self, position, radius):
+    def query_radius(self, position: SkyCoord, radius: units.Quantity) -> SourceTable:
         """
         Query the remote database at the specified position and pull all sources within a given radius.
 
@@ -336,7 +297,7 @@ class SourceDatabase(ABC):
         Table
             A table containing counts for each of the object types and the positions of queries.
         """
-        from pyXMIP.utilities._mp_utils import map_to_threads
+        from pyXMIP.utilities.optimize import map_to_threads
 
         # -------------------------------------------#
         # Managing args / kwargs and paths
@@ -564,6 +525,9 @@ class LocalDatabase(SourceDatabase):
             other_positions[idxother].ra.deg,
             other_positions[idxother].dec.deg,
         )
+        matched_table["CATNMATCH"] = [
+            len(list(set(idxself[idxother == idxo]))) for idxo in idxother
+        ]
 
         return matched_table
 
@@ -640,7 +604,7 @@ class RemoteDatabase(SourceDatabase, ABC):
         """
         import sqlalchemy as sql
 
-        from pyXMIP.utilities._mp_utils import map_to_threads
+        from pyXMIP.utilities.optimize import map_to_threads
 
         mainlog.info(f"Source matching {len(source_table)} against {self.name}.")
 
@@ -664,9 +628,8 @@ class RemoteDatabase(SourceDatabase, ABC):
         positions = source_table.get_coordinates()
 
         with logging_redirect_tqdm(loggers=[mainlog]):
-            pbar = tqdm(
-                desc=f"Querying {self.name}", total=len(search_radii), leave=False
-            )
+            pbar = tqdm(desc=f"Querying {self.name}", total=len(search_radii))
+            # -- Run once without pass to threads -- #
             result = map_to_threads(
                 self._thread_pooled_source_match,
                 positions,
@@ -701,16 +664,34 @@ class RemoteDatabase(SourceDatabase, ABC):
                     return None
 
                 query["CATOBJ"] = source_table_entry[source_table_schema.NAME]
-                query["CATRA"] = position.ra
-                query["CATDEC"] = position.dec
+                query["CATRA"] = position.ra.deg
+                query["CATDEC"] = position.dec.deg
+                query["CATNMATCH"] = len(query)
                 query.meta = {}
                 pbar.update()
             except Exception as exception:
                 mainlog.error(exception.__repr__())
                 return None
 
-            with threading.Lock():
-                query.append_to_sql(f"{self.name}_MATCH", engine)
+            with self._thread_lock:
+                if not sql.inspect(engine).has_table(f"{self.name}_MATCH"):
+                    mainlog.info(
+                        f"[{threading.current_thread().name}] Creating table {self.name}_MATCH schema."
+                    )
+                    metadata = sql.MetaData()
+                    _ = sql.Table(
+                        f"{self.name}_MATCH",
+                        metadata,
+                        *[
+                            sql.Column(k, convert_np_type_to_sql(v))
+                            for k, v in dict(query.to_pandas().dtypes).items()
+                        ],
+                    )
+                    metadata.create_all(engine)
+
+                query.append_to_sql(f"{self.name}_MATCH", engine, method="multi")
+
+        return None
 
 
 class NED(RemoteDatabase):
@@ -938,7 +919,7 @@ class SIMBAD(RemoteDatabase):
         Simbad.remove_votable_fields(*self.REMOVED_COLUMNS)
 
     @classmethod
-    def _default_correct_query_output(cls, table, schema=None):
+    def _default_correct_query_output(cls, table: SourceTable, schema=None):
         if "RA" in table.columns:
             table["RA"] = Angle(table["RA"], unit="h").deg
 
@@ -949,7 +930,7 @@ class SIMBAD(RemoteDatabase):
 
         return table
 
-    def _query_radius(self, position, radius):
+    def _query_radius(self, position: SkyCoord, radius: units.Quantity) -> SourceTable:
         """
         Query the remote database at the specified position and pull all sources within a given radius.
         Parameters
@@ -974,7 +955,7 @@ class SIMBAD(RemoteDatabase):
         output.schema = self.query_schema
         return output
 
-    def query_object(self, object_name):
+    def query_object(self, object_name: str):
         """
         Query SIMBAD for data related to a particular object.
 
@@ -999,7 +980,7 @@ class SIMBAD(RemoteDatabase):
         return output
 
     @staticmethod
-    def query_tap(query):
+    def query_tap(query: str):
         """
         Query Simbad via ASQL query.
 
@@ -1014,6 +995,49 @@ class SIMBAD(RemoteDatabase):
             The resulting output table.
         """
         return Simbad.query_tap(query)
+
+
+class DBRegistry(_Registry):
+    """
+    A :py:class:`DBRegistry` instance is a collection of identifiable database classes.
+
+    Notes
+    -----
+
+    The primary purpose of database registries is to allow the user and the backend to keep a "list" of the available
+    databases.
+    """
+
+    def __init__(self, databases: list[SourceDatabase]):
+        """
+        Initialize a database registry.
+
+        Parameters
+        ----------
+        databases: list of SourceDatabase
+            The list of databases to load into the registry.
+
+        """
+        super().__init__({database.name: database for database in databases})
+
+        # -- check that the classes are actually valid -- #
+        assert all(isinstance(v, SourceDatabase) for v in self.values())
+
+    @property
+    def names(self) -> list[str]:
+        return list(self.keys())
+
+    @property
+    def locals(self) -> list[str]:
+        return [k for k, v in self.items() if isinstance(v, LocalDatabase)]
+
+    @property
+    def remotes(self) -> list[str]:
+        return [k for k, v in self.items() if isinstance(v, RemoteDatabase)]
+
+    @classmethod
+    def _default_registry(cls):
+        return cls([NED(), SIMBAD()])
 
 
 DEFAULT_DATABASE_REGISTRY = DBRegistry._default_registry()
@@ -1112,21 +1136,3 @@ def add_points_to_poisson_map(database_name, n, radii, registry=None, **kwargs):
     database = get_database(database_name, registry)
 
     database.add_sources_to_poisson(n, radii, **kwargs)
-
-
-if __name__ == "__main__":
-    db = NED()
-    psn = db.poisson_atlas
-
-    import matplotlib.pyplot as plt
-
-    mp = psn.get_map("IrS")
-
-    print(mp)
-    mp.plot(cmap="gnuplot")
-    plt.show()
-
-    print(psn)
-    # tb = SourceTable.read("/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits")
-    # db = LocalDatabase(tb,"example_database")
-    # print(db)

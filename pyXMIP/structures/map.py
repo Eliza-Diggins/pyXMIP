@@ -21,8 +21,9 @@ from astropy.io import fits
 from tqdm.auto import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-from pyXMIP.utilities.core import enforce_units, mainlog
+from pyXMIP.utilities.core import enforce_units
 from pyXMIP.utilities.geo import convert_coordinates, convert_skycoord
+from pyXMIP.utilities.logging import mainlog
 from pyXMIP.utilities.plot import _enforce_style, plot_healpix
 
 

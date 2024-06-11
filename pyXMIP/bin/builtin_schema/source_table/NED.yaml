@@ -7,11 +7,18 @@
 #-----------------------------------------#
 
 column_map: # The column map tells the schema what different columns in your catalog actually are.
-    RA: "RA"
-    DEC: "DEC"
-    NAME: "Object Name"
-    TYPE: 'Type'
-    Z: "Redshift"
+    RA:
+      name: "RA"
+    DEC:
+      name: "DEC"
+    NAME:
+      name: "Object Name"
+    TYPE:
+      name: 'Type'
+    Z:
+      name: "Redshift"
+    SEP:
+      name: "Separation"
 
 object_map:
   "*":          '*'                    # Star or Point Source

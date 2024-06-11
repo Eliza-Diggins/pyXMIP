@@ -7,7 +7,7 @@ from pyXMIP.utilities._text import (
     print_cli_header,
     show_config,
 )
-from pyXMIP.utilities.core import _config_directory, getFromDict, setInDict, xsparams
+from pyXMIP.utilities.core import config_directory, getFromDict, setInDict, xsparams
 
 try:
     from rich.pretty import pprint as print
@@ -81,7 +81,7 @@ def set_config(option_name=None, option_value=None):
     from ruamel.yaml import YAML
 
     yaml = YAML()
-    with open(_config_directory, "r+") as f:
+    with open(config_directory, "r+") as f:
         config = yaml.load(f)
 
         try:
@@ -90,7 +90,7 @@ def set_config(option_name=None, option_value=None):
         except KeyError:
             print("Failed to change configuration.")
 
-    with open(_config_directory, "w") as f:
+    with open(config_directory, "w") as f:
         yaml.dump(config, f)
 
 

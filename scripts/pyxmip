@@ -12,9 +12,9 @@ import yaml
 
 import pyXMIP._script_commands as sc
 from pyXMIP._script_commands import build_cli_parsers_recursive
-from pyXMIP.utilities.core import _bin_directory, mainlog
+from pyXMIP.utilities.core import bin_directory, mainlog
 
-scripts_path = os.path.join(_bin_directory, "scripts.yaml")
+scripts_path = os.path.join(bin_directory, "scripts.yaml")
 
 with open(scripts_path, "r") as file:
     _yaml_cli = yaml.load(file, yaml.FullLoader)

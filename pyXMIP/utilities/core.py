@@ -1,161 +1,132 @@
 """
-Core utilities with ubiquitous use cases in the ``pyXs`` package.
+Core utilities for many tasks in the ``pyXMIP`` package environment.
+
+Notes
+-----
+
+Aside from access to the logging system, this module has very little practical use for the end user.
+
 """
-import logging
+import functools
 import operator
 import os
 import pathlib as pt
-import sys
-from contextlib import contextmanager
 from functools import reduce
+from typing import Any, Collection, Iterable, Mapping, Self
 
 import astropy.units as u
-import sqlalchemy as sql
-import yaml
+import ruamel.yaml
+from sqlalchemy.types import TypeEngine
 
 # -- configuration directory -- #
-_bin_directory = os.path.join(pt.Path(__file__).parents[1], "bin")
-_config_directory = os.path.join(pt.Path(__file__).parents[1], "bin", "config.yaml")
+bin_directory: pt.Path = pt.Path(os.path.join(pt.Path(__file__).parents[1], "bin"))
+# :py:class:`pathlib.Path`: The directory in which the ``pyXMIP`` bin is located.
+config_directory: pt.Path = pt.Path(
+    os.path.join(pt.Path(__file__).parents[1], "bin", "config.yaml")
+)
+# :py:class:`pathlib.Path`: The directory in which the ``pyXMIP`` configuration files are located.
+
+yaml = ruamel.yaml.YAML()
+yaml.register_class(u.Quantity)
+yaml.register_class(TypeEngine)
 
 
-# ======================================================================================================================#
-# YAML loader custom definitions                                                                                       #
-# ======================================================================================================================#
-def _yaml_unit_constructor(loader: yaml.FullLoader, node: yaml.nodes.MappingNode):
-    kw = loader.construct_mapping(node)
-    i_s = kw["input_scalar"]
-    del kw["input_scalar"]
-    return i_s * u.Unit(kw["units"])
-
-
-def _yaml_sql_type_constructor(loader: yaml.FullLoader, node: yaml.nodes.ScalarNode):
-    return getattr(sql.types, loader.construct_scalar(node))
-
-
-def _get_loader():
-    loader = yaml.FullLoader
-    loader.add_constructor("!unit", _yaml_unit_constructor)
-    loader.add_constructor("!sql", _yaml_sql_type_constructor)
-    return loader
-
-
-# ======================================================================================================================#
-# Configuration File                                                                                                    #
-# ======================================================================================================================#
-try:
-    with open(_config_directory, "r+") as config_file:
-        xsparams = yaml.load(config_file, _get_loader())
-
-except FileNotFoundError as er:
-    raise FileNotFoundError(
-        f"Couldn't find the configuration file! Is it at {_config_directory}? Error = {er.__repr__()}"
-    )
-except yaml.YAMLError as er:
-    raise yaml.YAMLError(
-        f"The configuration file is corrupted! Error = {er.__repr__()}"
-    )
-
-
-# ======================================================================================================================#
-# Logging                                                                                                               #
-# ======================================================================================================================#
-class PyxmLogger(logging.Logger):
-    """custom logging class with customizable verbosity.
-
-    Verbosity levels:
-
-    0 - development logging basically everything.
-    1 - high verbosity: lots of info.
-    2 - normal output.
-    3 - only critical info.
-
+class AttrDict(dict):
+    """
+    Attribute accessible dictionary.
     """
 
-    def __init__(self, name, level=logging.NOTSET, verbosity=0):
-        super().__init__(name, level)
-        self.verbosity = verbosity
-        self._fixed_verb = dict(
-            debug=None, info=None, warning=None, error=None, critical=None
-        )
+    def __init__(self, mapping: Mapping):
+        super(AttrDict, self).__init__(mapping)
+        self.__dict__ = self
 
-    def debug(self, msg, *args, verb=0, **kwargs):
-        if self._fixed_verb["debug"] is not None:
-            verb = self._fixed_verb["debug"]
+        for key in self.keys():
+            self[key] = self.__class__.from_nested_dict(self[key])
 
-        if verb >= self.verbosity:
-            super().debug(msg, *args, **kwargs)
+    @classmethod
+    def from_nested_dict(cls, data: Any) -> Self:
+        """Construct nested AttrDicts from nested dictionaries."""
+        if not isinstance(data, dict):
+            return data
+        else:
+            return AttrDict({key: cls.from_nested_dict(data[key]) for key in data})
 
-    def warning(self, msg, *args, verb=0, **kwargs):
-        if self._fixed_verb["warning"] is not None:
-            verb = self._fixed_verb["warning"]
+    @classmethod
+    def clean_types(cls, _mapping):
+        for k, v in _mapping.items():
+            if isinstance(v, AttrDict):
+                _mapping[k] = cls.clean_types(_mapping[k])
+            else:
+                pass
+        return dict(_mapping)
 
-        if verb >= self.verbosity:
-            super().warning(msg, *args, **kwargs)
-
-    def info(self, msg, *args, verb=0, **kwargs):
-        if self._fixed_verb["info"] is not None:
-            verb = self._fixed_verb["info"]
-
-        if verb >= self.verbosity:
-            super().info(msg, *args, **kwargs)
-
-    def error(self, msg, *args, verb=0, **kwargs):
-        if self._fixed_verb["error"] is not None:
-            verb = self._fixed_verb["error"]
-
-        if verb >= self.verbosity:
-            super().error(msg, *args, **kwargs)
-
-    def critical(self, msg, *args, verb=0, **kwargs):
-        if self._fixed_verb["critical"] is not None:
-            verb = self._fixed_verb["critical"]
-
-        if verb >= self.verbosity:
-            super().critical(msg, *args, **kwargs)
-
-    @contextmanager
-    def fixed_verb(self, **kwargs):
-        old_fix_verb = {**self._fixed_verb}
-        for k, v in self._fixed_verb.items():
-            self._fixed_verb[k] = kwargs.get(k, v)
-
-        yield None
-
-        self._fixed_verb = old_fix_verb
-
-    def reset_fixed_verb(self):
-        self._fixed_verb = dict(
-            debug=None, warning=None, info=None, error=None, critical=None
-        )
+    def clean(self):
+        return self.clean_types(self)
 
 
-# -- Setup the logger -- #
-stream = (
-    sys.stdout
-    if xsparams["system"]["logging"]["main"]["stream"] in ["STDOUT", "stdout"]
-    else sys.stderr
-)
-mainLogger = PyxmLogger(
-    "pyXMIP", verbosity=xsparams["system"]["logging"]["main"]["verbosity"]
-)
-
-xs_sh = logging.StreamHandler(stream=stream)
-
-# create formatter and add it to the handlers
-formatter = logging.Formatter(xsparams["system"]["logging"]["main"]["format"])
-xs_sh.setFormatter(formatter)
-# add the handler to the logger
-mainLogger.addHandler(xs_sh)
-mainLogger.setLevel(xsparams["system"]["logging"]["main"]["level"])
-mainLogger.propagate = False
-
-mainlog = mainLogger
-
-
-def enforce_units(value, preferred_units):
+class YAMLConfiguration:
     """
-    Return a version of ``value`` with units of the type preferred or return
-    an error if that isn't possible.
+    General class representing a YAML configuration file.
+    """
+
+    def __init__(self, path: pt.Path | str):
+        # ------------------------------------------------- #
+        # Defining parameters                               #
+        # ------------------------------------------------- #
+        self.path: pt.Path = pt.Path(path)
+        # :py:class:`pathlib.Path`: The path to the underlying yaml file.
+        self._config: ruamel.yaml.CommentedMap | None = None
+
+    @property
+    def config(self):
+        if self._config is None:
+            self._config = self.load()
+
+        return AttrDict(self._config)
+
+    @classmethod
+    def load_from_path(cls, path: pt.Path) -> dict:
+        """Read the configuration dictionary from disk."""
+        try:
+            with open(path, "r+") as cf:
+                return yaml.load(cf)
+
+        except FileNotFoundError as er:
+            raise FileNotFoundError(
+                f"Couldn't find the configuration file! Is it at {config_directory}? Error = {er.__repr__()}"
+            )
+
+    def load(self) -> dict:
+        return self.__class__.load_from_path(self.path)
+
+    def reload(self):
+        """Reload the configuration file from disk."""
+        self._config = None
+
+    @classmethod
+    def set_on_disk(cls, path: pt.Path | str, name: str | Collection[str], value: Any):
+        _old = cls.load_from_path(path)
+
+        if isinstance(name, str):
+            name = name.split(".")
+        else:
+            pass
+
+        setInDict(_old, name, value)
+
+        with open(path, "w") as cf:
+            yaml.dump(_old, cf)
+
+    def set_param(self, name: str | Collection[str], value):
+        self.__class__.set_on_disk(self.path, name, value)
+
+
+pxconfig = YAMLConfiguration(config_directory)
+
+
+def enforce_units(value: Any, preferred_units: u.Unit | str) -> u.Quantity:
+    """
+    Return a version of ``value`` with units of the type preferred or raise an error if that isn't possible.
 
     Parameters
     ----------
@@ -171,14 +142,144 @@ def enforce_units(value, preferred_units):
 
     """
     if isinstance(value, u.Quantity):
-        return value.to(preferred_units)
+        try:
+            return value.to(preferred_units)
+        except u.UnitConversionError as error:
+            raise ValueError(
+                f"Failed to enforce units {preferred_units} on {value}. MSG: {error.__str__()}"
+            )
     else:
         return value * u.Unit(preferred_units)
 
 
-def getFromDict(dataDict, mapList):
+def getFromDict(dataDict: Mapping, mapList: Iterable[slice]) -> Any:
+    """
+    Fetch an object from a nested dictionary using a list of keys.
+
+    Parameters
+    ----------
+    dataDict: dict
+        The data dictionary to search.
+    mapList: list
+        The list of keys to follow.
+
+    Returns
+    -------
+    Any
+        The output value.
+
+    """
     return reduce(operator.getitem, mapList, dataDict)
 
 
-def setInDict(dataDict, mapList, value):
+def setInDict(dataDict: Mapping, mapList: Iterable[slice], value: Any):
+    """
+    Set the value of an object from a nested dictionary using a list of keys.
+
+    Parameters
+    ----------
+    dataDict: dict
+        The data dictionary to search.
+    mapList: list
+        The list of keys to follow.
+    value: Any
+        The value to set the object to
+    """
     getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
+
+
+def rsetattr(obj: Any, attr: str, val: Any):
+    """
+    Recursively set an attribute.
+
+    Parameters
+    ----------
+    obj: Any
+        The object to search.
+    attr: str
+        The attribute position string.
+    val: Any
+        The value to set.
+    """
+    pre, _, post = attr.rpartition(".")
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+
+def rgetattr(obj: Any, attr: str, *args) -> Any:
+    """
+    Recursively get an attribute.
+
+    Parameters
+    ----------
+    obj: Any
+        The object to search.
+    attr: str
+        The attribute position string.
+    """
+
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+
+    return functools.reduce(_getattr, [obj] + attr.split("."))
+
+
+def produce_dict_heading(dataDict: Mapping, mapList: Iterable[slice]):
+    """
+    Generate iterative sub-dict in ``dataDict`` to allow setting of a sub-path for which the parent dict doesn't
+    yet exist.
+
+    Parameters
+    ----------
+    dataDict: dict
+        The data dictionary to search.
+    mapList: list
+        The position to generate to.
+
+    Returns
+    -------
+    None
+    """
+    for i, _ in enumerate(mapList, start=1):
+        try:
+            assert getFromDict(dataDict, mapList[:i]) is not None
+        except Exception:
+            setInDict(dataDict, mapList[:i], {})
+
+
+def find_descriptors(cls: Any, descriptor_classes: tuple[Any]) -> dict[str, Any]:
+    """Searches and returns all descriptors attached to this class or inherited."""
+    _descriptor_instances = {
+        k: v for k, v in cls.__dict__.items() if isinstance(v, descriptor_classes)
+    }
+    # iterate through all parent classes.
+    _bases = cls.__bases__  # list of all parents.
+    while object not in _bases:
+        _nbases = []
+        for _base in _bases:
+            _descriptor_instances = {
+                **_descriptor_instances,
+                **{
+                    k: v
+                    for k, v in _base.__dict__.items()
+                    if isinstance(v, descriptor_classes)
+                },
+            }
+            _nbases += _base.__bases__
+        _bases = _nbases[:]
+    return _descriptor_instances
+
+
+def merge_dicts(template: Mapping, partial: Mapping) -> Mapping:
+    _output = {**template}  # Copy template.
+
+    for k, v in template.items():
+        if k in partial and v is not None:
+            if isinstance(v, dict):
+                _output[k] = merge_dicts(v, partial[k])
+            else:
+                _output[k] = partial[k]
+
+        else:
+            pass
+
+    return _output

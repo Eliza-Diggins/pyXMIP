@@ -8,7 +8,7 @@ import healpy.projaxes as PA
 import numpy as np
 from matplotlib import pyplot as plt
 
-from pyXMIP.utilities.core import xsparams
+from pyXMIP.utilities.core import pxconfig
 
 
 # ======================================================================================================================#
@@ -21,7 +21,7 @@ def _enforce_style(func):
     def wrapper(*args, **kwargs):
         _rcp_copy = plt.rcParams.copy()
 
-        for _k, _v in xsparams["plotting"]["defaults"].items():
+        for _k, _v in pxconfig["plotting"]["defaults"].items():
             plt.rcParams[_k] = _v
 
         out = func(*args, **kwargs)
@@ -38,7 +38,7 @@ def set_style():
     """
     Uses the ``pyXMIP`` settings in the configuration file and enforces those formatting choices on matplotlib.
     """
-    for _k, _v in xsparams["plotting"]["defaults"].items():
+    for _k, _v in pxconfig["plotting"]["defaults"].items():
         plt.rcParams[_k] = _v
 
 

@@ -541,42 +541,8 @@ Below, you can find information about each of the available reduction processes.
 - :ref:`instrumental_reduction`
 - :ref:`object_type_reduction`
 
+Further Information
+'''''''''''''''''''
 
-Reduction Schema
-''''''''''''''''
-
-The cornerstone of the reduction process is the schema file, which dictates the runtime behavior of the reduction algorithm. In this section, we will describe the
-layout of these files and how one can go about constructing them.
-
-General Formatting
-++++++++++++++++++
-
-Like all schema files in the pyXMIP ecosystem, the reduction schema is a ``.yaml`` file with the following required headers:
-
-- ``RUN_PARAMS``: Core settings for the reduction run. This includes selecting what additional data should be considered,
-  which subprocesses should be enabled, etc.
-- ``IO_PARAMS``: IO related parameters, including file paths and other information.
-
-In addition to these two required sets of parameters, the following may also be specified / enabled
-
-- ``POISSON_PARAMS``: Parameters for the Poisson mapping sub-process.
-- ``OBJECT_PARAMS``: Parameters for the object type sub-process.
-- ``INSTRUMENT_PARAMS``: Parameters for the instrument specific sub-process.
-
-.. tab-set::
-
-    .. tab-item:: RUN_PARAMS
-
-        .. csv-table:: RUN_PARAM table
-            :class: longtable
-            :align: center
-            :width: 100%
-            :widths: 3,3,10,1
-            :file: _tables/run_params.csv
-            :header-rows: 1
-
-    .. tab-item:: IO_PARAMS
-
-        .. csv-table:: Table Title
-            :file: _tables/run_params.csv
-            :header-rows: 1
+- :ref:`reduction_schema`
+- :ref:`custom_reductions`

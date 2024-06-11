@@ -1,23 +1,25 @@
+"""
+Testing utilities for pyXMIP
+"""
 import os
 import pathlib as pt
 
-from pyXMIP.structures.table import SourceTable
+from astropy.table import Table
 
 
-def table_answer_testing(table, filename, answer_store, answer_dir):
-    filepath = pt.Path(os.path.join(answer_dir, filename))
+def check_astropy_table(table, answer_dir, subpath, answer_store):
+    path = pt.Path(os.path.join(answer_dir, subpath))
 
-    if answer_store:
-        # store the data and don't actually test
-        table.write(filepath, format="fits", overwrite=True)
+    if not path.parents[0].exists():
+        path.parents[0].mkdir(parents=True)
+
+    if answer_store or not path.exists():
+        table.write(path, format="ascii", overwrite=True)
+        return None
+
     else:
-        # check for the available.
-        if not filepath.exists():
-            table.write(filepath, format="fits")
-        else:
-            check_table = SourceTable.read(filepath, format="fits")
+        old_table = Table.read(path, format="ascii")
 
-            print(check_table, table)
-            assert len(check_table) == len(
-                table
-            ), f"Test table had len {len(table)} and check had len {len(check_table)}."
+        assert (
+            old_table.to_pandas() == table.to_pandas()
+        ).all, f"There was a change in the table at {path}."

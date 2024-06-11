@@ -9,8 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor, RadiusNeighborsRegressor
 from tqdm.contrib.concurrent import process_map
 
-from pyXMIP.utilities.core import mainlog
 from pyXMIP.utilities.geo import convert_skycoord
+from pyXMIP.utilities.logging import mainlog
 
 
 class PoissonMapRegressor:
@@ -249,7 +249,7 @@ class BayesianPoissonMapRegressor:
         # ==================================== #
         from itertools import repeat
 
-        from pyXMIP.utilities._mp_utils import created_shared_memory_equivalent, split
+        from pyXMIP.utilities.optimize import created_shared_memory_equivalent, split
 
         estimates = np.zeros(
             np.amax(PIX_ID) + 1, dtype="float64"

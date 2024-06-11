@@ -4,15 +4,29 @@ Astrometric Reduction Process
 ===============================
 
 The astrometric reduction process is designed to take into account the instrumental parameters of the observing instrument to
-deal with error is astrometry which might lead to inaccurate matches.
+deal with error is astrometry which might lead to inaccurate matches. In effect, this reduction process boils down to determining how
+confident one can be in a proposed match given their separation on the sky.
+
+.. raw:: html
+
+   <hr>
 
 Overview
 --------
 
-In ``pyXMIP``, astrometric precision of a given match is evaluated in a Bayesian manner (*a posteriori*). For each row in a given
-match table in your :py:class:`cross_reference.CrossMatchDatabase`, we compute the posterior probability :math:`P(H|D)` that the catalog object
-and the proposed cross-matching candidate are actually the same object based on their separation (*ceterus parabis*).
+Statistical inference regarding our confidence in the position of sources is a non-trivial problem. In ``pyXMIP``, we choose to treat
+it in a `Bayesian framework <https://en.wikipedia.org/wiki/Bayesian_inference>`_. The basic premise of the method is to compare two hypotheses
+for each proposed match:
 
+1. (:math:`H_0`, the null-hypothesis) These two sources (the catalog source and the match candidate) are not the same source.
+2. (:math:`H_1`, the test-hypothesis) These two sources are the same source.
+
+For each hypothesis, the probability that the two sources would have the observed separation is calculated, :math:`P(\delta|H_i)`,
+where :math:`\delta` is the separation between the two sources. Using these, we are able to calculate the `Bayes factor <https://en.wikipedia.org/wiki/Bayes_factor>`_
+and from that we can obtain the posterior distribution for :math:`H_1`.
+
+Because the model used is Bayesian, a `prior <https://en.wikipedia.org/wiki/Prior_probability>`_ is required and may be user specified or estimated
+from the available data.
 
 Mathematics Basis
 '''''''''''''''''
@@ -89,6 +103,43 @@ ideas of this methodology.
         \boxed{B(H,H_0|D) = \frac{1}{P(\mathbf{R}|H)P(\mathbf{R}|H_0)} \int_{S^2} P(\mathbf{R}|H) P(\mathbf{x}|\mathbf{R},M_{cat})P(\mathbf{y}|\mathbf{R},M_{db}) d\mathbf{R}. }
 
     It is possible to compute this Bayes factor and convert it into a posterior distribution (see :ref:`mathematics` below).
+
+Usage
+-----
+
+Like all reduction processes, the astrometric reduction is a :py:class:`structures.reduction.ReductionProcess` subclass (:py:class:`structures.reduction.AstrometricReductionProcess`).
+
+.. hint::
+
+    It's worth taking a look at the API documentation for :py:class:`structures.reduction.AstrometricReductionProcess`,
+    there are a great many parameters which might be very helpful for your particular use case.
+
+Setup and Parameters
+''''''''''''''''''''
+
+To get started, it's important to describe all of the relevant parameters and their behavior. The first consideration is how
+to model the uncertainty in the positions of each source.
+
+.. important::
+
+    There are a lot of parameters here, but you usually won't need to specify them all by hand. If you run this process through
+    a :py:class:`cross_reference.CrossMatchDatabase`, then the corresponding :py:class:`schema.CMDSchema` will be able to provide
+    a lot of the necessary information.
+
+Modeling Astrometric Uncertainty
+++++++++++++++++++++++++++++++++
+
+Every astrometric reduction process has two key parameters:
+
+1. :py:attr:`~structures.reduction.AstrometricReductionProcess.CATALOG_ERR`: The position uncertainty in the catalog sources.
+2. :py:attr:`~structures.reduction.AstrometricReductionProcess.DATABASE_ERR`: The position uncertainty in the database source.
+
+Both of these parameters are :py:class:`utilities.types.CoordinateErrorSpecifier` instances.
+
+
+.. raw:: html
+
+   <hr>
 
 Usage
 -----
@@ -202,6 +253,10 @@ initializing the :py:class:`reduction.ReductionProcess` from within the code or 
 
 Running the Reduction
 '''''''''''''''''''''
+
+.. raw:: html
+
+   <hr>
 
 .. _mathematics:
 Mathematics
