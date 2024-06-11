@@ -6,12 +6,15 @@ Installing ``pyXMIP``
 Installing From PyPy
 --------------------
 
-.. info::
+``pyXMIP`` may be installed from PyPI (stable versions) as follows:
 
-    This package has not yet been published to PyPy
+.. code-block:: shell
+
+    >>> pip install pyxmip
 
 Installing From Source
 ----------------------
+
 
 To install ``pyXMIP`` from source, you need only clone the git repository
 
@@ -21,13 +24,13 @@ To install ``pyXMIP`` from source, you need only clone the git repository
 
 and then install using
 
-.. code-block::
+.. code-block:: shell
 
     >>> cd pyXMIP
     >>> pip install .
 
 You can also achieve this in one line using
 
-.. code-block::
+.. code-block:: shell
 
     >>> pip install git+https://www.github.com/eliza-diggins/pyXMIP.git
