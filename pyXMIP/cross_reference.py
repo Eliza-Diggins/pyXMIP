@@ -34,7 +34,7 @@ from pyXMIP.utilities.types import _CMDTypePydanticAnnotation
 # -- Importing SELF -- #
 try:
     from typing import Self  # noqa
-except ModuleNotFoundError:
+except ImportError:
     from typing_extensions import Self as Self  # noqa
 
 # ========================================================= #

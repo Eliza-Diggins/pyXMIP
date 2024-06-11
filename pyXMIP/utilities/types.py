@@ -42,7 +42,7 @@ from pyXMIP.utilities.logging import mainlog
 # -- Importing SELF -- #
 try:
     from typing import Self  # noqa
-except ModuleNotFoundError:
+except ImportError:
     from typing_extensions import Self as Self  # noqa
 
 
