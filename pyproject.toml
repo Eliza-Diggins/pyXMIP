@@ -29,7 +29,8 @@ dependencies = [
     "healpy",
     "pydantic",
     "ruamel.yaml",
-    "matplotlib"
+    "matplotlib",
+    "typing-extensions"
 ]
 requires-python = ">=3.9"
 
