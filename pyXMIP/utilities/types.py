@@ -39,6 +39,12 @@ from typing_extensions import Annotated, Literal
 
 from pyXMIP.utilities.logging import mainlog
 
+# -- Importing SELF -- #
+try:
+    from typing import Self  # noqa
+except ModuleNotFoundError:
+    from typing_extensions import Self as Self  # noqa
+
 
 def convert_np_type_to_sql(dtype: np.dtype) -> Type[TypeEngine]:
     """

@@ -8,7 +8,7 @@ For guidance on working with reduction processes, we recommend looking at the gu
 
 """
 from abc import ABC, abstractmethod
-from typing import Callable, Self
+from typing import Callable
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,7 @@ from pydantic import BaseModel, model_validator
 from pyXMIP.cross_reference import PydanticCMD
 from pyXMIP.utilities.logging import mainlog
 from pyXMIP.utilities.sql import chunk_sql_query_operation
-from pyXMIP.utilities.types import ICRSCoordinateStdErrorSpecifier, TableColumn
+from pyXMIP.utilities.types import ICRSCoordinateStdErrorSpecifier, Self, TableColumn
 
 
 class ReductionProcess(BaseModel, ABC):

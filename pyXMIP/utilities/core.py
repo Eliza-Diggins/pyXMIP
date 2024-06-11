@@ -12,11 +12,17 @@ import operator
 import os
 import pathlib as pt
 from functools import reduce
-from typing import Any, Collection, Iterable, Mapping, Self
+from typing import Any, Collection, Iterable, Mapping
 
 import astropy.units as u
 import ruamel.yaml
 from sqlalchemy.types import TypeEngine
+
+# -- Importing SELF -- #
+try:
+    from typing import Self  # noqa
+except ModuleNotFoundError:
+    from typing_extensions import Self as Self  # noqa
 
 # -- configuration directory -- #
 bin_directory: pt.Path = pt.Path(os.path.join(pt.Path(__file__).parents[1], "bin"))

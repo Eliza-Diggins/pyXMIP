@@ -12,7 +12,7 @@ run queries and reduce results.
 """
 import pathlib as pt
 import time
-from typing import Annotated, Any, Callable, Collection, Self, TypeVar
+from typing import Annotated, Any, Callable, Collection, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -29,7 +29,7 @@ from pyXMIP.structures.databases import (
 )
 from pyXMIP.structures.table import SourceTable
 from pyXMIP.utilities.logging import mainlog
-from pyXMIP.utilities.types import _CMDTypePydanticAnnotation
+from pyXMIP.utilities.types import Self, _CMDTypePydanticAnnotation
 
 # ========================================================= #
 # Type hinting constructs                                   #
