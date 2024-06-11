@@ -2,17 +2,18 @@
 """
 Main pyXMIP command-line interface message passing script.
 """
-import argparse
 import os
+
+import yaml
+
+from pyXMIP._script_commands import CLI_FUNCTIONS, CLIParser
+from pyXMIP.utilities.core import bin_directory
+from pyXMIP.utilities.logging import mainlog
 
 # ================================================================================= #
 # Reading the yaml file
 # ================================================================================= #
-import yaml
 
-import pyXMIP._script_commands as sc
-from pyXMIP._script_commands import build_cli_parsers_recursive
-from pyXMIP.utilities.core import bin_directory, mainlog
 
 scripts_path = os.path.join(bin_directory, "scripts.yaml")
 
@@ -24,33 +25,27 @@ with open(scripts_path, "r") as file:
 # CLI Configuration
 # ================================================================================= #
 # Setup the main parser and add the commands subparser.
-_main_parser = argparse.ArgumentParser(prog="pyxmip")
-_command_subparser = _main_parser.add_subparsers(
-    title="commands", help="Available pyXMIP commands."
-)
-_command_parsers = build_cli_parsers_recursive(
-    _yaml_cli, parent_parser=_command_subparser
-)
+_main_parser = CLIParser.build_recursive(_yaml_cli)
 
 # ================================================================================ #
 # RUN
 # ================================================================================ #
 args = dict(_main_parser.parse_args().__dict__)
 
-operation_function = args.pop("operation_function", None)
-if operation_function is None:
-    from pyXMIP.utilities._text import print_cli_header
+operation = args.pop("operation", None)
+if operation is None:
+    from pyXMIP.utilities.text import print_cli_header
 
     print_cli_header()
     mainlog.error("Please enter a sub-command.")
     exit(1)
-elif operation_function == "unimplemented":
-    from pyXMIP.utilities._text import print_cli_header
+elif operation == "unimplemented":
+    from pyXMIP.utilities.text import print_cli_header
 
     print_cli_header()
     mainlog.error("This is not yet implemented.")
     exit(1)
 
 else:
-    getattr(sc, operation_function)(**args)
+    CLI_FUNCTIONS[operation](**args)
     exit(0)

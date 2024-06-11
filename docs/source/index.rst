@@ -1,9 +1,9 @@
 .. image:: images/logos_icons/logo_main.png
     :scale: 50%
 
-|precom| |linting| |docs| |isort Status| |black| |astropy| |astroQuery| |sklearn|
+|precom| |linting| |docs| |isort Status| |black| |astropy| |pydantic| |sklearn|
 
-pyXMIP (the python X-Matching and Identification Package) is an astronomical software package for cross referencing source catalogs
+pyXMIP (the **p**\ ython **X**\ -**M**\ atching and **I**\ dentification **P**\ ackage) is an astronomical software package for cross referencing source catalogs
 against known databases. The package provides a variety of statistical tools for quantifying the confidence of a given match and automates
 queries against many of the most common astronomical databases.
 
@@ -18,7 +18,6 @@ Features
 
 - Cross match catalogs of sources from survey missions against a wide array of known source databases.
 - Use statistical methodologies to model the distribution of sources and produce match probabilities.
-- Create mock all sky surveys.
 
 .. grid:: 3
 
@@ -147,7 +146,7 @@ Pages
     :target: https://github.com/psf/black
 .. |astropy| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
     :target: https://www.astropy.org
-.. |astroquery| image:: http://img.shields.io/badge/powered%20by-AstroQuery-orange.svg?style=flat
+.. |pydantic| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json
     :target: https://www.astropy.org
 .. |sklearn| image:: http://img.shields.io/badge/powered%20by-sklearn-cyan.svg?style=flat
     :target: https://scikit-learn.org/stable/index.html

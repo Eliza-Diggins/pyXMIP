@@ -564,7 +564,7 @@ class CrossMatchDatabase:
         allow_overwrite: bool, optional
             If ``True``, then overwriting is permitted on this operation.
         """
-        from pyXMIP.utilities.optimize import chunk_sql_query_operation
+        from pyXMIP.utilities.sql import chunk_sql_query_operation
 
         def _chunk_db_operation(function: Callable[[pd.DataFrame, ...], pd.DataFrame]):
             """
@@ -698,7 +698,7 @@ class CrossMatchDatabase:
         allow_overwrite: bool, optional
             If ``True``, then overwriting is permitted on this operation.
         """
-        from pyXMIP.utilities.optimize import chunk_sql_table_operation
+        from pyXMIP.utilities.sql import chunk_sql_table_operation
 
         def _chunk_db_table_operation(
             function: Callable[[pd.DataFrame, ...], pd.DataFrame]

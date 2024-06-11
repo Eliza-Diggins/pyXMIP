@@ -1,5 +1,5 @@
 """
-Module containing core datastructures and validation procedures for interacting with user data.
+Module containing core data structures and validation procedures for interacting with user data.
 
 Notes
 -----
@@ -9,9 +9,10 @@ the package require some boilerplate code to provide for validation. To do this 
 main package, this module contains all of that boilerplate code.
 
 """
-from typing import Any, Callable, Type
+from typing import Any, Callable, Mapping, Type
 
 import astropy.coordinates as astro_coords
+import numpy as np
 from astropy.units import Quantity, Unit
 from pydantic import (
     AfterValidator,
@@ -24,13 +25,37 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import PydanticUndefinedType, core_schema
-from sqlalchemy.types import BOOLEAN, DATETIME, FLOAT, INTEGER, NULLTYPE, TEXT, Interval
+from sqlalchemy.types import (
+    BOOLEAN,
+    DATETIME,
+    FLOAT,
+    INTEGER,
+    NULLTYPE,
+    TEXT,
+    Interval,
+    TypeEngine,
+)
 from typing_extensions import Annotated, Literal
 
 from pyXMIP.utilities.logging import mainlog
 
 
-def convert_np_type_to_sql(dtype):
+def convert_np_type_to_sql(dtype: np.dtype) -> Type[TypeEngine]:
+    """
+    Convert a standard ``numpy`` data type into its corresponding ``sqlalchemy`` dtype.
+
+    Parameters
+    ----------
+    dtype: :py:class:`numpy.dtype`
+        The data type (numpy) to convert.
+
+    Returns
+    -------
+    TypeEngine
+        The class representing that data type in sqlalchemy.
+
+    """
+
     _kind = dtype.kind
 
     if _kind == "f":
@@ -160,7 +185,7 @@ class _QuantityTypePydanticAnnotation:
 
 class _FrameTypePydanticAnnotation:
     """
-    This is a PyDantic annotation to process quantity-typed objects.
+    This is a PyDantic annotation to process coordinate frame objects.
     """
 
     @classmethod
@@ -303,6 +328,30 @@ def construct_template(datamodel: Type[BaseModel]) -> dict:
 # ============================================================= #
 #   Custom structures are Pydantic recognized data structures for validation
 #   and eventual usage in schema objects.
+
+
+class Registry(dict):
+    """
+    Bare-bones registry class.
+    """
+
+    def __init__(self, mapping: Mapping):
+        """
+        Initialize the generalized registry class.
+
+        Parameters
+        ----------
+        mapping: dict
+            The dictionary underlying this registry.
+        """
+        super().__init__(mapping)
+
+    def as_list(self) -> list:
+        return list(self.values())
+
+    def add(self, key: str, value: Any):
+        assert key not in self, f"Key {key} already in registry."
+        self[key] = value
 
 
 class TableColumn(BaseModel):

@@ -40,6 +40,9 @@ Statistics
 Other
 -----
 
+These sub-modules are largely collections of convenience functions or utility functions for use elsewhere. Nonetheless,
+users interested in the logging system, the config system, or plotting should look at the relevant documentation here.
+
 .. autosummary::
     :toctree: _as_gen
     :recursive:
@@ -47,6 +50,9 @@ Other
     :nosignatures:
 
     utilities.core
-    utilities.geo
-    utilities.plot
     utilities.types
+    utilities.logging
+    utilities.optimize
+    utilities.plot
+    utilities.text
+    utilities.sql

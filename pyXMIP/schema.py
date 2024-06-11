@@ -17,12 +17,12 @@ from typing import ClassVar, Type, Union
 import astropy.coordinates as astro_coords
 import pydantic as pyn
 
-from pyXMIP.utilities._registries import _Registry
 from pyXMIP.utilities.core import bin_directory, find_descriptors, rgetattr, rsetattr
 from pyXMIP.utilities.logging import mainlog
 from pyXMIP.utilities.types import (
     ColumnMap,
     ICRSCoordinateStdErrorSpecifier,
+    Registry,
     SourceTableSchemaSettings,
     TableColumn,
     construct_template,
@@ -620,7 +620,7 @@ class ReductionSchema(Schema):
     pass
 
 
-class SchemaRegistry(_Registry):
+class SchemaRegistry(Registry):
     """
     Registry class for containing collections of :py:class:`Schema` classes.
     """

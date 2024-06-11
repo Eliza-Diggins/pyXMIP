@@ -16,7 +16,7 @@ from pydantic import BaseModel, model_validator
 
 from pyXMIP.cross_reference import PydanticCMD
 from pyXMIP.utilities.logging import mainlog
-from pyXMIP.utilities.optimize import chunk_sql_query_operation
+from pyXMIP.utilities.sql import chunk_sql_query_operation
 from pyXMIP.utilities.types import ICRSCoordinateStdErrorSpecifier, TableColumn
 
 

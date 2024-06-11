@@ -21,8 +21,8 @@ from pyXMIP.utilities.core import pxconfig
 # Establishing relevant streams                             #
 # --------------------------------------------------------- #
 streams = dict(
-    mainlog=getattr(sys, pxconfig.logging.mainlog.stream),
-    devlog=getattr(sys, pxconfig.logging.devlog.stream),
+    mainlog=getattr(sys, pxconfig.config.logging.mainlog.stream),
+    devlog=getattr(sys, pxconfig.config.logging.devlog.stream),
 )
 
 _loggers = dict(mainlog=logging.Logger("pyXMIP"), devlog=logging.Logger("pyXMIP-DEV"))
@@ -32,13 +32,15 @@ _handlers = {}
 for k, v in _loggers.items():
     # Construct the formatter string.
     _handlers[k] = logging.StreamHandler(streams[k])
-    _handlers[k].setFormatter(logging.Formatter(getattr(pxconfig.logging, k).format))
+    _handlers[k].setFormatter(
+        logging.Formatter(getattr(pxconfig.config.logging, k).format)
+    )
     v.addHandler(_handlers[k])
-    v.setLevel(getattr(pxconfig.logging, k).level)
+    v.setLevel(getattr(pxconfig.config.logging, k).level)
     v.propagate = False
 
     if k != "mainlog":
-        v.disabled = not getattr(pxconfig.logging, k).enabled
+        v.disabled = not getattr(pxconfig.config.logging, k).enabled
 
 mainlog: logging.Logger = _loggers["mainlog"]
 # :py:class:`logging.Logger`: The main logger for ``pyXMIP``.

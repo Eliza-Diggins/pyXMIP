@@ -13,27 +13,32 @@ import time
 import warnings
 from abc import ABC, abstractmethod
 from itertools import repeat
+from typing import Any, Callable, Generic, Type, TypeVar
 
 import numpy as np
 import requests.exceptions
 import sqlalchemy as sql
 from astropy import units
 from astropy.coordinates import Angle, SkyCoord
-from astropy.table import vstack
+from astropy.table import Table, vstack
 from astroquery.ipac.ned import Ned
 from astroquery.simbad import Simbad
 from tqdm.auto import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-from pyXMIP.schema import DEFAULT_SOURCE_SCHEMA_REGISTRY
+from pyXMIP.schema import DEFAULT_SOURCE_SCHEMA_REGISTRY, SourceTableSchema
 from pyXMIP.structures.map import PoissonAtlas
 from pyXMIP.structures.table import SourceTable, correct_column_types
-from pyXMIP.utilities._registries import _Registry
 from pyXMIP.utilities.core import bin_directory, enforce_units
 from pyXMIP.utilities.logging import mainlog
-from pyXMIP.utilities.types import convert_np_type_to_sql
+from pyXMIP.utilities.types import Registry, convert_np_type_to_sql
 
-poisson_map_directory = os.path.join(bin_directory, "psn_maps")
+poisson_map_directory: str = os.path.join(bin_directory, "psn_maps")
+
+# -- Typing Variables -- #
+Instance = TypeVar("Instance")
+Value = TypeVar("Value")
+Attribute = TypeVar("Attribute")
 
 
 class DatabaseError(Exception):
@@ -46,20 +51,22 @@ class DatabaseError(Exception):
         super().__init__(self.message)
 
 
-class _DatabaseConfigSetting:
-    def __init__(self, default=None):
+class _DatabaseConfigSetting(Generic[Instance, Attribute, Value]):
+    # Descriptor class for query configuration settings.
+    # Stored in query_config.
+    def __init__(self, default: Any = None):
         self.default = default
 
-    def __set_name__(self, owner, name):
+    def __set_name__(self, owner: Type[Instance], name: str) -> None:
         self._name = name
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Instance, owner: Type[Instance]) -> Any:
         if self._name in instance.query_config:
             return instance.query_config[self._name]
         else:
             return self.default
 
-    def __set__(self, instance, value):
+    def __set__(self, instance: Instance, value: Any) -> None:
         instance.query_config[self._name] = value
 
 
@@ -78,23 +85,23 @@ class SourceDatabase(ABC):
     """
 
     # -- class default variables and methods -- #
-    default_poisson_atlas_path = os.path.join(poisson_map_directory, "NONE")
+    default_poisson_atlas_path: str = os.path.join(poisson_map_directory, "NONE")
     """str: The path to the default poisson atlas file.
 
     For remote databases, this is generally non-trivial. For local databases,this is typically None.
     """
-    default_query_config = None
+    default_query_config: dict[str, Any] = None
     """dict: The configuration information for performing the query.
 
     Depending on the particular database, this may vary substantially."""
-    default_query_schema = None
+    default_query_schema: SourceTableSchema = None
     """:py:class:`schema.SourceTableSchema`: The schema for the returned table after a query.
 
     For local databases, this is automatically set to the base catalog. For remotes, it must generally be constructed.
     """
     _thread_lock = threading.Lock()
 
-    def __init__(self, db_name, *args, **kwargs):
+    def __init__(self, db_name: str, *args, **kwargs):
         """
         Initialize the :py:class:`SourceDatabase`.
 
@@ -111,31 +118,31 @@ class SourceDatabase(ABC):
         correct_query_output: callable
             The callable for correcting formatting of the query output.
         """
-        self.name = db_name
+        self.name: str = db_name
         """str: The name of this database instance.
         """
-        self._poisson_atlas_path = kwargs.pop(
+        self._poisson_atlas_path: str = kwargs.pop(
             "poisson_path", self.__class__.default_poisson_atlas_path
         )
         """str: The path to the Poisson Atlas file.
 
         By default, it is ``None``; but remote subclasses should have a built-in poisson path.
         """
-        self.query_config = kwargs.pop(
+        self.query_config: dict = kwargs.pop(
             "query_config", self.__class__.default_query_config
         )
         """dict: The query configuration options.
 
         By default, it is ``None``; this varies for subclasses.
         """
-        self.query_schema = kwargs.pop(
+        self.query_schema: SourceTableSchema = kwargs.pop(
             "query_schema", self.__class__.default_query_schema
         )
         """:py:class:`schema.SourceTableSchema`: The schema for the returned table after a query.
 
         For local databases, this is automatically set to the base catalog. For remotes, it must generally be constructed.
         """
-        self.correct_query_output = kwargs.pop(
+        self.correct_query_output: Callable[[SourceTable], SourceTable] = kwargs.pop(
             "correct_query_output", self.default_correct_query_output
         )
         """callable: The method for altering returned source tables to be writable to sql.
@@ -149,7 +156,7 @@ class SourceDatabase(ABC):
     def __repr__(self):
         return self.__str__()
 
-    def register(self, registry):
+    def register(self, registry: Registry):
         """Add this instance to a DBRegistry."""
         if self.name not in registry:
             registry[self.name] = self
@@ -209,8 +216,7 @@ class SourceDatabase(ABC):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             mainlog.info(
-                f"Querying lat={np.round(position.frame.spherical.lat.deg,decimals=3)}, lon={np.round(position.frame.spherical.lon.deg,decimals=3)} in {self.name}...",
-                verb=4,
+                f"Querying lat={np.round(position.frame.spherical.lat.deg,decimals=3)}, lon={np.round(position.frame.spherical.lon.deg,decimals=3)} in {self.name}..."
             )
             output_table = self._query_radius(
                 position,
@@ -220,7 +226,9 @@ class SourceDatabase(ABC):
         return output_table
 
     @classmethod
-    def _default_correct_query_output(cls, table, schema=None):
+    def _default_correct_query_output(
+        cls, table: SourceTable | Table, schema: SourceTableSchema = None
+    ) -> SourceTable | Table:
         """
         The default query output correction callable.
 
@@ -252,7 +260,9 @@ class SourceDatabase(ABC):
 
         return table
 
-    def default_correct_query_output(self, table):
+    def default_correct_query_output(
+        self, table: SourceTable | Table
+    ) -> SourceTable | Table:
         """
         The default query output correction callable.
 
@@ -273,9 +283,13 @@ class SourceDatabase(ABC):
         By default, the only thing that this function does is correct column types.
 
         """
-        return self._default_correct_query_output(table, schema=self.query_schema)
+        return self.__class__._default_correct_query_output(
+            table, schema=self.query_schema
+        )
 
-    def count(self, positions, radii, parallel_kwargs=None):
+    def count(
+        self, positions: SkyCoord, radii: units.Quantity, parallel_kwargs: dict = None
+    ):
         """
         Count the number of each object type in a set of position queries.
 
@@ -331,7 +345,9 @@ class SourceDatabase(ABC):
         output_table["TIME"] = time.asctime()
         return output_table
 
-    def _thread_pooled_count(self, position, radius, progress_bar):
+    def _thread_pooled_count(
+        self, position: SkyCoord, radius: units.Quantity, progress_bar: Any
+    ) -> Table:
         try:
             _output_var = self.query_radius(position, radius).count_types()
         except Exception as exception:
@@ -340,7 +356,9 @@ class SourceDatabase(ABC):
         progress_bar.update()
         return _output_var
 
-    def random_sample_count(self, points, radii, parallel_kwargs=None):
+    def random_sample_count(
+        self, points: int, radii: units.Quantity, parallel_kwargs: Any = None
+    ) -> Table:
         """
         Count the number of instances of each object type at each of a number of random positions on the sky.
 
@@ -385,7 +403,7 @@ class SourceDatabase(ABC):
     # -- Poisson Atlas related methods -- #
 
     @property
-    def poisson_atlas(self):
+    def poisson_atlas(self) -> PoissonAtlas:
         """
         The Poisson-atlas corresponding to this database.
 
@@ -414,10 +432,12 @@ class SourceDatabase(ABC):
             return PoissonAtlas(self._poisson_atlas_path)
 
     @poisson_atlas.setter
-    def poisson_atlas(self, value):
+    def poisson_atlas(self, value: str):
         self._poisson_atlas_path = value
 
-    def add_sources_to_poisson(self, points, radii, parallel_kwargs=None):
+    def add_sources_to_poisson(
+        self, points: int, radii: units.Quantity, parallel_kwargs: dict = None
+    ):
         """
         Add randomly sampled sources to the Poisson-atlas of this database instance.
 
@@ -997,7 +1017,7 @@ class SIMBAD(RemoteDatabase):
         return Simbad.query_tap(query)
 
 
-class DBRegistry(_Registry):
+class DBRegistry(Registry):
     """
     A :py:class:`DBRegistry` instance is a collection of identifiable database classes.
 
