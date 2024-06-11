@@ -45,4 +45,4 @@ healpy
 pydantic
 astropy
 astroquery
-sklearn
+scikit-learn
