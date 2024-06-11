@@ -7,7 +7,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = "pyxmip"
-version = "1.0.0"
+version = "1.0.2"
 description = "Cross-matching and cross-identification toolkit for astronomical surveys."
 readme = "/docs/README.md"
 authors = [{ name = "Eliza C. Diggins", email = "eliza.diggins@utah.edu" }]
