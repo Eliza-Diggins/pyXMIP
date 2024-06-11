@@ -40,7 +40,7 @@ sphinxcontrib-serializinghtml==1.1.9
 tqdm==4.66.1
 virtualenv==20.24.6
 pandas
-sqlalchemy
+SQLAlchemy
 healpy
 pydantic
 astropy

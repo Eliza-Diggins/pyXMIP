@@ -24,11 +24,11 @@ dependencies = [
     'numpy',
     'astropy',
     'tqdm',
-    'sqlalchemy',
+    'SQLAlchemy',
     "astroquery",
     "healpy",
     "pydantic",
-    "ruamel",
+    "ruamel.yaml",
     "matplotlib"
 ]
 requires-python = ">=3.9"
