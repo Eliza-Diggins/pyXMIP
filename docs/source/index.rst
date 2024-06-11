@@ -147,7 +147,7 @@ Pages
 .. |astropy| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
     :target: https://www.astropy.org
 .. |pydantic| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json
-    :target: https://www.astropy.org
+    :target: https://docs.pydantic.dev/latest/
 .. |sklearn| image:: http://img.shields.io/badge/powered%20by-sklearn-cyan.svg?style=flat
     :target: https://scikit-learn.org/stable/index.html
 .. |NED| image:: images/logos_icons/NED.png
