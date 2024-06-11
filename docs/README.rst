@@ -1,4 +1,4 @@
-.. image:: docs/source/images/logos_icons/logo_main.png
+.. image:: /docs/source/images/logos_icons/logo_main.png
     :width: 400
 
 |precom| |linting| |docs| |isort Status| |black| |astropy| |pydantic| |sklearn|
