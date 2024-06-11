@@ -29,7 +29,13 @@ from pyXMIP.structures.databases import (
 )
 from pyXMIP.structures.table import SourceTable
 from pyXMIP.utilities.logging import mainlog
-from pyXMIP.utilities.types import Self, _CMDTypePydanticAnnotation
+from pyXMIP.utilities.types import _CMDTypePydanticAnnotation
+
+# -- Importing SELF -- #
+try:
+    from typing import Self  # noqa
+except ModuleNotFoundError:
+    from typing_extensions import Self as Self  # noqa
 
 # ========================================================= #
 # Type hinting constructs                                   #

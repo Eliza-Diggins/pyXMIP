@@ -17,7 +17,13 @@ from pydantic import BaseModel, model_validator
 from pyXMIP.cross_reference import PydanticCMD
 from pyXMIP.utilities.logging import mainlog
 from pyXMIP.utilities.sql import chunk_sql_query_operation
-from pyXMIP.utilities.types import ICRSCoordinateStdErrorSpecifier, Self, TableColumn
+from pyXMIP.utilities.types import ICRSCoordinateStdErrorSpecifier, TableColumn
+
+# -- Importing SELF -- #
+try:
+    from typing import Self  # noqa
+except ModuleNotFoundError:
+    from typing_extensions import Self as Self  # noqa
 
 
 class ReductionProcess(BaseModel, ABC):
