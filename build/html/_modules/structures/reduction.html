@@ -1,0 +1,1057 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>structures.reduction &#8212; pyXMIP  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/structures/reduction';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo_small.png" class="logo__image only-light" alt="pyXMIP  documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo_small.png" class="logo__image only-dark" alt="pyXMIP  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        pyXMIP Quickstart Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">structures.reduction</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for structures.reduction</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Reduction processes and related structures.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">For guidance on working with reduction processes, we recommend looking at the guide: :ref:`cross_Referencing`.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">model_validator</span>
+
+<span class="kn">from</span> <span class="nn">pyXMIP.cross_reference</span> <span class="kn">import</span> <span class="n">PydanticCMD</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.logging</span> <span class="kn">import</span> <span class="n">mainlog</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.sql</span> <span class="kn">import</span> <span class="n">chunk_sql_query_operation</span>
+<span class="kn">from</span> <span class="nn">pyXMIP.utilities.types</span> <span class="kn">import</span> <span class="n">ICRSCoordinateStdErrorSpecifier</span><span class="p">,</span> <span class="n">TableColumn</span>
+
+<span class="c1"># -- Importing SELF -- #</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>  <span class="c1"># noqa</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span> <span class="k">as</span> <span class="n">Self</span>  <span class="c1"># noqa</span>
+
+
+<div class="viewcode-block" id="ReductionProcess">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.ReductionProcess.html#structures.reduction.ReductionProcess">[docs]</a>
+<span class="k">class</span> <span class="nc">ReductionProcess</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class structure for reduction processes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------ #</span>
+    <span class="c1"># Schema Specifiers              #</span>
+    <span class="c1"># ------------------------------ #</span>
+    <span class="n">settings_header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The settings header under which to find the parameters for this reduction process.</span>
+
+<span class="sd">    When initializing a reduction process or set of reduction processes from a schema, the schema&#39;s underlying data dictionary</span>
+<span class="sd">    will contain all of the relevant parameters under a header (i.e. ``ABSTRACT_PROCESS_PARAMS``). This attribute allows ``pyXMIP``</span>
+<span class="sd">    to identify the :py:class:`ReductionProcess` associated with the settings and set everything up correctly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">settings_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The schema flag in ``RUNTIME_PARAMS`` which marks this process as enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ------------------------------ #</span>
+    <span class="c1"># Process Specifiers             #</span>
+    <span class="c1"># ------------------------------ #</span>
+    <span class="n">process_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The name of this reduction process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cross_match_database</span><span class="p">:</span> <span class="n">PydanticCMD</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`cross_reference.CrossMatchDatabase`: The CMD this reduction process will run on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The table name this reduction process will run on.&quot;&quot;&quot;</span>
+    <span class="n">fill_unknown</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;bool: If ``True``, then process will attempt to generate values for the process.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReductionProcess.__init__">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.ReductionProcess.__init__.html#structures.reduction.ReductionProcess.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the reduction process.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        process_name: str</span>
+<span class="sd">            The name of the final :py:class:`ReductionProcess` instance.</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            parameter and assigned value pairs corresponding to the parameters of this reduction process.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The initialization process simply assigns the ``process_name`` to ``self.name`` and adds the kwargs to the</span>
+<span class="sd">        ``self._parameter_dictionary``, which is then accessed by the descriptors. Parameters are validated during instantiation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ReductionProcess: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">debug_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The string annotation used in debugging statements for this process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">proc_tmp_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The temp table name where process results are tabulated.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">_TMP&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">op_tmp_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The temp table where the newly joined outputs are stored while replace occurs.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">_TMP&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obj_col</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The column of the ``table`` containing the object identifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">table_schema</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">NAME</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">score_col</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The column name storing the scores for the process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">_SCORE&quot;</span>
+
+<div class="viewcode-block" id="ReductionProcess.validate">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.ReductionProcess.validate.html#structures.reduction.ReductionProcess.validate">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Custom validator for this reduction process.</span>
+
+<span class="sd">        The ``validate`` method is a standard ``pydantic`` validator (runs after ``__init__`` and returns ``self``) which</span>
+<span class="sd">        parses the provided attributes and utilizes the :py:attr:`ReductionProcess.cross_match_database` and :py:attr:`ReductionProcess.table`</span>
+<span class="sd">        values to fill in other missing values. This method should only succeed if there is enough information to generate the operator and</span>
+<span class="sd">        SQL query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ----------------------------------------------- #</span>
+        <span class="c1"># Constructing Missing Settings                   #</span>
+        <span class="c1"># ----------------------------------------------- #</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_unknown</span><span class="p">:</span>
+            <span class="c1"># The unknowns are going to be filled.</span>
+            <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Attempting to generate any missing attributes.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fill_unknown_parameters</span><span class="p">()</span>
+
+        <span class="c1"># ----------------------------------------------- #</span>
+        <span class="c1"># Validating the Model                            #</span>
+        <span class="c1"># ----------------------------------------------- #</span>
+        <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Validating model parameters.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># -- default checks -- #</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">match_tables</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> TABLE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2"> not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="c1"># Non-standard checks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_fill_unknown_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="ReductionProcess.generate_sql_query">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.ReductionProcess.generate_sql_query.html#structures.reduction.ReductionProcess.generate_sql_query">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">generate_sql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the correct ``sql`` query for this reduction process.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The output SQL query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ReductionProcess.generate_operator">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.ReductionProcess.generate_operator.html#structures.reduction.ReductionProcess.generate_operator">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">generate_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the correct ``operator`` function for this reduction process.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Callable[[pd.DataFrame],pd.DataFrame|pd.Series]</span>
+<span class="sd">            The function which operates on the table.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The output operator is a function with signature ``func(table: pd.DataFrame) -&gt; pd.DataFrame``. The output dataframe</span>
+<span class="sd">        **must** have 3 columns (``&quot;&lt;REDUCTION_PROCESS_NAME&gt;_SCORE&quot;``) with ``float`` values corresponding to the respective scores</span>
+<span class="sd">        of each entry in the input table as well as the ``CATOBJ`` column specifying the catalog object and the column identifying</span>
+<span class="sd">        the potential match.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="k">as</span> <span class="nn">sql</span>
+
+        <span class="c1"># ------------------------------------- #</span>
+        <span class="c1"># Setup and validation                  #</span>
+        <span class="c1"># ------------------------------------- #</span>
+        <span class="n">tqdm_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="p">}</span>
+        <span class="n">_sql_engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">_sql_engine</span>
+
+        <span class="c1"># -- check that we can actually perform this reduction -- #</span>
+        <span class="n">_check_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">check_meta</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_check_status</span> <span class="ow">and</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="c1"># The process has already been run, but overwrite = True.</span>
+            <span class="k">with</span> <span class="n">_sql_engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Process has already been performed. Overwritting.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">sql</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;ALTER TABLE `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">` DROP COLUMN `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">_SCORE`&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">_check_status</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> The process has already been performed and overwrite=False.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># -- construct the query and the operator -- #</span>
+        <span class="c1"># These call to the two abstract generator methods for the setup procedure.</span>
+        <span class="n">query</span><span class="p">,</span> <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_sql_query</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_operator</span><span class="p">()</span>
+
+        <span class="c1"># ------------------------------------- #</span>
+        <span class="c1"># Create the callable operator          #</span>
+        <span class="c1"># ------------------------------------- #</span>
+        <span class="c1"># The chunked SQL operator is called to produce a version of OPERATOR which runs efficiently on</span>
+        <span class="c1"># chunks.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The new signature will be f(engine,query,output_table,*args,**kwargs)</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">chunk_sql_query_operation</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">tqdm_kwargs</span><span class="o">=</span><span class="n">tqdm_kwargs</span><span class="p">))(</span><span class="n">_operator</span><span class="p">)</span>
+
+        <span class="c1"># -------------------------------------- #</span>
+        <span class="c1"># Running the operator                   #</span>
+        <span class="c1"># -------------------------------------- #</span>
+        <span class="n">operator</span><span class="p">(</span><span class="n">_sql_engine</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="si">}</span><span class="s2">_TMP&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># -------------------------------------- #</span>
+        <span class="c1"># Post-Processing                        #</span>
+        <span class="c1"># -------------------------------------- #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_process</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># ---------------------------------------------- #</span>
+        <span class="c1"># Constructing queries                           #</span>
+        <span class="c1"># ---------------------------------------------- #</span>
+        <span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="k">as</span> <span class="nn">sql</span>
+
+        <span class="n">JOIN_QUERY</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">op_tmp_table</span><span class="si">}</span><span class="s2"> AS &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.* , </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_tmp_table</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score_col</span><span class="si">}</span><span class="s2">` &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2"> LEFT JOIN </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_tmp_table</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ON ((</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.CATOBJ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_tmp_table</span><span class="si">}</span><span class="s2">.CATOBJ) AND &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_col</span><span class="si">}</span><span class="s2">` = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_tmp_table</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_col</span><span class="si">}</span><span class="s2">`))&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">DROP_QUERY</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DROP TABLE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">RENAME_QUERY</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ALTER TABLE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">op_tmp_table</span><span class="si">}</span><span class="s2"> RENAME TO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">_sql_engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Cleaning up SQL components... (Joining tables)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">JOIN_QUERY</span><span class="p">)</span>
+            <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Cleaning up SQL components... (Dropping tables)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">DROP_QUERY</span><span class="p">)</span>
+            <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Cleaning up SQL components... (Renaming tables)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">RENAME_QUERY</span><span class="p">)</span>
+
+        <span class="c1"># -- Managing the META data -- #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">meta_add</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">is_reduction</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AstrometricReductionProcess">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.html#structures.reduction.AstrometricReductionProcess">[docs]</a>
+<span class="k">class</span> <span class="nc">AstrometricReductionProcess</span><span class="p">(</span><span class="n">ReductionProcess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reduction process for refining match confidence on the basis of astrometric precision and separation</span>
+<span class="sd">    between sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">settings_header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ASTROMETRY_PARAMS&quot;</span>
+    <span class="n">settings_flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;enable_astrometry&quot;</span>
+    <span class="n">process_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ASTROMETRIC_REDUCTION&quot;</span>
+
+    <span class="c1"># ----------------------------------------------------------- #</span>
+    <span class="c1"># Settings                                                    #</span>
+    <span class="c1"># ----------------------------------------------------------- #</span>
+    <span class="n">CATALOG_ERR</span><span class="p">:</span> <span class="n">ICRSCoordinateStdErrorSpecifier</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`utilities.types.CoordinateStdErrorSpecifier`: The error specifier for the catalog.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DATABASE_ERR</span><span class="p">:</span> <span class="n">ICRSCoordinateStdErrorSpecifier</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:py:class:`utilities.types.CoordinateStdErrorSpecifier`: The error specifier for the database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prior</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;NMATCH&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_get_displacement_op</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs the displacement operator for this reduction process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+        <span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+
+        <span class="c1"># ---------------------------------------------------- #</span>
+        <span class="c1"># Construct the names for important columns            #</span>
+        <span class="c1"># ---------------------------------------------------- #</span>
+        <span class="c1"># Necessary columns are the positions and units for each of the</span>
+        <span class="c1"># coordinate positions.</span>
+        <span class="n">_cra</span><span class="p">,</span> <span class="n">_cdec</span><span class="p">,</span> <span class="n">_dra</span><span class="p">,</span> <span class="n">_ddec</span> <span class="o">=</span> <span class="s2">&quot;CATRA&quot;</span><span class="p">,</span> <span class="s2">&quot;CATDEC&quot;</span><span class="p">,</span> <span class="s2">&quot;DBRA&quot;</span><span class="p">,</span> <span class="s2">&quot;DBDEC&quot;</span>
+        <span class="n">_cra_unit</span><span class="p">,</span> <span class="n">_cdec_unit</span> <span class="o">=</span> <span class="s2">&quot;deg&quot;</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span>
+        <span class="n">_dra_unit</span><span class="p">,</span> <span class="n">_ddec_unit</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">table_schema</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">RA</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">table_schema</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">DEC</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ---------------------------------------------------- #</span>
+        <span class="c1"># Construct the operator                               #</span>
+        <span class="c1"># ---------------------------------------------------- #</span>
+        <span class="k">def</span> <span class="nf">_coord_func</span><span class="p">(</span>
+            <span class="n">table_chunk</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+            <span class="n">cra</span><span class="o">=</span><span class="n">_cra</span><span class="p">,</span>
+            <span class="n">cdec</span><span class="o">=</span><span class="n">_cdec</span><span class="p">,</span>
+            <span class="n">dra</span><span class="o">=</span><span class="n">_dra</span><span class="p">,</span>
+            <span class="n">ddec</span><span class="o">=</span><span class="n">_ddec</span><span class="p">,</span>
+            <span class="n">cra_unit</span><span class="o">=</span><span class="n">_cra_unit</span><span class="p">,</span>
+            <span class="n">cdec_unit</span><span class="o">=</span><span class="n">_cdec_unit</span><span class="p">,</span>
+            <span class="n">dra_unit</span><span class="o">=</span><span class="n">_dra_unit</span><span class="p">,</span>
+            <span class="n">ddec_unit</span><span class="o">=</span><span class="n">_ddec_unit</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+            <span class="c1"># -- generate the coordinate positions -- #</span>
+            <span class="n">cp</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">ra</span><span class="o">=</span><span class="n">Quantity</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="n">cra</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">cra_unit</span><span class="p">),</span>
+                <span class="n">dec</span><span class="o">=</span><span class="n">Quantity</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="n">cdec</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">cdec_unit</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">dp</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">ra</span><span class="o">=</span><span class="n">Quantity</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="n">dra</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">dra_unit</span><span class="p">),</span>
+                <span class="n">dec</span><span class="o">=</span><span class="n">Quantity</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="n">ddec</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">ddec_unit</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># -- return the separations -- #</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">ra</span> <span class="o">-</span> <span class="n">dp</span><span class="o">.</span><span class="n">ra</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">dec</span> <span class="o">-</span> <span class="n">dp</span><span class="o">.</span><span class="n">dec</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
+                <span class="s2">&quot;arcsec&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_coord_func</span>
+
+<div class="viewcode-block" id="AstrometricReductionProcess.generate_operator">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.generate_operator.html#structures.reduction.AstrometricReductionProcess.generate_operator">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+        <span class="c1"># ----------------------------------- #</span>
+        <span class="c1"># Get the column separation operator  #</span>
+        <span class="c1"># ----------------------------------- #</span>
+        <span class="c1"># the displacement_function maps the table to the separation between RA and DEC coords.</span>
+        <span class="n">displacement_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_displacement_op</span><span class="p">()</span>
+
+        <span class="c1"># ------------------------------------ #</span>
+        <span class="c1"># Construct main operator              #</span>
+        <span class="c1"># ------------------------------------ #</span>
+        <span class="c1"># There are 3 separate formulae depending on the nature of the specified errors.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="o">.</span><span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># The database is assumed to be ideal. Thus, we model error domain as a single gaussian.</span>
+            <span class="n">crau</span><span class="p">,</span> <span class="n">cdecu</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="o">.</span><span class="n">lon_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="o">.</span><span class="n">lat_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># -- Pull additional meta-data -- #</span>
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span>
+                <span class="n">table_chunk</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                <span class="n">df</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+                    <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">displacement_function</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="c1"># -- compute displacement vector -- #</span>
+                <span class="n">ra_dis</span><span class="p">,</span> <span class="n">dec_dis</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">)</span>
+                <span class="c1"># -- compute error values -- #</span>
+                <span class="n">sra</span><span class="p">,</span> <span class="n">sdec</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;CATRA_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">crau</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;CATDEC_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">cdecu</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="n">coef</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">sra</span> <span class="o">*</span> <span class="n">sdec</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;bf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">ra_dis</span> <span class="o">/</span> <span class="n">sra</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dec_dis</span> <span class="o">/</span> <span class="n">sdec</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">table_chunk</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="o">.</span><span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># The catalog is assumed to be ideal. Thus, we model error domain as a single gaussian.</span>
+            <span class="n">crau</span><span class="p">,</span> <span class="n">cdecu</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="o">.</span><span class="n">lon_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="o">.</span><span class="n">lat_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># -- Pull additional meta-data -- #</span>
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">displacement_function</span><span class="p">):</span>
+                <span class="c1"># -- compute displacement vector -- #</span>
+                <span class="n">ra_dis</span><span class="p">,</span> <span class="n">dec_dis</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">)</span>
+                <span class="c1"># -- compute error values -- #</span>
+                <span class="n">sra</span><span class="p">,</span> <span class="n">sdec</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;DBRA_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">crau</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;DBDEC_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">cdecu</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="n">coef</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">sra</span> <span class="o">*</span> <span class="n">sdec</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;bf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">ra_dis</span> <span class="o">/</span> <span class="n">sra</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dec_dis</span> <span class="o">/</span> <span class="n">sdec</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">table_chunk</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># -- Complex formalism -- #</span>
+            <span class="n">crau</span><span class="p">,</span> <span class="n">cdecu</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="o">.</span><span class="n">lon_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="o">.</span><span class="n">lat_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">drau</span><span class="p">,</span> <span class="n">ddecu</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="o">.</span><span class="n">lon_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="o">.</span><span class="n">lat_error</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">displacement_function</span><span class="p">):</span>
+                <span class="c1"># -- compute displacement vector -- #</span>
+                <span class="n">ra_dis</span><span class="p">,</span> <span class="n">dec_dis</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">)</span>
+
+                <span class="c1"># -- compute error values -- #</span>
+                <span class="n">cra</span><span class="p">,</span> <span class="n">cdec</span><span class="p">,</span> <span class="n">dra</span><span class="p">,</span> <span class="n">ddec</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;CATRA_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">crau</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;CATDEC_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">cdecu</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;DBRA_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">drau</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;DBDEC_ERR&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">ddecu</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;arcsec&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">iscra</span><span class="p">,</span> <span class="n">iscdec</span><span class="p">,</span> <span class="n">isdra</span><span class="p">,</span> <span class="n">isddec</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">cra</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">cdec</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">dra</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">ddec</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">coef</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+                    <span class="o">*</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="n">cra</span> <span class="o">*</span> <span class="n">cdec</span> <span class="o">*</span> <span class="n">dra</span> <span class="o">*</span> <span class="n">ddec</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">cra</span><span class="o">**-</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dra</span><span class="o">**-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cdec</span><span class="o">**-</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ddec</span><span class="o">**-</span><span class="mi">2</span><span class="p">)))</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">exp</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                    <span class="p">((</span><span class="n">iscra</span> <span class="o">*</span> <span class="n">isdra</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">iscra</span> <span class="o">+</span> <span class="n">isdra</span><span class="p">))</span> <span class="o">*</span> <span class="n">ra_dis</span><span class="o">**</span><span class="mi">2</span>
+                    <span class="o">+</span> <span class="p">((</span><span class="n">iscdec</span> <span class="o">*</span> <span class="n">isddec</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">iscdec</span> <span class="o">+</span> <span class="n">isddec</span><span class="p">))</span> <span class="o">*</span> <span class="n">dec_dis</span><span class="o">**</span><span class="mi">2</span>
+                <span class="p">)</span>
+
+                <span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;bf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">table_chunk</span>
+
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="c1"># Implement the prior                              #</span>
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="k">def</span> <span class="nf">_pfunc</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">_func</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">displacement_function</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">):</span>
+            <span class="n">table_chunk</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+            <span class="n">table_chunk</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">score_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span><span class="p">(</span><span class="n">table_chunk</span><span class="p">)</span> <span class="o">*</span> <span class="n">table_chunk</span><span class="p">[</span><span class="s2">&quot;bf&quot;</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">table_chunk</span>
+
+        <span class="k">return</span> <span class="n">_pfunc</span></div>
+
+
+<div class="viewcode-block" id="AstrometricReductionProcess.generate_sql_query">
+<a class="viewcode-back" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.generate_sql_query.html#structures.reduction.AstrometricReductionProcess.generate_sql_query">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_sql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="c1"># Adding fixed columns to the column list          #</span>
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="c1"># This includes the object identifier columns for both db and CATALOG along with the</span>
+        <span class="c1"># coordinate columns in ICRS.</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;CATOBJ&quot;</span><span class="p">:</span> <span class="s2">&quot;CATALOG.`CATOBJ`&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_col</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CATRA&quot;</span><span class="p">:</span> <span class="s2">&quot;CATALOG.`RA`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CATDEC&quot;</span><span class="p">:</span> <span class="s2">&quot;CATALOG.`DEC`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DBRA&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.`RA`&quot;</span><span class="p">,</span>  <span class="c1"># ALL tables have RA; its a fixed column.</span>
+            <span class="s2">&quot;DBDEC&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.`DEC`&quot;</span><span class="p">,</span>  <span class="c1"># ALL tables have DEC; its a fixed column.</span>
+            <span class="s2">&quot;NMATCH&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="si">}</span><span class="s2">.`CATNMATCH`&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="c1"># Adding un-fixed columns to the column list       #</span>
+        <span class="c1"># ------------------------------------------------ #</span>
+        <span class="k">for</span> <span class="n">tbl</span><span class="p">,</span> <span class="n">error_struct</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;CATALOG&quot;</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="c1"># Add coordinate error columns where necessary.</span>
+            <span class="k">if</span> <span class="n">error_struct</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">error_struct</span><span class="o">.</span><span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># The error structure is None, we can just skip.</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">error_struct</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
+                <span class="c1"># The error structure is circular. We need to check if the error specifier is a value or a columns.</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error_struct</span><span class="o">.</span><span class="n">position_error</span><span class="p">,</span> <span class="n">TableColumn</span><span class="p">):</span>
+                    <span class="c1"># this is a column and needs to be added.</span>
+                    <span class="n">columns</span><span class="p">[</span>
+                        <span class="s2">&quot;DBRA_ERR&quot;</span> <span class="k">if</span> <span class="n">tbl</span> <span class="o">!=</span> <span class="s2">&quot;CATALOG&quot;</span> <span class="k">else</span> <span class="s2">&quot;CATRA_ERR&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tbl</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="n">error_struct</span><span class="o">.</span><span class="n">position_error</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span>
+                    <span class="n">columns</span><span class="p">[</span>
+                        <span class="s2">&quot;DBDEC_ERR&quot;</span> <span class="k">if</span> <span class="n">tbl</span> <span class="o">!=</span> <span class="s2">&quot;CATALOG&quot;</span> <span class="k">else</span> <span class="s2">&quot;CATDEC_ERR&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tbl</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="n">error_struct</span><span class="o">.</span><span class="n">position_error</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># the error structure is axial.</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error_struct</span><span class="o">.</span><span class="n">lat_error</span><span class="p">,</span> <span class="n">TableColumn</span><span class="p">):</span>
+                    <span class="n">columns</span><span class="p">[</span>
+                        <span class="s2">&quot;DBDEC_ERR&quot;</span> <span class="k">if</span> <span class="n">tbl</span> <span class="o">!=</span> <span class="s2">&quot;CATALOG&quot;</span> <span class="k">else</span> <span class="s2">&quot;CATDEC_ERR&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tbl</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="n">error_struct</span><span class="o">.</span><span class="n">lat_error</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error_struct</span><span class="o">.</span><span class="n">lon_error</span><span class="p">,</span> <span class="n">TableColumn</span><span class="p">):</span>
+                    <span class="n">columns</span><span class="p">[</span>
+                        <span class="s2">&quot;DBRA_ERR&quot;</span> <span class="k">if</span> <span class="n">tbl</span> <span class="o">!=</span> <span class="s2">&quot;CATALOG&quot;</span> <span class="k">else</span> <span class="s2">&quot;CATRA_ERR&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tbl</span><span class="si">}</span><span class="s2">.`</span><span class="si">{</span><span class="n">error_struct</span><span class="o">.</span><span class="n">lon_error</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span>
+
+        <span class="c1"># -- Now construct the SQL query. -- #</span>
+        <span class="n">column_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> as `</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">`&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+        <span class="n">SQL_QUERY</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;SELECT </span><span class="si">%(columns)s</span><span class="s2"> FROM </span><span class="si">%(table)s</span><span class="s2"> LEFT JOIN CATALOG USING(CATOBJ)&quot;</span>
+            <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column_string</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">SQL_QUERY</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># -- Check that at least one of the processes is non-redundant -- #</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Neither component of the match has specified error.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">err_spec</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">err_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">err_spec</span><span class="o">.</span><span class="n">check_empty</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_fill_unknown_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">error_specifiers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATABASE_ERR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="p">]</span>
+        <span class="n">schemas</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">table_schema</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cross_match_database</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">catalog_schema</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">error_specifier</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">error_specifiers</span><span class="p">,</span> <span class="n">schemas</span><span class="p">):</span>
+            <span class="c1"># -- Skip unspecified error specifiers -- #</span>
+            <span class="c1"># This way, the user is always trusted to ignore a component if they want to.</span>
+            <span class="k">if</span> <span class="n">error_specifier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># -- Seek error columns in the schema -- #</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">RA_ERR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Filled parameter lon_err with </span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">RA_ERR</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">error_specifier</span><span class="o">.</span><span class="n">lon_error</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">RA_ERR</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">DEC_ERR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mainlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_flag</span><span class="si">}</span><span class="s2"> Filled parameter lat_err with </span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">DEC_ERR</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">error_specifier</span><span class="o">.</span><span class="n">lat_error</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">DEC_ERR</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># load the cross match database from disk</span>
+    <span class="kn">from</span> <span class="nn">pyXMIP.cross_reference</span> <span class="kn">import</span> <span class="n">CrossMatchDatabase</span>
+
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">CrossMatchDatabase</span><span class="p">(</span><span class="s2">&quot;../../docs/source/examples/data/cross_matched.db&quot;</span><span class="p">)</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">catalog_schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">RA_ERR</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;RA_UPERR&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">}</span>
+    <span class="n">cmd</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">catalog_schema</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">DEC_ERR</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DEC_UPERR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">AstrometricReductionProcess</span><span class="p">(</span>
+        <span class="n">cross_match_database</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span>
+        <span class="n">table</span><span class="o">=</span><span class="s2">&quot;NED_STD_MATCH&quot;</span><span class="p">,</span>
+        <span class="n">CATALOG_ERR</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">fill_unknown</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">CATALOG_ERR</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2024, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -452,10 +452,10 @@ the displacement between the observation and the true position. In this case, th
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<p>Like all reduction processes, the astrometric reduction is a <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code> subclass (<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code>).</p>
+<p>Like all reduction processes, the astrometric reduction is a <a class="reference internal" href="../../_as_gen/structures.reduction.ReductionProcess.html#structures.reduction.ReductionProcess" title="structures.reduction.ReductionProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code></a> subclass (<a class="reference internal" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.html#structures.reduction.AstrometricReductionProcess" title="structures.reduction.AstrometricReductionProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code></a>).</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>It’s worth taking a look at the API documentation for <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code>,
+<p>It’s worth taking a look at the API documentation for <a class="reference internal" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.html#structures.reduction.AstrometricReductionProcess" title="structures.reduction.AstrometricReductionProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.AstrometricReductionProcess</span></code></a>,
 there are a great many parameters which might be very helpful for your particular use case.</p>
 </div>
 <section id="setup-and-parameters">
@@ -465,15 +465,15 @@ to model the uncertainty in the positions of each source.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>There are a lot of parameters here, but you usually won’t need to specify them all by hand. If you run this process through
-a <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code>, then the corresponding <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.CMDSchema</span></code> will be able to provide
+a <a class="reference internal" href="../../_as_gen/cross_reference.CrossMatchDatabase.html#cross_reference.CrossMatchDatabase" title="cross_reference.CrossMatchDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code></a>, then the corresponding <a class="reference internal" href="../../_as_gen/schema.CMDSchema.html#schema.CMDSchema" title="schema.CMDSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.CMDSchema</span></code></a> will be able to provide
 a lot of the necessary information.</p>
 </div>
 <section id="modeling-astrometric-uncertainty">
 <h4>Modeling Astrometric Uncertainty<a class="headerlink" href="#modeling-astrometric-uncertainty" title="Link to this heading">#</a></h4>
 <p>Every astrometric reduction process has two key parameters:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">CATALOG_ERR</span></code>: The position uncertainty in the catalog sources.</p></li>
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">DATABASE_ERR</span></code>: The position uncertainty in the database source.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.CATALOG_ERR.html#structures.reduction.AstrometricReductionProcess.CATALOG_ERR" title="structures.reduction.AstrometricReductionProcess.CATALOG_ERR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CATALOG_ERR</span></code></a>: The position uncertainty in the catalog sources.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/structures.reduction.AstrometricReductionProcess.DATABASE_ERR.html#structures.reduction.AstrometricReductionProcess.DATABASE_ERR" title="structures.reduction.AstrometricReductionProcess.DATABASE_ERR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DATABASE_ERR</span></code></a>: The position uncertainty in the database source.</p></li>
 </ol>
 <p>Both of these parameters are <code class="xref py py-class docutils literal notranslate"><span class="pre">utilities.types.CoordinateErrorSpecifier</span></code> instances.</p>
 <hr></section>
@@ -493,7 +493,7 @@ have errors provided in both RA and DEC. For some unfortunate cases, you might o
 be provided to the reduction process by hand.</p>
 <p>Each of these options corresponds to a given <strong>astrometric-mode</strong>.</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> in your <code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> has an astrometric mode.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">CATALOG</span></code> in your <a class="reference internal" href="../../_as_gen/cross_reference.CrossMatchDatabase.html#cross_reference.CrossMatchDatabase" title="cross_reference.CrossMatchDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code></a> has an astrometric mode.</p>
 <ul>
 <li><p>Determined by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">astrometry_mode_cat</span></code> attribute of the reduction class.</p></li>
 </ul>

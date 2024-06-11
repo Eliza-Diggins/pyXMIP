@@ -377,7 +377,7 @@ and the possible interactions that can be had therein.</p>
 <section id="loading-a-catalog-from-disk">
 <h2>Loading a Catalog from Disk<a class="headerlink" href="#loading-a-catalog-from-disk" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is designed from cross-referencing / identification of astronomical objects within catalogs. To load a catalog into
-the library, simply use <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code>. In this reference, we’re going to use the eROSITA eRASS 1
+the library, simply use <a class="reference internal" href="../_as_gen/structures.table.load.html#structures.table.load" title="structures.table.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a>. In this reference, we’re going to use the eROSITA eRASS 1
 all sky survey data located <a class="reference external" href="https://erosita.mpe.mpg.de/dr1/erodat/">here</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyXMIP</span> <span class="k">as</span> <span class="nn">pyxmip</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">pyxmip</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;eRASS1_Hard.v1.0.fits&quot;</span><span class="p">)</span>
@@ -409,7 +409,7 @@ all sky survey data located <a class="reference external" href="https://erosita.
 <span class="go">1eRASS J130904.4-260824 em01_198117_020_ML00487_002_c010 ...        0</span>
 </pre></div>
 </div>
-<p>Loading a catalog results in a class called <code class="xref py py-class docutils literal notranslate"><span class="pre">SourceTable</span></code>. This is a <em>slightly modified</em> version of
+<p>Loading a catalog results in a class called <a class="reference internal" href="../_as_gen/structures.table.SourceTable.html#structures.table.SourceTable" title="structures.table.SourceTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceTable</span></code></a>. This is a <em>slightly modified</em> version of
 the typical <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.table.Table</span></code></a> class with some special purpose components. We can do all of the classic modifications
 to the table that would be possible in <code class="xref py py-mod docutils literal notranslate"><span class="pre">astropy</span></code>.</p>
 <p>Just like any other table of data, we can plot the sources in this catalog:</p>
@@ -429,18 +429,18 @@ to the table that would be possible in <code class="xref py py-mod docutils lite
 <section id="working-with-catalogs">
 <h2>Working With Catalogs<a class="headerlink" href="#working-with-catalogs" title="Link to this heading">#</a></h2>
 <p>Before moving on to other, more complex, aspects of <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, it’s worth describing some additional details of the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> class.</p>
+<a class="reference internal" href="../_as_gen/structures.table.SourceTable.html#structures.table.SourceTable" title="structures.table.SourceTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code></a> class.</p>
 <section id="table-schema">
 <h3>Table Schema<a class="headerlink" href="#table-schema" title="Link to this heading">#</a></h3>
 <p>The first thing to familiarize yourself with is the schema associated with the table. You can find a comprehensive guide to
-schemas in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> on the <a class="reference internal" href="schema.html#schema"><span class="std std-ref">pyXMIP Schema Classes</span></a> page as well as on the API documentation of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema</span></code> module. For now,
+schemas in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> on the <a class="reference internal" href="schema.html#schema"><span class="std std-ref">pyXMIP Schema Classes</span></a> page as well as on the API documentation of the <a class="reference internal" href="../_as_gen/schema.html#module-schema" title="schema"><code class="xref py py-mod docutils literal notranslate"><span class="pre">schema</span></code></a> module. For now,
 we’ll introduce only the broader aspects of the schema.</p>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class is associated with every table and effectively tells <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> what all of the
+<p>The <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> class is associated with every table and effectively tells <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> what all of the
 different column names and associated data actually mean. These schema located the coordinates, object types, redshifts, and other
 key information about the catalog. They also determine the base coordinate system and are necessary for much of the useful operations
 provided by this software.</p>
 <p>In many cases, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> can deduce some parts of the schema based on the table itself. Let’s try this with the eROSITA data.
-To access the schema, we simply use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">schema</span></code> attribute:</p>
+To access the schema, we simply use the <a class="reference internal" href="../_as_gen/structures.table.SourceTable.schema.html#structures.table.SourceTable.schema" title="structures.table.SourceTable.schema"><code class="xref py py-attr docutils literal notranslate"><span class="pre">schema</span></code></a> attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">schema</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">schema</span>
 <span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,308  [SourceTableSchema] Constructing SourceTableSchema from fits table.</span>
 <span class="go">pyXMIP : [DEBUG    ] 2024-04-27 21:13:12,318  [SourceTableSchema] Failed to identify automatic match for special column Z.</span>
@@ -454,7 +454,7 @@ To access the schema, we simply use the <code class="xref py py-attr docutils li
 </pre></div>
 </div>
 <p>Whoa! That’s a lot of outputs, what do they actually tell us?</p>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class will first try to identify special columns (things like redshift, coordinates, object name, etc.) from
+<p>The <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> class will first try to identify special columns (things like redshift, coordinates, object name, etc.) from
 the available column names. According to the log, we have failed to find a redshift or object type (eRASS data doesn’t have these), but we did find
 the <code class="docutils literal notranslate"><span class="pre">IAUNAME</span></code> column as the <code class="docutils literal notranslate"><span class="pre">NAME</span></code> of each object, along with <code class="docutils literal notranslate"><span class="pre">RA</span></code>, <code class="docutils literal notranslate"><span class="pre">DEC</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>; each of which is a coordinate column. Finally,
 we note that two viable coordinate systems were identified and that ICRS (RA/DEC) was chosen as the default.</p>
@@ -491,7 +491,7 @@ source names from the table:</p>
 </div>
 <p>You can also easily access the coordinates, redshift, object type, etc. through the same attributes that would represent
 those columns in the schema class. It is highly recommended that new users familiarize themselves with the available attributes
-as described in the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> documentation.</p>
+as described in the <a class="reference internal" href="../_as_gen/structures.table.SourceTable.html#structures.table.SourceTable" title="structures.table.SourceTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code></a> documentation.</p>
 </section>
 </section>
 </section>

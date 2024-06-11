@@ -373,11 +373,11 @@ document.write(`
 <p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> uses classes (called <code class="docutils literal notranslate"><span class="pre">Schema</span></code> classes) to translate the various conventions and datatypes in the user’s data and
 the standardized versions that can be used in the backend. This includes doing everything from identifying the coordinate
 columns in a table to determining what types of objects are present in a given database and everything in between.</p>
-<p>In this guide, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema</span></code> module is described in detail with all of the critical knowledge to utilize <code class="docutils literal notranslate"><span class="pre">Schema</span></code>
+<p>In this guide, the <a class="reference internal" href="../_as_gen/schema.html#module-schema" title="schema"><code class="xref py py-mod docutils literal notranslate"><span class="pre">schema</span></code></a> module is described in detail with all of the critical knowledge to utilize <code class="docutils literal notranslate"><span class="pre">Schema</span></code>
 classes successfully.</p>
 <hr><section id="what-is-a-schema">
 <h2>What is a Schema<a class="headerlink" href="#what-is-a-schema" title="Link to this heading">#</a></h2>
-<p>There are a variety of different types of schema in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, the most common of which is <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>.
+<p>There are a variety of different types of schema in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, the most common of which is <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>.
 Schema have a variety of purposes, but they all do effectively the same thing: they allow <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to convert your data
 to a form it understands.</p>
 <p>Under-the-hood, schemas are <strong>dataclasses</strong> built on top of the <code class="docutils literal notranslate"><span class="pre">pydantic</span></code> <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> class. Effectively, this means that
@@ -386,9 +386,9 @@ from the developer’s perspective, there’s quite a bit of additional logic to
 <code class="docutils literal notranslate"><span class="pre">pydantic</span></code> provides structure (very powerful structure) for these sorts of data validation tasks and we thus use it here.</p>
 <p>Let’s begin by listing some of the most important schema:</p>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> - By far the most important of the schemas.</p>
+<li><p><a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> - By far the most important of the schemas.</p>
 <ul>
-<li><p>Everytime the user loads a table in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, it get an associated <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> instance.</p>
+<li><p>Everytime the user loads a table in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>, it get an associated <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> instance.</p>
 <ul>
 <li><p>Sometimes, this can be deduced from the available column names (i.e. RA and DEC columns); however, in other cases
 it cannot.</p></li>
@@ -396,15 +396,15 @@ it cannot.</p></li>
 be necessary to write your own.</p></li>
 </ul>
 </li>
-<li><p>The corresponding <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> allows <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to convert column names to standardized forms, understand
+<li><p>The corresponding <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> allows <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to convert column names to standardized forms, understand
 different object types, and manage a variety of settings.</p></li>
 </ul>
 </li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code></p>
+<li><p><a class="reference internal" href="../_as_gen/schema.ReductionSchema.html#schema.ReductionSchema" title="schema.ReductionSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code></a></p>
 <ul>
 <li><p>The reduction process converts raw match data to a statistically optimized cross-reference catalogs. To do this, the user generally
 writes a <strong>reduction file</strong> (<code class="docutils literal notranslate"><span class="pre">yaml</span></code>) containing all of the settings for that reduction process. This is read into <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> and
-becomes an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code> class.</p></li>
+becomes an instance of the <a class="reference internal" href="../_as_gen/schema.ReductionSchema.html#schema.ReductionSchema" title="schema.ReductionSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code></a> class.</p></li>
 </ul>
 </li>
 </ul>
@@ -437,13 +437,13 @@ Source Table Schema</label><div class="sd-tab-content docutils">
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>For a comprehensive listing of the available options / settings recognized by these schema, look at the
-API documentation: <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>. It may also be worthwhile to look at various examples
+API documentation: <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>. It may also be worthwhile to look at various examples
 in the documentation where these schema are interacted with.</p>
 </div>
 <p>Source table schema are the most important schema in <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code>. They are necessary whenever you need <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to
 recognize table structures from your own data.</p>
 <p>A schema can be written to / read from disk in a number of formats; in this document, we use <code class="docutils literal notranslate"><span class="pre">.yaml</span></code>, but <code class="docutils literal notranslate"><span class="pre">.json</span></code>, and <code class="docutils literal notranslate"><span class="pre">.toml</span></code> are
-also recognized. To write a <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>, you need 3 sections of your <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> files as follows:</p>
+also recognized. To write a <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>, you need 3 sections of your <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> files as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example yaml SourceTableSchema</span>
 <span class="nt">column_map</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># The column map encodes special columns in your catalog table.</span>
@@ -472,9 +472,9 @@ also recognized. To write a <code class="xref py py-class docutils literal notra
 <span class="w">    </span><span class="nt">default_coord_system</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ICRS&quot;</span>
 </pre></div>
 </div>
-<p>For comprehensive details, see <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code>.</p>
+<p>For comprehensive details, see <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a>.</p>
 <p>Some special schemas are already built-in. In particular, <strong>all</strong> of the built-in remote databases already have
-schema in the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> environment. These default schema are stored in registries (<code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SchemaRegistry</span></code>).
+schema in the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> environment. These default schema are stored in registries (<a class="reference internal" href="../_as_gen/schema.SchemaRegistry.html#schema.SchemaRegistry" title="schema.SchemaRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SchemaRegistry</span></code></a>).
 In particular, the <code class="docutils literal notranslate"><span class="pre">schema.DEFAULT_SOURCE_SCHEMA_REGISTRY</span></code> contains the list of built-in table schema available.</p>
 <p>For example, we can get a list of these registries as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP.schema</span> <span class="kn">import</span> <span class="n">DEFAULT_SOURCE_SCHEMA_REGISTRY</span>
@@ -504,7 +504,7 @@ Reduction Schema</label><div class="sd-tab-content docutils">
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>For a comprehensive listing of the available options / settings recognized by these schema, look at the
-API documentation: <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code>.</p>
+API documentation: <a class="reference internal" href="../_as_gen/schema.ReductionSchema.html#schema.ReductionSchema" title="schema.ReductionSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.ReductionSchema</span></code></a>.</p>
 </div>
 <p>Reduction schema tell <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> how to perform the statistical analyses of interest on an existing cross-matching database.
 The structure of the schema will largely depend on the exact nature of the reductions being performed. Users can write their own
@@ -547,9 +547,9 @@ manage various aspects of their use-case.</p>
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
 </input><label class="sd-tab-label" for="sd-tab-item-2">
 Source Table Schema</label><div class="sd-tab-content docutils">
-<p>The key purpose of <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> instances is to allow <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to translate between
+<p>The key purpose of <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> instances is to allow <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> to translate between
 your table format and the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> backend. As such, there are a lot of methods which are of little use to
-the user, but are utilized within the <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code> backend.</p>
+the user, but are utilized within the <a class="reference internal" href="../_as_gen/structures.table.SourceTable.html#structures.table.SourceTable" title="structures.table.SourceTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.table.SourceTable</span></code></a> backend.</p>
 <p>More usefully, all of the different settings and <code class="docutils literal notranslate"><span class="pre">column_map</span></code> special columns are immediately available as
 properties.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The NED database TYPE column is </span><span class="si">{</span><span class="n">ned_schema</span><span class="o">.</span><span class="n">TYPE</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -582,10 +582,10 @@ set from within the <code class="docutils literal notranslate"><span class="pre"
 <span class="go">&#39;L&#39;: &#39;Galactic Longitude&#39;}</span>
 </pre></div>
 </div>
-<p>One of the most important functionalities if the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> class is managing coordinate systems.
+<p>One of the most important functionalities if the <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> class is managing coordinate systems.
 It is critical that <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is able to identify the locations of the catalog items and convert them accurately too and
-from the correct systems. To do this, the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code> has a several convenient methods.</p>
-<p>The first of these methods is <code class="xref py py-meth docutils literal notranslate"><span class="pre">schema.SourceTableSchema.coordinate_system()</span></code>, which returns the columns and class
+from the correct systems. To do this, the <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.html#schema.SourceTableSchema" title="schema.SourceTableSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.SourceTableSchema</span></code></a> has a several convenient methods.</p>
+<p>The first of these methods is <a class="reference internal" href="../_as_gen/schema.SourceTableSchema.coordinate_system.html#schema.SourceTableSchema.coordinate_system" title="schema.SourceTableSchema.coordinate_system"><code class="xref py py-meth docutils literal notranslate"><span class="pre">schema.SourceTableSchema.coordinate_system()</span></code></a>, which returns the columns and class
 representing the current coordinate system:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ned_schema</span><span class="o">.</span><span class="n">coordinate_system</span>
 <span class="go">(astropy.coordinates.builtin_frames.icrs.ICRS, [&#39;RA&#39;, &#39;DEC&#39;])</span>

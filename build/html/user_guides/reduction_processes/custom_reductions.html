@@ -377,7 +377,7 @@ structures which should make this a possible thing to accomplish given that the 
 <h2>What is a Reduction Process?<a class="headerlink" href="#what-is-a-reduction-process" title="Link to this heading">#</a></h2>
 <p>At a basic level, reduction processes are quite simple:</p>
 <ul class="simple">
-<li><p>They are classes (subclassed from <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code>).
+<li><p>They are classes (subclassed from <a class="reference internal" href="../../_as_gen/structures.reduction.ReductionProcess.html#structures.reduction.ReductionProcess" title="structures.reduction.ReductionProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code></a>).
 - All reduction classes have a set of relevant parameters.
 - All reduction classes have a <code class="xref py py-meth docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess.validate_params()</span></code> method to validate parameter values.
 - All reduction classes have a <code class="docutils literal notranslate"><span class="pre">__call__()</span></code> method.</p></li>
@@ -385,7 +385,7 @@ structures which should make this a possible thing to accomplish given that the 
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Reduction processes always implement <code class="docutils literal notranslate"><span class="pre">__call__(self,</span> <span class="pre">cross_match_database,</span> <span class="pre">table)</span></code>, where <code class="docutils literal notranslate"><span class="pre">cross_match_database</span></code> is a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code> instance representing the data to be reduced and the <code class="docutils literal notranslate"><span class="pre">table</span></code> parameter is the
+<a class="reference internal" href="../../_as_gen/cross_reference.CrossMatchDatabase.html#cross_reference.CrossMatchDatabase" title="cross_reference.CrossMatchDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">cross_reference.CrossMatchDatabase</span></code></a> instance representing the data to be reduced and the <code class="docutils literal notranslate"><span class="pre">table</span></code> parameter is the
 table within that database on which the reduction is performed.</p>
 </div>
 <p>From the perspective of the end-user, one <strong>sets up</strong> the reduction process instance (in doing so, specifying all of the needed parameters), and then
@@ -395,7 +395,7 @@ runs it using <code class="docutils literal notranslate"><span class="pre">insta
 <h2>Writing Reductions<a class="headerlink" href="#writing-reductions" title="Link to this heading">#</a></h2>
 <section id="basic-structure">
 <h3>Basic Structure<a class="headerlink" href="#basic-structure" title="Link to this heading">#</a></h3>
-<p>All reduction processes must be subclassed from <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code>. This is an abstract base class with only
+<p>All reduction processes must be subclassed from <a class="reference internal" href="../../_as_gen/structures.reduction.ReductionProcess.html#structures.reduction.ReductionProcess" title="structures.reduction.ReductionProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.reduction.ReductionProcess</span></code></a>. This is an abstract base class with only
 a couple of basic scaffolding methods already provided. Critically, the initialization takes only one parameter (<code class="docutils literal notranslate"><span class="pre">process_name</span></code>) and
 any number of optional <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>.</p>
 <p>The process name becomes the <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> while the <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> become the underlying
