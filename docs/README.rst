@@ -1,4 +1,4 @@
-.. image:: source/images/logos_icons/logo_main.png
+.. image:: docs/source/images/logos_icons/logo_main.png
     :width: 400
 
 |precom| |linting| |docs| |isort Status| |black| |astropy| |pydantic| |sklearn|
@@ -7,10 +7,6 @@ pyXMIP (the **p**\ ython **X**\ -**M**\ atching and **I**\ dentification **P**\ 
 against known databases. The package provides a variety of statistical tools for quantifying the confidence of a given match and automates
 queries against many of the most common astronomical databases.
 
-
-.. raw:: html
-
-   <hr style="color:black">
 
 Features
 ========
@@ -74,9 +70,3 @@ You can also achieve this in one line using
     :target: https://docs.pydantic.dev/latest/
 .. |sklearn| image:: http://img.shields.io/badge/powered%20by-sklearn-cyan.svg?style=flat
     :target: https://scikit-learn.org/stable/index.html
-.. |NED| image:: images/logos_icons/NED.png
-    :scale: 20%
-    :target: https://ned.ipac.caltech.edu
-.. |SIMBAD| image:: images/logos_icons/SIMBAD.jpg
-    :scale: 20%
-    :target: https://simbad.cds.unistra.fr/simbad/

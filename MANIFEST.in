@@ -2,3 +2,4 @@ recursive-include pyXMIP/bin *
 recursive-include docs/README.rst
 recursive-include docs/source *
 recursive-include scripts *
+recursive-exclude docs/source/_as_gen *
