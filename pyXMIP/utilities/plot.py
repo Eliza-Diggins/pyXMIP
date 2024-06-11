@@ -166,7 +166,7 @@ def plot_hips(
     resolution=1000,
     hips_path="CDS/P/DSS2/red",
     hips_kwargs=None,
-    **kwargs
+    **kwargs,
 ):
     # -- Managing WCS axes -- #
     from astropy.wcs import WCS
@@ -186,7 +186,7 @@ def plot_hips(
         (resolution, resolution),
         hips_path=hips_path,
         projection=projection,
-        **hips_kwargs
+        **hips_kwargs,
     )
 
     # -- Throw the WCS coordinates -- #

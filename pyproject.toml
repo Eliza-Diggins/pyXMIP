@@ -36,6 +36,3 @@ requires-python = ">=3.9"
 
 [project.urls]
 Homepage = "https://github.com/eliza-diggins/pyXMIP"
-
-[project.scripts]
-pyxmip = "pyxmip"

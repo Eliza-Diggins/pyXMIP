@@ -1,3 +1,7 @@
 from setuptools import setup
 
-setup()
+setup(
+    scripts=[
+        "scripts/pyxmip",
+    ],
+)
