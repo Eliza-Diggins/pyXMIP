@@ -370,57 +370,173 @@ document.write(`
                   
   <section id="configuring-pyxmip">
 <span id="configuration"></span><h1>Configuring <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code><a class="headerlink" href="#configuring-pyxmip" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> has a lot of configurable settings that you can interact with. In this mini-guide, we’ll show you the basics
-of messing around with the settings for your installation.</p>
-<p>To start, let’s take a look at our configuration settings:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pyxmip<span class="w"> </span>config<span class="w"> </span>show
-
-<span class="w">    </span><span class="o">{</span>
-<span class="w">    </span><span class="s1">&#39;system&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">        </span><span class="s1">&#39;logging&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="s1">&#39;main&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="s1">&#39;enabled&#39;</span>:<span class="w"> </span>True,
-<span class="w">                </span><span class="s1">&#39;format&#39;</span>:<span class="w"> </span><span class="s1">&#39;%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s&#39;</span>,
-<span class="w">                </span><span class="s1">&#39;level&#39;</span>:<span class="w"> </span><span class="s1">&#39;DEBUG&#39;</span>,
-<span class="w">                </span><span class="s1">&#39;stream&#39;</span>:<span class="w"> </span><span class="s1">&#39;STDERR&#39;</span>
-<span class="w">            </span><span class="o">}</span>,
-<span class="w">            </span><span class="s1">&#39;developer&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="s1">&#39;enabled&#39;</span>:<span class="w"> </span>False,
-<span class="w">                </span><span class="s1">&#39;output_directory&#39;</span>:<span class="w"> </span>None
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">}</span>,
-<span class="w">        </span><span class="s1">&#39;add_ons&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="s1">&#39;rich&#39;</span>:<span class="w"> </span>False
-<span class="w">        </span><span class="o">}</span>
-<span class="w">    </span><span class="o">}</span>,
-<span class="w">    </span><span class="s1">&#39;plotting&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">        </span><span class="s1">&#39;defaults&#39;</span>:<span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="s1">&#39;text.usetex&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;xtick.major.size&#39;</span>:<span class="w"> </span><span class="m">8</span>,
-<span class="w">            </span><span class="s1">&#39;ytick.major.size&#39;</span>:<span class="w"> </span><span class="m">8</span>,
-<span class="w">            </span><span class="s1">&#39;xtick.minor.size&#39;</span>:<span class="w"> </span><span class="m">5</span>,
-<span class="w">            </span><span class="s1">&#39;ytick.minor.size&#39;</span>:<span class="w"> </span><span class="m">5</span>,
-<span class="w">            </span><span class="s1">&#39;xtick.top&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;xtick.bottom&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;xtick.labeltop&#39;</span>:<span class="w"> </span>False,
-<span class="w">            </span><span class="s1">&#39;xtick.labelbottom&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;xtick.minor.visible&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;ytick.left&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;ytick.right&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;ytick.labelleft&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;ytick.labelright&#39;</span>:<span class="w"> </span>False,
-<span class="w">            </span><span class="s1">&#39;ytick.minor.visible&#39;</span>:<span class="w"> </span>True,
-<span class="w">            </span><span class="s1">&#39;xtick.direction&#39;</span>:<span class="w"> </span><span class="s1">&#39;in&#39;</span>,
-<span class="w">            </span><span class="s1">&#39;ytick.direction&#39;</span>:<span class="w"> </span><span class="s1">&#39;in&#39;</span>,
-<span class="w">            </span><span class="s1">&#39;font.style&#39;</span>:<span class="w"> </span><span class="s1">&#39;normal&#39;</span>,
-<span class="w">            </span><span class="s1">&#39;font.size&#39;</span>:<span class="w"> </span><span class="m">12</span>,
-<span class="w">            </span><span class="s1">&#39;image.cmap&#39;</span>:<span class="w"> </span><span class="s1">&#39;inferno&#39;</span>
-<span class="w">        </span><span class="o">}</span>
-<span class="w">    </span><span class="o">}</span>
-<span class="o">}</span>
+<p>For most use cases, <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> doesn’t need configuration; however, the code is equipped with a relatively sophisticated set
+of configurable options should need / desire drive the user to want something to change. You can access the configuration settings
+either through the python module (code-side) or through the terminal commands (terminal-side). In all of the following examples, we
+describe both approaches.</p>
+<section id="accessing-the-configuration">
+<h2>Accessing the Configuration<a class="headerlink" href="#accessing-the-configuration" title="Link to this heading">#</a></h2>
+<p>The configuration file for <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> is located in the <code class="docutils literal notranslate"><span class="pre">/bin</span></code> directory of your installation. If you are unsure of your installation
+directory, you can find it using the following:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Python</label><div class="sd-tab-content docutils">
+<p>To access the configuration path from <code class="docutils literal notranslate"><span class="pre">python</span></code>, simply import it from the utilities module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">config_directory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">config_directory</span><span class="p">)</span>
+<span class="go">    PosixPath(&#39;.../pyXMIP/bin/config.yaml&#39;)</span>
 </pre></div>
 </div>
-<p>There’s a lot going on there!</p>
+<p>In your case, you’ll see the installation path of your package where the <code class="docutils literal notranslate"><span class="pre">...</span></code> are.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+CLI</label><div class="sd-tab-content docutils">
+<p>The configuration path can be obtained using the following CLI command.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>USER:~$<span class="w"> </span>pyxmip<span class="w"> </span>config<span class="w"> </span>path
+.../pyXMIP/bin/config.yaml
+</pre></div>
+</div>
+</div>
+</div>
+<p>The actual configuration appears as an object in <code class="docutils literal notranslate"><span class="pre">pyXMIP.utilities.core</span></code>. From this object, you can make alterations, print
+values, etc.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
+Python</label><div class="sd-tab-content docutils">
+<p>To access the configuration object, simply import <code class="xref py py-attr docutils literal notranslate"><span class="pre">utilities.core.pxconfig</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">pxconfig</span>
+</pre></div>
+</div>
+<p>The actual configuration dictionary is located in <code class="docutils literal notranslate"><span class="pre">pxconfig.config</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span> <span class="c1"># Just for nicer printing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">pxconfig</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">│   &#39;system&#39;: {&#39;preferences&#39;: {&#39;disable_progress_bars&#39;: False}},</span>
+<span class="go">│   &#39;logging&#39;: {</span>
+<span class="go">│   │   &#39;mainlog&#39;: {</span>
+<span class="go">│   │   │   &#39;format&#39;: &#39;%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s&#39;,</span>
+<span class="go">│   │   │   &#39;level&#39;: &#39;INFO&#39;,</span>
+<span class="go">│   │   │   &#39;stream&#39;: &#39;stderr&#39;</span>
+<span class="go">│   │   },</span>
+<span class="go">│   │   &#39;devlog&#39;: {</span>
+<span class="go">│   │   │   &#39;enabled&#39;: False,</span>
+<span class="go">│   │   │   &#39;format&#39;: &#39;%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s&#39;,</span>
+<span class="go">│   │   │   &#39;level&#39;: &#39;DEBUG&#39;,</span>
+<span class="go">│   │   │   &#39;stream&#39;: &#39;stderr&#39;</span>
+<span class="go">│   │   }</span>
+<span class="go">│   },</span>
+<span class="go">│   &#39;plotting&#39;: {</span>
+<span class="go">│   │   &#39;defaults&#39;: {</span>
+<span class="go">│   │   │   &#39;text.usetex&#39;: True,</span>
+<span class="go">│   │   │   &#39;xtick.major.size&#39;: 8,</span>
+<span class="go">│   │   │   &#39;ytick.major.size&#39;: 8,</span>
+<span class="go">│   │   │   &#39;xtick.minor.size&#39;: 5,</span>
+<span class="go">│   │   │   &#39;ytick.minor.size&#39;: 5,</span>
+<span class="go">│   │   │   &#39;xtick.top&#39;: True,</span>
+<span class="go">│   │   │   &#39;xtick.bottom&#39;: True,</span>
+<span class="go">│   │   │   &#39;xtick.labeltop&#39;: False,</span>
+<span class="go">│   │   │   &#39;xtick.labelbottom&#39;: True,</span>
+<span class="go">│   │   │   &#39;xtick.minor.visible&#39;: True,</span>
+<span class="go">│   │   │   &#39;ytick.left&#39;: True,</span>
+<span class="go">│   │   │   &#39;ytick.right&#39;: True,</span>
+<span class="go">│   │   │   &#39;ytick.labelleft&#39;: True,</span>
+<span class="go">│   │   │   &#39;ytick.labelright&#39;: False,</span>
+<span class="go">│   │   │   &#39;ytick.minor.visible&#39;: True,</span>
+<span class="go">│   │   │   &#39;xtick.direction&#39;: &#39;in&#39;,</span>
+<span class="go">│   │   │   &#39;ytick.direction&#39;: &#39;in&#39;,</span>
+<span class="go">│   │   │   &#39;font.style&#39;: &#39;normal&#39;,</span>
+<span class="go">│   │   │   &#39;font.size&#39;: 12,</span>
+<span class="go">│   │   │   &#39;image.cmap&#39;: &#39;inferno&#39;</span>
+<span class="go">│   │   }</span>
+<span class="go">│   }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Configuration settings can be set in the current context simply by making alterations to the dictionary.</p>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-3">
+CLI</label><div class="sd-tab-content docutils">
+<p>From the CLI, you can view the current configuration; however, (obviously) you cannot alter the current local context values.
+In the next section, we’ll discuss how to make permanent changes to the configuration file.</p>
+<p>To view the configuration or some part of it, you simple need to use the following commands</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>USER:~$<span class="w"> </span>pyxmip<span class="w"> </span>config<span class="w"> </span>view
+<span class="o">{</span>
+│<span class="w">   </span><span class="s1">&#39;system&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;preferences&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;disable_progress_bars&#39;</span>:<span class="w"> </span>False<span class="o">}}</span>,
+│<span class="w">   </span><span class="s1">&#39;logging&#39;</span>:<span class="w"> </span><span class="o">{</span>
+│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;mainlog&#39;</span>:<span class="w"> </span><span class="o">{</span>
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;format&#39;</span>:<span class="w"> </span><span class="s1">&#39;%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;level&#39;</span>:<span class="w"> </span><span class="s1">&#39;INFO&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;stream&#39;</span>:<span class="w"> </span><span class="s1">&#39;stderr&#39;</span>
+│<span class="w">   </span>│<span class="w">   </span><span class="o">}</span>,
+│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;devlog&#39;</span>:<span class="w"> </span><span class="o">{</span>
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;enabled&#39;</span>:<span class="w"> </span>False,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;format&#39;</span>:<span class="w"> </span><span class="s1">&#39;%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;level&#39;</span>:<span class="w"> </span><span class="s1">&#39;DEBUG&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;stream&#39;</span>:<span class="w"> </span><span class="s1">&#39;stderr&#39;</span>
+│<span class="w">   </span>│<span class="w">   </span><span class="o">}</span>
+│<span class="w">   </span><span class="o">}</span>,
+│<span class="w">   </span><span class="s1">&#39;plotting&#39;</span>:<span class="w"> </span><span class="o">{</span>
+│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;defaults&#39;</span>:<span class="w"> </span><span class="o">{</span>
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;text.usetex&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.major.size&#39;</span>:<span class="w"> </span><span class="m">8</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.major.size&#39;</span>:<span class="w"> </span><span class="m">8</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.minor.size&#39;</span>:<span class="w"> </span><span class="m">5</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.minor.size&#39;</span>:<span class="w"> </span><span class="m">5</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.top&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.bottom&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.labeltop&#39;</span>:<span class="w"> </span>False,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.labelbottom&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.minor.visible&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.left&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.right&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.labelleft&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.labelright&#39;</span>:<span class="w"> </span>False,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.minor.visible&#39;</span>:<span class="w"> </span>True,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;xtick.direction&#39;</span>:<span class="w"> </span><span class="s1">&#39;in&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;ytick.direction&#39;</span>:<span class="w"> </span><span class="s1">&#39;in&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;font.style&#39;</span>:<span class="w"> </span><span class="s1">&#39;normal&#39;</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;font.size&#39;</span>:<span class="w"> </span><span class="m">12</span>,
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span><span class="s1">&#39;image.cmap&#39;</span>:<span class="w"> </span><span class="s1">&#39;inferno&#39;</span>
+│<span class="w">   </span>│<span class="w">   </span><span class="o">}</span>
+│<span class="w">   </span><span class="o">}</span>
+<span class="o">}</span>
+
+USER:~$<span class="w"> </span>pyxmip<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>system.preferences
+<span class="o">{</span><span class="s1">&#39;disable_progress_bars&#39;</span>:<span class="w"> </span>False<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="altering-the-configuration">
+<h2>Altering The Configuration<a class="headerlink" href="#altering-the-configuration" title="Link to this heading">#</a></h2>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">pxconfig</span></code> variable, changes made to the <code class="docutils literal notranslate"><span class="pre">.config</span></code> attribute will not be saved at the end of the runtime context. If you
+want to change something permanently, you will need to use a command, alter the file directly, or use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">utilities.Core.YAMLConfiguration.set_on_disk()</span></code> method.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-4">
+Python</label><div class="sd-tab-content docutils">
+<p>To make a change on disk using <code class="docutils literal notranslate"><span class="pre">python</span></code>, simply execute the <code class="docutils literal notranslate"><span class="pre">set_on_disk</span></code> function. For example, here
+we change the value of the <code class="docutils literal notranslate"><span class="pre">disable_progress_bars</span></code> setting to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyXMIP.utilities.core</span> <span class="kn">import</span> <span class="n">pxconfig</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pxconfig</span><span class="o">.</span><span class="n">set_on_disk</span><span class="p">(</span><span class="n">pxconfig</span><span class="o">.</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;system.preferences.disable_progress_bars&#39;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-5">
+CLI</label><div class="sd-tab-content docutils">
+<p>To make the same change using the CLI, simply use the <code class="docutils literal notranslate"><span class="pre">config</span> <span class="pre">set</span></code> command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>USER:~$<span class="w"> </span>pyxmip<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>system.preferences.disable_progress_bars<span class="w"> </span><span class="nb">false</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -441,6 +557,17 @@ of messing around with the settings for your installation.</p>
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-the-configuration">Accessing the Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#altering-the-configuration">Altering The Configuration</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div class="tocsection sourcelink">

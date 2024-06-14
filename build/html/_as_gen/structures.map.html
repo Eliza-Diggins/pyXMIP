@@ -1350,7 +1350,7 @@ document.write(`
                   
   <section id="module-structures.map">
 <span id="structures-map"></span><h1>structures.map<a class="headerlink" href="#module-structures.map" title="Link to this heading">#</a></h1>
-<p>Module for representing functions on the sky.</p>
+<p>Module to work with functions on the domain of the sky including representing all-sky data and performing other analyses.</p>
 <p class="rubric">Notes</p>
 <p>The <a class="reference internal" href="#module-structures.map" title="structures.map"><code class="xref py py-mod docutils literal notranslate"><span class="pre">structures.map</span></code></a> module provides an interface for managing data on the sky. The <a class="reference internal" href="structures.map.MapAtlas.html#structures.map.MapAtlas" title="structures.map.MapAtlas"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.map.MapAtlas</span></code></a> class
 represents a collection of <a class="reference internal" href="structures.map.Map.html#structures.map.Map" title="structures.map.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.map.Map</span></code></a> objects. Each of these maps acts like a function of sky position.</p>
@@ -1361,7 +1361,7 @@ represents a collection of <a class="reference internal" href="structures.map.Ma
 <td><p>Representation of a callable HEALPix map in an Atlas.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="structures.map.MapAtlas.html#structures.map.MapAtlas" title="structures.map.MapAtlas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapAtlas</span></code></a>(filepath)</p></td>
-<td><p>The <a class="reference internal" href="structures.map.MapAtlas.html#structures.map.MapAtlas" title="structures.map.MapAtlas"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapAtlas</span></code></a> class is a generic wrapper for <code class="docutils literal notranslate"><span class="pre">.fits</span></code> files which is designed to store sky maps and associated data tables.</p></td>
+<td><p><a class="reference internal" href="structures.map.MapAtlas.html#structures.map.MapAtlas" title="structures.map.MapAtlas"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapAtlas</span></code></a> instances are collections of maps on the night-sky.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="structures.map.PoissonAtlas.html#structures.map.PoissonAtlas" title="structures.map.PoissonAtlas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PoissonAtlas</span></code></a>(filepath)</p></td>
 <td><p>Special case class of <a class="reference internal" href="structures.map.StatAtlas.html#structures.map.StatAtlas" title="structures.map.StatAtlas"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatAtlas</span></code></a> for Poisson maps.</p></td>

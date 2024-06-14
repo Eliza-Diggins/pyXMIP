@@ -538,7 +538,7 @@ Sub-Process Overview
 
 Below, you can find information about each of the available reduction processes.
 
-- :ref:`instrumental_reduction`
+- :ref:`Astrometric_reduction`
 - :ref:`object_type_reduction`
 
 Further Information
