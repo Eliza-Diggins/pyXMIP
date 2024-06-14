@@ -11,7 +11,7 @@ system:
   # -- These are system-wide settings for basic usage. -- #
   preferences:
     # General user preferences.
-    disable_progress_bars: false   # Change to true to disable all progress bars in the module.
+    disable_progress_bars: true    # Change to true to disable all progress bars in the module.
 logging:
   # -- Settings pertaining to the logging system in pyXMIP -- #
   # There are 2 loggers in the pyXMIP module: mainlog and devlog.

@@ -6,3 +6,29 @@ version:
   kwargs: {}
   help: "The version of the pyXMIP package"
   function: 'print_version'
+config:
+  help: "Commands for the configuration system."
+  subparsers:
+    path:
+      args: {}
+      kwargs: {}
+      help: "The path to the pyXMIP configuration file."
+      function: "print_config_path"
+    view:
+      kwargs:
+        dictionary_position:
+          shortcut: '-d'
+          default: 'all'
+          help: 'The position to display in the configuration file. Should be formatted string of option.option.option...'
+      args: {}
+      help: "View the configuration file."
+      function: 'view_config'
+    set:
+      args:
+        dictionary_position:
+          help: 'The dictionary position to alter.'
+        value:
+          help: 'The value to set.'
+      kwargs: {}
+      help: "Set new configuration value."
+      function: 'set_config'

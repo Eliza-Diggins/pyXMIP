@@ -35,9 +35,13 @@ class CLIParser(ArgumentParser):
                 _s = base_parser.add_parser(name=k, help=v.get("help", None))
 
                 for arg_name, arg_dict in v.get("args", {}).items():
-                    _s.add_argument(name=arg_name, **arg_dict)
+                    _s.add_argument(arg_name, **arg_dict)
                 for kwarg_name, kwarg_dict in v.get("kwargs", {}).items():
-                    _s.add_argument(name=kwarg_name, **kwarg_dict)
+                    _s.add_argument(
+                        f"--{kwarg_name}",
+                        kwarg_dict.pop("shortcut", f"-{kwarg_name}"),
+                        **kwarg_dict,
+                    )
 
                 _s.set_defaults(operation=v.get("function", "none"))
 
@@ -45,6 +49,40 @@ class CLIParser(ArgumentParser):
                 _s = base_parser.add_parser(name=k, help=v.get("help", None))
                 _q = _s.add_subparsers(title=v.get("title"), help=v.get("help", None))
 
-                cls.build_recursive(v, base_parser=_q)
+                cls.build_recursive(v["subparsers"], base_parser=_q)
 
         return base_parser
+
+
+def print_config_path():
+    from pyXMIP.utilities.core import config_directory
+
+    print(str(config_directory))
+
+
+def view_config(dictionary_position="all"):
+    from pyXMIP.utilities.core import pxconfig, rgetattr
+
+    if dictionary_position == "all":
+        print(pxconfig.config)
+    else:
+        print(rgetattr(pxconfig.config, dictionary_position))
+
+
+def set_config(dictionary_position=None, value=None):
+    from yaml import safe_load
+
+    from pyXMIP.utilities.core import pxconfig, rgetattr
+    from pyXMIP.utilities.logging import mainlog
+
+    if isinstance(rgetattr(pxconfig.config, dictionary_position), dict):
+        mainlog.error(
+            "Cannot alter option dictionary from CLI, please provide a valid option path."
+        )
+    else:
+        pxconfig.set_on_disk(pxconfig.path, dictionary_position, safe_load(value))
+
+
+CLI_FUNCTIONS["view_config"] = view_config
+CLI_FUNCTIONS["set_config"] = set_config
+CLI_FUNCTIONS["print_config_path"] = print_config_path

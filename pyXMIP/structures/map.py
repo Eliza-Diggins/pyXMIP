@@ -1,5 +1,5 @@
 r"""
-Module for representing functions on the sky.
+Module to work with functions on the domain of the sky including representing all-sky data and performing other analyses.
 
 Notes
 -----
@@ -75,8 +75,7 @@ class _MapHeaderParam:
 
 class MapAtlas:
     r"""
-    The :py:class:`MapAtlas` class is a generic wrapper for ``.fits`` files which is designed to store sky maps and associated
-    data tables.
+    :py:class:`MapAtlas` instances are collections of maps on the night-sky.
 
     Notes
     -----
