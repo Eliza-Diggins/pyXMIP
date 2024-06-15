@@ -61,9 +61,10 @@
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/utilities.plot';</script>
+    <link rel="icon" href="../_static/logo_small.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="utilities.plot.get_hips_image" href="utilities.plot.get_hips_image.html" />
+    <link rel="next" title="utilities.plot.get_hips_data" href="utilities.plot.get_hips_data.html" />
     <link rel="prev" title="utilities.logging" href="utilities.logging.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -1274,9 +1275,12 @@ document.write(`
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.logging.html">utilities.logging</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">utilities.plot</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-48"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.get_hips_data.html">utilities.plot.get_hips_data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.get_hips_image.html">utilities.plot.get_hips_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.image_histogram_equalization.html">utilities.plot.image_histogram_equalization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.plot_healpix.html">utilities.plot.plot_healpix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.plot_hips.html">utilities.plot.plot_hips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.replace_axes.html">utilities.plot.replace_axes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.set_style.html">utilities.plot.set_style</a></li>
 </ul>
 </li>
@@ -1354,16 +1358,25 @@ document.write(`
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.get_hips_image.html#utilities.plot.get_hips_image" title="utilities.plot.get_hips_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hips_image</span></code></a>(center, FOV, dims[, ...])</p></td>
-<td><p>Fetch a HIPs image from arbitrary servers and return.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.get_hips_data.html#utilities.plot.get_hips_data" title="utilities.plot.get_hips_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hips_data</span></code></a>(center, FOV[, dims, ...])</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">astroquery</span></code> to seek a HIPs image and return it with the relevant parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="utilities.plot.get_hips_image.html#utilities.plot.get_hips_image" title="utilities.plot.get_hips_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hips_image</span></code></a>(center, FOV[, dims, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.image_histogram_equalization.html#utilities.plot.image_histogram_equalization" title="utilities.plot.image_histogram_equalization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_histogram_equalization</span></code></a>(image[, bins, ...])</p></td>
+<td><p>Equalize an image's color so that the PDF is flattened.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="utilities.plot.plot_healpix.html#utilities.plot.plot_healpix" title="utilities.plot.plot_healpix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_healpix</span></code></a>(healpix_map[, fig, ax, projection])</p></td>
+<td><p>Plot a HEALPix map.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.plot_hips.html#utilities.plot.plot_hips" title="utilities.plot.plot_hips"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_hips</span></code></a>(center, FOV[, fig, ax, imshow_kwargs])</p></td>
+<td><p>Create a HIPs map figure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="utilities.plot.replace_axes.html#utilities.plot.replace_axes" title="utilities.plot.replace_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_axes</span></code></a>(ax[, fig])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.plot_hips.html#utilities.plot.plot_hips" title="utilities.plot.plot_hips"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_hips</span></code></a>(center, FOV[, fig, projection, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="utilities.plot.set_style.html#utilities.plot.set_style" title="utilities.plot.set_style"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_style</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="utilities.plot.set_style.html#utilities.plot.set_style" title="utilities.plot.set_style"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_style</span></code></a>()</p></td>
 <td><p>Uses the <code class="docutils literal notranslate"><span class="pre">pyXMIP</span></code> settings in the configuration file and enforces those formatting choices on matplotlib.</p></td>
 </tr>
 </tbody>
@@ -1390,11 +1403,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="utilities.plot.get_hips_image.html"
+       href="utilities.plot.get_hips_data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">utilities.plot.get_hips_image</p>
+        <p class="prev-next-title">utilities.plot.get_hips_data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

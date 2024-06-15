@@ -61,10 +61,11 @@
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/utilities.plot.plot_healpix';</script>
+    <link rel="icon" href="../_static/logo_small.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="utilities.plot.plot_hips" href="utilities.plot.plot_hips.html" />
-    <link rel="prev" title="utilities.plot.get_hips_image" href="utilities.plot.get_hips_image.html" />
+    <link rel="prev" title="utilities.plot.image_histogram_equalization" href="utilities.plot.image_histogram_equalization.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -1274,9 +1275,12 @@ document.write(`
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.logging.html">utilities.logging</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="utilities.plot.html">utilities.plot</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-48"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.get_hips_data.html">utilities.plot.get_hips_data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.get_hips_image.html">utilities.plot.get_hips_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.image_histogram_equalization.html">utilities.plot.image_histogram_equalization</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">utilities.plot.plot_healpix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.plot_hips.html">utilities.plot.plot_hips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.plot.replace_axes.html">utilities.plot.replace_axes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utilities.plot.set_style.html">utilities.plot.set_style</a></li>
 </ul>
 </li>
@@ -1355,8 +1359,28 @@ document.write(`
 <h1>utilities.plot.plot_healpix<a class="headerlink" href="#utilities-plot-plot-healpix" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.plot.plot_healpix">
-<span class="sig-prename descclassname"><span class="pre">utilities.plot.</span></span><span class="sig-name descname"><span class="pre">plot_healpix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">healpix_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utilities/plot.html#plot_healpix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.plot.plot_healpix" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">utilities.plot.</span></span><span class="sig-name descname"><span class="pre">plot_healpix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">healpix_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.0)"><span class="pre">Figure</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.0)"><span class="pre">Axes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utilities/plot.html#plot_healpix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.plot.plot_healpix" title="Link to this definition">#</a></dt>
+<dd><p>Plot a HEALPix map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>healpix_map</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – The HEALPix map to plot.</p></li>
+<li><p><strong>fig</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.Figure</span></code>) – The figure to add the axes to.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.Axes</span></code>) – The axes to add the image to.</p></li>
+<li><p><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The projection to select.</p></li>
+<li><p><strong>kwargs</strong> – Additional kwargs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">fig</span></code> – The output figure</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ax</span></code> – The output axes</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">img</span></code> – The output image.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -1371,12 +1395,12 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="utilities.plot.get_hips_image.html"
+       href="utilities.plot.image_histogram_equalization.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">utilities.plot.get_hips_image</p>
+        <p class="prev-next-title">utilities.plot.image_histogram_equalization</p>
       </div>
     </a>
     <a class="right-next"

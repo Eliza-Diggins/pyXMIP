@@ -47,28 +47,28 @@ To cross match a catalog stored in (for example) ``example.fits``, we can do eit
 
         .. code-block:: bash
 
-            >>> pyxmip xmatch run -h
-            usage: pyxmip xmatch run [-h] [-db DATABASES [DATABASES ...]] [-f] input_path output_path
+            user:~$ pyxmip xmatch run -h
+            usage: pyXMIP xmatch run [-h] [--databases DATABASES [DATABASES ...]] [--output OUTPUT] [--overwrite] source
+
 
             positional arguments:
-              input_path            The path to the catalog you want to cross-reference
-              output_path           The path to output the data to (SQL database).
+              source                The input catalog file.
 
             options:
               -h, --help            show this help message and exit
-              -db DATABASES [DATABASES ...], --databases DATABASES [DATABASES ...]
-                                    Databases to include
-              -f, --force           Allow overwriting of existing data.
+              --databases DATABASES [DATABASES ...], -d DATABASES [DATABASES ...]
+                                    The database names to include. Default is all.
+              --output OUTPUT, -o OUTPUT
+                                    Specify the output directory
+              --overwrite, -f       Force by overwriting if pre-exists.
 
-        As such, to compile a given catalog into a cross matching database, you need only run a command like the following.
+            user:~$ pyxmip xmatch run /eRASS1_Hard.v1.0.fits -f
+            pyXMIP : [INFO     ] 2024-06-15 09:47:59,524 X-Matching /eRASS1_Hard.v1.0.fits into /eRASS1_Hard.v1.0.fits.db.
+            pyXMIP : [INFO     ] 2024-06-15 09:47:59,718 Cross matching with 2 databases: ['NED_STD', 'SIMBAD_STD'].
+            pyXMIP : [INFO     ] 2024-06-15 09:47:59,731 Source matching 5466 against NED_STD.
+            pyXMIP : [INFO     ] 2024-06-15 09:47:59,912 [MainThread] Creating table NED_STD_MATCH schema.
+            Cross-Matching:   0%|                                                                 | 0/2 [00:00<?, ?it/s]
 
-        .. code-block:: bash
-
-            >>> pyxmip xmatch run docs/source/examples/data/eRASS1_Hard.v1.0.fits docs/source/examples/data/cross_matched.db -f
-
-        There are also two optional flags: ``-db`` and ``-f``. ``-f`` will allow you to overwrite existing ``.db`` output
-        files with the same path. ``-db db1 db2 ... dbN`` allows you to overwrite the default set of databases to use for
-        cross matching and instead use your own.
 
         .. hint::
 
@@ -98,7 +98,7 @@ To cross match a catalog stored in (for example) ``example.fits``, we can do eit
             pyXMIP : [DEBUG    ] 2024-04-28 13:34:12,763 Querying with threading.
             pyXMIP : [INFO     ] 2024-04-28 13:37:38,003 Source matching 5466 against SIMBAD.
             pyXMIP : [DEBUG    ] 2024-04-28 13:37:38,006 Querying with threading.
-            Matching from 2 databases: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [05:15<00:00, 157.57s/it]
+            Matching from 2 databases: 100%|██████████████████████████████████████████████████████████████████| 2/2 [05:15<00:00, 157.57s/it]
 
 
         .. hint::
@@ -159,39 +159,18 @@ Generically, these tables can look a lot different for different databases and d
     Under the hood, we query the database and join the output table to information about the object we're matching against. Thus
     you may see any number of columns from the database's query output table.
 
-While tables can look different from one another, there are a few **standard columns** that you'll see in all cross-matching databases:
+Within each of the match-tables, you will generically find any number of different columns. These column correspond to the columns returned when
+querying the underlying database. In addition, a few convenience columns are always provided:
 
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-| Column Name           | Query Schema Equivalent    | Required? | Description                                            |
-+=======================+============================+===========+========================================================+
-| ``NAME``              | ``schema.NAME``            | ``True``  | The name of the match candidate.                       |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-| ``RA``                | ``schema.RA``              | ``True``  | The RA of the match candidate (in degrees). Regardless |
-|                       |                            |           | of the available coordinate columns, RA / DEC are      |
-|                       |                            |           | always included as the base coordinate system for      |
-|                       |                            |           | further manipulations.                                 |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``DEC``                | ``schema.DEC``             | ``True``  | The DEC of the match candidate (in degrees). See ``RA``|
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``TYPE``               |``schema.TYPE``             | ``False`` | The object type for the candidate.                     |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``Z``                  |``schema.Z``                |``False``  | The redshift of the candidate.                         |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``CATOBJ``             |                            |``True``   | The catalog object that was matched to this candidate. |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``CATRA``              |                            |``True``   | The catalog object's RA (degrees).                     |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-|``CATDEC``             |                            |``True``   | The catalog declination (degrees).                     |
-+-----------------------+----------------------------+-----------+--------------------------------------------------------+
-
-The additional columns that you might find are additional (potentially useful) columns provided by your :py:class:`structures.databases.SourceDatabase` instances
-used for the matching process.
+- ``CATOBJ``, ``CATRA``, and ``CATDEC`` correspond to the object-identifier, RA and DEC of the catalog object for which each entry is a match.
+- ``RA`` and ``DEC`` are always added (if they are not already available). This ensures that we can use a stanardized coordinate system for all
+  further tasks.
 
 .. important::
 
     Everytime the underlying :py:class:`structures.databases.SourceDatabase` instance is queried, it returns a :py:class:`structures.table.SourceTable`.
     That table is then put through the "cleaning process" defined by :py:attr:`structures.databases.SourceDatabase.correct_query_output`. The cleaning
-    process is designed to do the **bare-minimum** to make the query writable to a ``sql`` format. After the cleaning has occured, the table is written
+    process is designed to do the **bare-minimum** to make the query writable to a ``sql`` format. After the cleaning has occurred, the table is written
     to your ``sql`` database and we proceed to the next query.
 
     If your output table (:py:class:`structures.table.SourceTable`) is not formatted in a way which can be written to file (problematic columns,
@@ -210,9 +189,9 @@ Once you've obtained a cross-referencing output, a lot of information can be obt
 .. code-block:: python
 
     >>> import pyXMIP as pyxm
-    >>> catalog_table = pyxm.load("/home/ediggins/pyROSITA_test/eRASS1_Hard.v1.0.fits")
+    >>> catalog_table = pyxm.load("eRASS1_Hard.v1.0.fits")
 
-    >>> pyxm.cross_match_table(q[:10],"test.db",overwrite=True)
+    >>> pyxm.cross_match_table(catalog_table[:10],"test.db",overwrite=True)
 
 If we now access the ``test.db`` SQL file, we find the following:
 
@@ -222,15 +201,12 @@ If we now access the ``test.db`` SQL file, we find the following:
     SQLite version 3.31.1 2020-01-27 19:55:54
     Enter ".help" for usage hints.
 
-    sqlite> .schema
+    user:~/$  .schema
     CREATE TABLE IF NOT EXISTS "CATALOG" (
-            "CATALOG_OBJECT" TEXT,
+            "CATOBJ" TEXT,
             "DETUID" TEXT,
             "SKYTILE" INTEGER,
-            "ID_SRC" INTEGER,
-            "UID" BIGINT,
             ...
-            "FLAG_SP_LGA" SMALLINT,
             "FLAG_SP_GC_CONS" SMALLINT,
             "FLAG_NO_RADEC_ERR" SMALLINT,
             "FLAG_NO_EXT_ERR" SMALLINT,
@@ -240,14 +216,15 @@ If we now access the ``test.db`` SQL file, we find the following:
     CREATE TABLE IF NOT EXISTS "META" (
             "PROCESS" TEXT,
             "TABLE" TEXT,
-            "DATE_RUN" TEXT
+            "DATE_RUN" TEXT,
+            "REDUCTION" BOOLEAN
     );
     CREATE TABLE IF NOT EXISTS "NED_STD_MATCH" (
             "No." BIGINT,
-            "NAME" TEXT,
+            "Object Name" TEXT,
             "RA" FLOAT,
             "DEC" FLOAT,
-            "TYPE" TEXT,
+            "Type" TEXT,
             "Velocity" FLOAT,
             "Redshift" FLOAT,
             "Redshift Flag" TEXT,
@@ -262,12 +239,13 @@ If we now access the ``test.db`` SQL file, we find the following:
             "Associations" BIGINT,
             "CATOBJ" TEXT,
             "CATRA" FLOAT,
-            "CATDEC" FLOAT
+            "CATDEC" FLOAT,
+            "CATNMATCH" BIGINT
     );
     CREATE TABLE IF NOT EXISTS "SIMBAD_STD_MATCH" (
-            "NAME" TEXT,
-            "RA" TEXT,
-            "DEC" TEXT,
+            "MAIN_ID" TEXT,
+            "RA" FLOAT,
+            "DEC" FLOAT,
             "RA_PREC" BIGINT,
             "DEC_PREC" BIGINT,
             "COO_ERR_MAJA" FLOAT,
@@ -276,14 +254,16 @@ If we now access the ``test.db`` SQL file, we find the following:
             "COO_QUAL" TEXT,
             "COO_WAVELENGTH" TEXT,
             "COO_BIBCODE" TEXT,
-            "TYPE" TEXT,
+            "OTYPES" TEXT,
             "RA_d_A" FLOAT,
             "DEC_d_D" FLOAT,
             "SCRIPT_NUMBER_ID" BIGINT,
             "CATOBJ" TEXT,
             "CATRA" FLOAT,
-            "CATDEC" FLOAT
+            "CATDEC" FLOAT,
+            "CATNMATCH" BIGINT
     );
+
 
 As you can see, we now have the ``CATALOG`` and the ``META`` table, and the standard columns are all placed in the tables.
 
@@ -344,11 +324,11 @@ Let's begin by calling the ``cmd.tables`` attribute and see what comes up:
 .. code-block:: python
 
     >>> cmd.tables
-    ['CATALOG', 'META', 'NED_MATCH', 'SIMBAD_MATCH']
+    ['CATALOG', 'META', 'NED_STD_MATCH', 'SIMBAD_STD_MATCH']
 
 As one might guess, these are the tables inside of the underlying ``SQL`` database.
 
-- ``NED_MATCH`` and ``SIMBAD_MATCH`` are the **raw match tables** for each of the databases.
+- ``NED_STD_MATCH`` and ``SIMBAD_STD_MATCH`` are the **raw match tables** for each of the databases.
 
   - These contain all of the match candidates for each of the catalog sources.
 
@@ -361,12 +341,12 @@ Taking a look at the ``META`` table, we can see all of the various "processes" w
 .. code-block:: python
 
     >>> cmd.meta
-                PROCESS         TABLE                  DATE_RUN
-    0  CATALOG_INCLUDED           all  Sun Apr 28 18:50:23 2024
-    1    OBJECT_CORRECT     NED_MATCH  Sun Apr 28 18:50:27 2024
-    2    OBJECT_CORRECT  SIMBAD_MATCH  Sun Apr 28 18:50:27 2024
-    3    COLUMN_CORRECT     NED_MATCH  Sun Apr 28 18:50:27 2024
-    4    COLUMN_CORRECT  SIMBAD_MATCH  Sun Apr 28 18:50:27 2024
+                 PROCESS             TABLE                  DATE_RUN  REDUCTION
+    0     META_GENERATED               ALL  Sat Jun 15 10:02:35 2024      False
+    1  CORRECT_OBJ_TYPES     NED_STD_MATCH  Sat Jun 15 10:02:35 2024      False
+    2     STNDIZE_COORDS     NED_STD_MATCH  Sat Jun 15 10:02:35 2024      False
+    3  CORRECT_OBJ_TYPES  SIMBAD_STD_MATCH  Sat Jun 15 10:02:35 2024      False
+    4     STNDIZE_COORDS  SIMBAD_STD_MATCH  Sat Jun 15 10:02:35 2024      False
 
 Each line represents a different action that was taken on a specific table.
 
@@ -376,21 +356,6 @@ Each line represents a different action that was taken on a specific table.
 
 Under the hood, each of these is just a method of the :py:class:`cross_reference.CrossMatchDatabase` database. There are a number
 of these processes, which can be read about in detail below.
-
-.. rubric:: Available CMD Processes
-
-+----------------------------------+--------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-| META TAG                         | Method                                                             | Description                                                                           |
-+==================================+====================================================================+=======================================================================================+
-| ``CATALOG_INCLUDED``             | :py:meth:`cross_reference.CrossMatchDatabase.add_catalog`          | Add a catalog (any readable source table) to the database. In most cases, this is     |
-|                                  |                                                                    | done automatically during the cross-matching process.                                 |
-+----------------------------------+--------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-| ``CORRECT_OBJECT_TYPES``         | :py:meth:`cross_reference.CrossMatchDatabase.correct_object_types` | Correct the object types so that they match the ``SIMBAD`` object types.              |
-+----------------------------------+--------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-| ``CORRECT_COLUMN_NAMES``         | :py:meth:`cross_reference.CrossMatchDatabase.correct_column_names` | Correct the names of columns to fit the ``pyXMIP`` standard.                          |
-+----------------------------------+--------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-| ``CORRECT_COORDINATE_COLUMNS``   | :py:meth:`cross_reference.CrossMatchDatabase.correct_coordinates`  | Correct the available coordinate columns.                                             |
-+----------------------------------+--------------------------------------------------------------------+---------------------------------------------------------------------------------------+
 
 .. important::
 
