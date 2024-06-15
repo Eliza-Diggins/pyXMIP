@@ -83,6 +83,15 @@ def set_config(dictionary_position=None, value=None):
         pxconfig.set_on_disk(pxconfig.path, dictionary_position, safe_load(value))
 
 
+def xmatch(source=None, databases=None, output=None, overwrite=False):
+    from pyXMIP.cross_reference import cross_match
+
+    if output is None:
+        output = str(source) + ".db"
+    cross_match(source, output, databases, overwrite=overwrite)
+
+
+CLI_FUNCTIONS["xmatch"] = xmatch
 CLI_FUNCTIONS["view_config"] = view_config
 CLI_FUNCTIONS["set_config"] = set_config
 CLI_FUNCTIONS["print_config_path"] = print_config_path

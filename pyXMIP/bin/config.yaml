@@ -22,36 +22,42 @@ logging:
     stream: stderr   # Can be STDERR or STDOUT.
   devlog:
     # The developer log. This will increase the ammount of technical detail printed to stdout.
-    enabled: false
+    enabled: true
     format: '%(name)-3s : [%(levelname)-9s] %(asctime)s %(message)s' # Logger's string format for output
     level: DEBUG    # Only logging passed to this level or higher are displayed.
     stream: stderr   # Can be STDERR or STDOUT.
 
 #======================================================================================================================#
 plotting:
-  # These are options for any of the default plots generated in cluster generator.
-  defaults:
-    # -- Latex settings -- #
-    text.usetex: true
-    # -- Tick Settings -- #
-    xtick.major.size: 8
-    ytick.major.size: 8
-    xtick.minor.size: 5
-    ytick.minor.size: 5
-    xtick.top: true
-    xtick.bottom: true
-    xtick.labeltop: false
-    xtick.labelbottom: true
-    xtick.minor.visible: true
-    ytick.left: true
-    ytick.right: true
-    ytick.labelleft: true
-    ytick.labelright: false
-    ytick.minor.visible: true
-    xtick.direction: in
-    ytick.direction: in
-    # -- Font Settings -- #
-    font.style: normal
-    font.size: 12
-    # -- Image -- #
-    image.cmap: inferno
+    # These are options for any of the default plots generated in cluster generator.
+    hips_defaults:
+      hips_map: "CDS/P/DSS2/red"
+      projection: "AIT"
+      cmap: 'binary'
+    healpix:
+      projection: "mollweide"
+    defaults:
+      # -- Latex settings -- #
+      text.usetex: true
+      # -- Tick Settings -- #
+      xtick.major.size: 8
+      ytick.major.size: 8
+      xtick.minor.size: 5
+      ytick.minor.size: 5
+      xtick.top: true
+      xtick.bottom: true
+      xtick.labeltop: false
+      xtick.labelbottom: true
+      xtick.minor.visible: true
+      ytick.left: true
+      ytick.right: true
+      ytick.labelleft: true
+      ytick.labelright: false
+      ytick.minor.visible: true
+      xtick.direction: in
+      ytick.direction: in
+      # -- Font Settings -- #
+      font.style: normal
+      font.size: 12
+      # -- Image -- #
+      image.cmap: inferno

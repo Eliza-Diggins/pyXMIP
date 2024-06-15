@@ -32,3 +32,26 @@ config:
       kwargs: {}
       help: "Set new configuration value."
       function: 'set_config'
+xmatch:
+  help: "Cross matching commands."
+  subparsers:
+    run:
+      args:
+        source:
+          help: "The input catalog file."
+      kwargs:
+        databases:
+          shortcut: '-d'
+          default: null
+          nargs: '+'
+          help: "The database names to include. Default is all."
+        output:
+          shortcut: '-o'
+          default: null
+          help: "Specify the output directory"
+        overwrite:
+          shortcut: '-f'
+          action: 'store_true'
+          help: "Force by overwriting if pre-exists."
+      help: "Run a cross-matching against a set of databases."
+      function: 'xmatch'
