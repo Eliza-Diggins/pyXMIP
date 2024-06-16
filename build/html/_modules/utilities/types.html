@@ -658,6 +658,50 @@ document.write(`
         <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
 
 
+<span class="k">class</span> <span class="nc">_RegistryPydanticAnnotation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a PyDantic annotation to process :py:class:`CrossMatchDatabase` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">_source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">_handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">validate_from_dict</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Registry</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">from_dict_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">dict_schema</span><span class="p">(),</span>
+                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span><span class="n">validate_from_dict</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_dict_schema</span><span class="p">,</span>
+            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="c1"># check if it&#39;s an instance first before doing any further work</span>
+                    <span class="n">core_schema</span><span class="o">.</span><span class="n">is_instance_schema</span><span class="p">(</span><span class="n">Registry</span><span class="p">),</span>
+                    <span class="n">from_dict_schema</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">instance</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonSchemaValue</span><span class="p">:</span>
+        <span class="c1"># Use the same schema that would be used for `str`</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">())</span>
+
+
 <span class="c1"># ============================================================= #</span>
 <span class="c1"># Custom Validators</span>
 <span class="c1"># ============================================================= #</span>
@@ -748,6 +792,10 @@ document.write(`
         <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 </div>
 
+
+
+<span class="n">PydanticRegistry</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Registry</span><span class="p">,</span> <span class="n">_RegistryPydanticAnnotation</span><span class="p">]</span>
+<span class="c1"># Any: The Pydantic type representing the :py:class:`astropy.units.core.Quantity` class.</span>
 
 
 <div class="viewcode-block" id="TableColumn">
