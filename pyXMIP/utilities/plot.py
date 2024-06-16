@@ -385,19 +385,3 @@ def plot_hips(
     ax.imshow(image, origin="lower", **imshow_kwargs)
 
     return fig, ax
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-
-    fig, axes = plt.subplots(2, 2)
-
-    plot_hips(
-        SkyCoord(ra=261.192142, dec=-34.167927, unit="deg"),
-        "5 deg",
-        dims=(300, 300),
-        eq_kwargs=dict(eq_vmin=0.0),
-        fig=fig,
-        ax=axes[0, 0],
-    )
-    plt.show()

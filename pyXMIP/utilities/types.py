@@ -283,6 +283,50 @@ class _CMDTypePydanticAnnotation:
         return handler(core_schema.str_schema())
 
 
+class _RegistryPydanticAnnotation:
+    """
+    This is a PyDantic annotation to process :py:class:`CrossMatchDatabase` objects.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls,
+        _source_type: Any,
+        _handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        def validate_from_dict(value: dict) -> Registry:
+            result = Registry(value)
+            return result
+
+        from_dict_schema = core_schema.chain_schema(
+            [
+                core_schema.dict_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_dict),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_dict_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    # check if it's an instance first before doing any further work
+                    core_schema.is_instance_schema(Registry),
+                    from_dict_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda instance: instance.__name__
+            ),
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        # Use the same schema that would be used for `str`
+        return handler(core_schema.str_schema())
+
+
 # ============================================================= #
 # Custom Validators
 # ============================================================= #
@@ -358,6 +402,10 @@ class Registry(dict):
     def add(self, key: str, value: Any):
         assert key not in self, f"Key {key} already in registry."
         self[key] = value
+
+
+PydanticRegistry = Annotated[Registry, _RegistryPydanticAnnotation]
+# Any: The Pydantic type representing the :py:class:`astropy.units.core.Quantity` class.
 
 
 class TableColumn(BaseModel):
